@@ -292,40 +292,40 @@ Les membres du type contrat sont les fonctions externes du contrat, y compris le
 Tableaux d'octets de taille fixe
 --------------------------------
 
-The value types ``bytes1``, ``bytes2``, ``bytes3``, ..., ``bytes32`` hold a sequence of bytes from one to up to 32.
-``byte`` is an alias for ``bytes1``.
+Les types valeur ``bytes1``, ``bytes2``, ``bytes3``, ..., ``bytes32`` contiennent une séquence de 1 à 32 octets.
+``byte`` est un alias de ``bytes1``.
 
-Operators:
+Opérateurs:
 
-* Comparisons: ``<=``, ``<``, ``==``, ``!=``, ``>=``, ``>`` (evaluate to ``bool``)
-* Bit operators: ``&``, ``|``, ``^`` (bitwise exclusive or), ``~`` (bitwise negation)
-* Shift operators: ``<<`` (left shift), ``>>`` (right shift)
-* Index access: If ``x`` is of type ``bytesI``, then ``x[k]`` for ``0 <= k < I`` returns the ``k`` th byte (read-only).
+* Comparaisons: ``<=``, ``<``, ``==``, ``!=``, ``>=``, ``>`` (retournent un ``bool``)
+* Opérateurs binaires: ``&``, ``|``, ``^`` (ou exclusif binaire), ``~`` (négation binaire)
+* Opérateurs de décalage: ``<<`` (décalage vers la gauche), ``>>`` (décalage vers la droite)
+* Accès par indexage: Si ``x`` estd e type ``bytesI``, alors ``x[k]`` pour ``0 <= k < I`` retourne le ``k`` ème byte (lecture seule).
 
-The shifting operator works with any integer type as right operand (but returns the type of the left operand), which denotes the number of bits to shift by.
-Shifting by a negative amount causes a runtime exception.
+L'opérateur de décalage travaille avec n'importe quel type d'entier comme opérande droite (mais retourne le type de l'opérande gauche), qui indique le nombre de bits à décaler.
+Le décalage d'un montant négatif entraîne une exception d'exécution.
 
-Members:
+Membres :
 
-* ``.length`` yields the fixed length of the byte array (read-only).
+*``.length``` donne la longueur fixe du tableau d'octets (lecture seule).
 
 .. note::
-    The type ``byte[]`` is an array of bytes, but due to padding rules, it wastes 31 bytes of space for each element (except in storage). It is better to use the ``bytes`` type instead.
+    Le type ``byte[]`` est un tableau d'octets, mais en raison des règles de bourrage, il gaspille 31 octets d'espace pour chaque élément (sauf en storage). Il est préférable d'utiliser le type "bytes" à la place.
 
-Dynamically-sized byte array
+Tableaux dynamiques d'octets
 ----------------------------
 
 ``bytes``:
-    Dynamically-sized byte array, see :ref:`arrays`. Not a value-type!
+    Tableau d'octets de taille dynamique, voir :ref:``arrays``. Ce n'est pas un type valeur !
 ``string``:
-    Dynamically-sized UTF-8-encoded string, see :ref:`arrays`. Not a value-type!
+    Chaîne codée UTF-8 de taille dynamique, voir :ref:`arrays`. Ce n'est pas un type valeur !
 
 .. index:: address, literal;address
 
 .. _address_literals:
 
-Address Literals
-----------------
+Adresses Litérales
+------------------
 
 Hexadecimal literals that pass the address checksum test, for example ``0xdCad3a6d3569DF655070DEd06cb7A1b2Ccd1D3AF`` are of ``address payable`` type.
 Hexadecimal literals that are between 39 and 41 digits long and do not pass the checksum test produce a warning and are treated as regular rational number literals.
