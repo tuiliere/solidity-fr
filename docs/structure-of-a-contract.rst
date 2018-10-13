@@ -53,10 +53,10 @@ Les :ref:`function-calls` peuvent se produire en interne ou en externe et avoir 
 
 .. _structure-function-modifiers:
 
-Function Modifiers
-==================
+Modificateurs de Fonctions
+==========================
 
-Function modifiers can be used to amend the semantics of functions in a declarative way (see :ref:`modifiers` in the contracts section).
+Les modificateurs (``modifier``) de fonctions peuvent être utilisés pour modifier la sémantique des fonctions de manière déclarative (voir :ref:`modifiers` dans la section contrats).
 
 ::
 
@@ -65,7 +65,7 @@ Function modifiers can be used to amend the semantics of functions in a declarat
     contract Purchase {
         address public seller;
 
-        modifier onlySeller() { // Modifier
+        modifier onlySeller() { // Modificateur
             require(
                 msg.sender == seller,
                 "Only seller can call this."
@@ -73,17 +73,17 @@ Function modifiers can be used to amend the semantics of functions in a declarat
             _;
         }
 
-        function abort() public view onlySeller { // Modifier usage
+        function abort() public view onlySeller { // Utilisation du modificateur
             // ...
         }
     }
 
 .. _structure-events:
 
-Events
-======
+Évènements
+==========
 
-Events are convenience interfaces with the EVM logging facilities.
+Les 'ev`enements (``event``) sont une interface d'accès aux fonctionnalités de journalisation de l'EVM.
 
 ::
 
@@ -98,14 +98,14 @@ Events are convenience interfaces with the EVM logging facilities.
         }
     }
 
-See :ref:`events` in contracts section for information on how events are declared and can be used from within a dapp.
+Voir :ref:`events` dans la section contrats pour plus d'informations sur la façon dont les événements sont déclarés et peuvent être utilisés à partir d'une dapp.
 
 .. _structure-struct-types:
 
-Struct Types
-=============
+Type Structure
+==============
 
-Structs are custom defined types that can group several variables (see :ref:`structs` in types section).
+Les structures (``struct``) sont des types personnalisés qui peuvent regrouper plusieurs variables (voir :ref:`structs` dans la section Types).
 
 ::
 
@@ -122,10 +122,10 @@ Structs are custom defined types that can group several variables (see :ref:`str
 
 .. _structure-enum-types:
 
-Enum Types
-==========
+Type Enum
+=========
 
-Enums can be used to create custom types with a finite set of 'constant values' (see :ref:`enums` in types section).
+Les Enumérateurs (``enum``) peuvent être utilisés pour créer des types personnalisés avec un ensemble fini de 'valeurs constantes' (voir :ref:`enums` dans la section Types).
 
 ::
 
