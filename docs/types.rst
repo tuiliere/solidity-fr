@@ -155,7 +155,7 @@ Les conversions implicites de ``address payable`` à ``address`` sont autorisée
 .. note::
     La seule façon d'effectuer une telle conversion est d'utiliser une conversion intermédiaire en ``uint160``.
 
-:ref:`Adresses littérales<address_literals<address_literals>` peuvent être implicitement converties en ``address payable``.
+Les :ref:`adresses littérales<address_literals<address_literals>` peuvent être implicitement converties en ``address payable``.
 
 Les conversions explicites vers et à partir de ``address`` sont autorisées pour les entiers, les entiers littéraux, les ``bytes20`` et les types de contrats avec les réserves suivantes :
 Les conversions sous la forme ``address payable(x)`` ne sont pas permises. Au lieu de cela, le résultat d'une conversion sous forme ``adresse(x)`` donne une ``address payable`` si ``x`` est un contrat disposant d'une fonction par défaut (``fallback``) ``payable``, ou si ``x`` est de type entier, bytes fixes, ou littéral.
@@ -163,37 +163,37 @@ Sinon, l'adresse obtenue sera de type ``address``.
 Dans les fonctions de signature externes, ``address`` est utilisé à la fois pour le type ``address``et ``address payable``.
 
 .. note::
-    It might very well be that you do not need to care about the distinction between ``address`` and ``address payable`` and just use ``address`` everywhere. For example, if you are using the :ref:`withdrawal pattern<withdrawal_pattern>`, you can (and should) store the address itself as ``address``, because you invoke the ``transfer`` function on
-    ``msg.sender``, which is an ``address payable``.
+    Il se peut fort bien que vous n'ayez pas à vous soucier de la distinction entre ``address`` et ``address payable`` et que vous utilisiez simplement ``address`` partout. Par exemple, si vous utilisez la fonction :ref:`withdrawal pattern<withdrawal_pattern>`, vous pouvez (et devriez) stocker l'adresse elle-même comme ``address``, parce que vous invoquez la fonction ``transfer`` sur
+     ``msg.sender``, qui est une ``address payable``.
 
-Operators:
+Opérateurs :
 
 * ``<=``, ``<``, ``==``, ``!=``, ``>=`` and ``>``
 
 .. warning::
-    If you convert a type that uses a larger byte size to an ``address``, for example ``bytes32``, then the ``address`` is truncated.
-    To reduce conversion ambiguity version 0.4.24 and higher of the compiler force you make the truncation explicit in the conversion.
-    Take for example the address ``0x111122223333444455556666777788889999AAAABBBBCCCCDDDDEEEEFFFFCCCC``.
+    Si vous convertissez un type qui utilise une taille d'octet plus grande en ``address``, par exemple ``bytes32``, alors l'adresse est tronquée.
+     Pour réduire l'ambiguïté de conversion à partir de la version 0.4.24 du compilateur vous force à rendre la troncature explicite dans la conversion.
+     Prenons par exemple l'adresse ``0x1111222222323333434444545555666666777777778888999999AAAABBBBBBCCDDDDEEFEFFFFFFCC``.
 
-    You can use ``address(uint160(bytes20(b)))``, which results in ``0x111122223333444455556666777788889999aAaa``,
-    or you can use ``address(uint160(uint256(b)))``, which results in ``0x777788889999AaAAbBbbCcccddDdeeeEfFFfCcCc``.
+     Vous pouvez utiliser ``address(uint160(octets20(b)))``, ce qui donne ``0x1111212222323333434444545555666677778888889999aAaaa``,
+     ou vous pouvez utiliser ``address(uint160(uint256(b)))``, ce qui donne ``0x777777888888999999AaAAbBbbCcccddDdeeeEfFFfCcCcCc``.
 
 .. note::
-    The distinction between ``address`` and ``address payable`` was introduced with version 0.5.0.
-    Also starting from that version, contracts do not derive from the address type, but can still be explicitly converted to
-    ``address`` or to ``address payable``, if they have a payable fallback function.
+    La distinction entre ``address``et ``address payable`` a été introduite avec la version 0.5.0.
+     À partir de cette version également, les contrats ne dérivent pas du type d'adresse, mais peuvent toujours être convertis explicitement en
+     adresse " ou à " adresse payable ", s'ils ont une fonction par défaut payable.
 
 .. _members-of-addresses:
 
-Members of Addresses
-^^^^^^^^^^^^^^^^^^^^
+Membres de Address
+^^^^^^^^^^^^^^^^^^
 
-For a quick reference of all members of address, see :ref:`address_related`.
+Pour une liste des membres de address, voir :ref:`address_related`.
 
-* ``balance`` and ``transfer``
+* ``balance`` et ``transfer``.
 
-It is possible to query the balance of an address using the property ``balance``
-and to send Ether (in units of wei) to a payable address using the ``transfer`` function:
+Il est possible d'interroger le solde d'une adresse en utilisant la propriété ``balance``
+et d'envoyer des Ether (en unités de wei) à une adresse payable à l'aide de la fonction ``transfert`` :
 
 ::
 
@@ -201,97 +201,96 @@ and to send Ether (in units of wei) to a payable address using the ``transfer`` 
     address myAddress = address(this);
     if (x.balance < 10 && myAddress.balance >= 10) x.transfer(10);
 
-The ``transfer`` function fails if the balance of the current contract is not large enough or if the Ether transfer is rejected by the receiving account. The ``transfer`` function reverts on failure.
+La fonction ``transfer`` échoue si le solde du contrat en cours n'est pas suffisant ou si le transfert d'Ether est rejeté par le compte destinataire. La fonction ``transfert`` s'inverse en cas d'échec.
 
 .. note::
-    If ``x`` is a contract address, its code (more specifically: its :ref:`fallback-function`, if present) will be executed together with the ``transfer`` call (this is a feature of the EVM and cannot be prevented). If that execution runs out of gas or fails in any way, the Ether transfer will be reverted and the current contract will stop with an exception.
+    Si ``x`` est une adresse de contrat, son code (plus précisément : sa :ref:`fallback-function`, si présente) sera exécutée avec l'appel ``transfer`` (c'est une caractéristique de l'EVM et ne peut être empêché). Si cette exécution échoue ou s'il n'y a plus de gas, le transfert d'Ether sera annulé et le contrat en cours s'arrêtera avec une exception.
 
 * ``send``
 
-Send is the low-level counterpart of ``transfer``. If the execution fails, the current contract will not stop with an exception, but ``send`` will return ``false``.
+``send`` est la contrepartie de bas niveau du ``transfer``. Si l'exécution échoue, le contrat en cours ne s'arrêtera pas avec une exception, mais ``send`` retournera ``false``.
 
 .. warning::
-    There are some dangers in using ``send``: The transfer fails if the call stack depth is at 1024 (this can always be forced by the caller) and it also fails if the recipient runs out of gas. So in order to make safe Ether transfers, always check the return value of ``send``, use ``transfer`` or even better: use a pattern where the recipient withdraws the money.
+    Il y a certains dangers à utiliser la fonction ``send`` : Le transfert échoue si la profondeur de la stack atteint 1024 (cela peut toujours être forcé par l'appelant) et il échoue également si le destinataire manque de gas. Donc, afin d'effectuer des transferts d'Ether en toute sécurité, vérifiez toujours la valeur de retour de ``send``, utilisez ``transfer`` ou mieux encore  : utilisez un modèle où le destinataire retire l'argent.
 
-* ``call``, ``delegatecall`` and ``staticcall``
+* ``call``, ``delegatecall`` et ``staticcall``
 
-In order to interface with contracts that do not adhere to the ABI, or to get more direct control over the encoding,
-the functions ``call``, ``delegatecall`` and ``staticcall`` are provided.
-They all take a single ``bytes memory`` argument as input and return the success condition (as a ``bool``) and the returned data (``bytes memory``).
-The functions ``abi.encode``, ``abi.encodePacked``, ``abi.encodeWithSelector`` and ``abi.encodeWithSignature`` can be used to encode structured data.
+Afin de s'interfacer avec des contrats qui ne respectent pas l'ABI, ou d'obtenir un contrôle plus direct sur l'encodage,
+les fonctions ``call``, ``delegatecall`` et ``staticcall`` sont disponibles.
+Elles prennent tous pour argument un seul ``bytes memory`` comme entrée et retournent la condition de succès (en tant que ``bool``) et les données (``bytes memory``).
+Les fonctions ``abi.encoder``, ``abi.encoderPacked``, ``abi.encoderWithSelector`` et ``abi.encoderWithSignature`` peuvent être utilisées pour coder des données structurées.
 
-Example::
+Exemple::
 
     bytes memory payload = abi.encodeWithSignature("register(string)", "MyName");
     (bool success, bytes memory returnData) = address(nameReg).call(payload);
     require(success);
 
 .. warning::
-    All these functions are low-level functions and should be used with care.
-    Specifically, any unknown contract might be malicious and if you call it, you hand over control to that contract which could in turn call back into your contract, so be prepared for changes to your state variables
-    when the call returns. The regular way to interact with other contracts is to call a function on a contract object (``x.f()``).
+    Toutes ces fonctions sont des fonctions de bas niveau et doivent être utilisées avec précaution.
+     Plus précisément, tout contrat inconnu peut être malveillant et si vous l'appelez, vous transférez le contrôle à ce contrat qui, à son tour, peut revenir dans votre contrat, donc soyez prêt à modifier les variables de votre état.
+     quand l'appel revient. La façon habituelle d'interagir avec d'autres contrats est d'appeler une fonction sur un objet ``contract`` (``x.f()``)..
 
 :: note::
-    Previous versions of Solidity allowed these functions to receive arbitrary arguments and would also handle a first argument of type ``bytes4`` differently. These edge cases were removed in version 0.5.0.
+    Les versions précédentes de Solidity permettaient à ces fonctions de recevoir des arguments arbitraires et de traiter différemment un premier argument de type ``bytes4``. Ces cas rares ont été supprimés dans la version 0.5.0.
 
-It is possible to adjust the supplied gas with the ``.gas()`` modifier::
+Il est possible de régler le gas fourni avec le modificateur ``.gas()``::
 
     namReg.call.gas(1000000)(abi.encodeWithSignature("register(string)", "MyName"));
 
-Similarly, the supplied Ether value can be controlled too::
+De même, la valeur en Ether fournie peut également être contrôlée: :::
 
     nameReg.call.value(1 ether)(abi.encodeWithSignature("register(string)", "MyName"));
 
-Lastly, these modifiers can be combined. Their order does not matter::
+Enfin, ces modificateurs peuvent être combinés. Leur ordre n'a pas d'importance::
 
     nameReg.call.gas(1000000).value(1 ether)(abi.encodeWithSignature("register(string)", "MyName"));
 
-In a similar way, the function ``delegatecall`` can be used: the difference is that only the code of the given address is used, all other aspects (storage, balance, ...) are taken from the current contract. The purpose of ``delegatecall`` is to use library code which is stored in another contract. The user has to ensure that the layout of storage in both contracts is suitable for delegatecall to be used.
+De la même manière, la fonction ``delegatecall`` peut être utilisée: la différence est que seul le code de l'adresse donnée est utilisé, tous les autres aspects (stockage, balance,...) sont repris du contrat actuel. Le but de ``delegatecall`` est d'utiliser du code de bibliothèque qui est stocké dans un autre contrat. L'utilisateur doit s'assurer que la disposition du stockage dans les deux contrats est adaptée à l'utilisation de ``delegatecall``.
 
 .. note::
-    Prior to homestead, only a limited variant called ``callcode`` was available that did not provide access to the original ``msg.sender`` and ``msg.value`` values. This function was removed in version 0.5.0.
+    Avant Homestead, il n'existait qu'une variante limitée appelée ``callcode`` qui ne donnait pas accès aux valeurs originales ``msg.sender`` et ``msg.value``. Cette fonction a été supprimée dans la version 0.5.0.
 
-Since byzantium ``staticcall`` can be used as well. This is basically the same as ``call``, but will revert if the called function modifies the state in any way.
+Depuis Byzantium, ``staticcall`` peut aussi être utilisé. C'est fondamentalement la même chose que ``call``, mais reviendra en arrière si la fonction appelée modifie l'état d'une manière ou d'une autre.
 
-All three functions ``call``, ``delegatecall`` and ``staticcall`` are very low-level functions and should only be used as a *last resort* as they break the type-safety of Solidity.
+Les trois fonctions ``call``, ``delegatecall``et ``staticcall`` sont des fonctions de très bas niveau et ne devraient être utilisées qu'en *dernier recours* car elles brisent la sécurité de type de Solidity.
 
-The ``.gas()`` option is available on all three methods, while the ``.value()`` option is not supported for ``delegatecall``.
+L'option ``.gas()`` est disponible sur les trois méthodes, tandis que l'option ``.value()`` n'est pas supportée pour ``delegatecall``.
 
 .. note::
-    All contracts can be converted to ``address`` type, so it is possible to query the balance of the
-    current contract using ``address(this).balance``.
+    Tous les contrats pouvant être convertis en type ``address``, il est possible d'interroger le solde du contrat en cours en utilisant ``address(this).balance``.
 
 .. index:: ! contract type, ! type; contract
 
 .. _contract_types:
 
-Contract Types
---------------
+Types Contrat
+-------------
 
-Every :ref:`contract<contracts>` defines its own type.
-You can implicitly convert contracts to contracts they inherit from.
-Contracts can be explicitly converted to and from all other contract types and the ``address`` type.
+Chaque :ref:`contrat<contracts>` définit son propre type.
+Vous pouvez implicitement convertir des contrats en contrats dont ils héritent.
+Les contrats peuvent être explicitement convertis de et vers tous les autres types de contrats et le type ``address``.
 
-Explicit conversion to and from the ``address payable`` type is only possible if the contract type has a payable fallback function.
-The conversion is still performed using ``address(x)`` and not using ``address payable(x)``. You can find more information in the section about the :ref:`address type<address>`.
+La conversion explicite vers et depuis le type ``address payable`` n'est possible que si le type de contrat dispose d'une fonction de repli payante.
+La conversion est toujours effectuée en utilisant ``address(x)`` et non ``address payable(x)``. Vous trouverez plus d'informations dans la section sur le :ref:`type address<address>`.
 
 .. note::
-    Before version 0.5.0, contracts directly derived from the address type and there was no distinction between ``address`` and ``address payable``.
+     Avant la version 0.5.0, les contrats dérivaient directement du type address et il n'y avait aucune distinction entre ``address`` et ``address payable``.
 
-If you declare a local variable of contract type (`MyContract c`), you can call functions on that contract. Take care to assign it from somewhere that is the same contract type.
+Si vous déclarez une variable locale de type contrat (`MonContrat c`), vous pouvez appeler des fonctions sur ce contrat. Prenez bien soin de l'assigner à un contrat d'un type correspondant.
 
-You can also instantiate contracts (which means they are newly created). You can find more details in the :ref:`'Contracts via new'<creating-contracts>` section.
+Vous pouvez également instancier les contrats (ce qui signifie qu'ils sont nouvellement créés). Vous trouverez plus de détails dans la section :ref:`'contrats de création'<contrats de création>`.
 
-The data representation of a contract is identical to that of the ``address`` type and this type is also used in the :ref:`ABI<ABI>`.
+La représentation des données d'un contrat est identique à celle du type ``address`` et ce type est également utilisé dans l':ref:`ABI<ABI>`.
 
-Contracts do not support any operators.
+Les contrats ne supportent aucun opérateur.
 
-The members of contract types are the external functions of the contract including public state variables.
+Les membres du type contrat sont les fonctions externes du contrat, y compris les variables d'état publiques.
 
 .. index:: byte array, bytes32
 
-Fixed-size byte arrays
-----------------------
+Tableaux d'octets de taille fixe
+--------------------------------
 
 The value types ``bytes1``, ``bytes2``, ``bytes3``, ..., ``bytes32`` hold a sequence of bytes from one to up to 32.
 ``byte`` is an alias for ``bytes1``.
