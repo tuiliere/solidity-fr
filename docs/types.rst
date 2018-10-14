@@ -515,13 +515,13 @@ Les fonctions publiques (ou externes) ont aussi un membre spécial appelé ``sel
       }
     }
 
-Example that shows how to use internal function types::
+Exemple d'utilisation des fonctions de type ``internal``::
 
     pragma solidity >=0.4.16 <0.6.0;
 
     library ArrayUtils {
-      // internal functions can be used in internal library functions because
-      // they will be part of the same code context
+      // les fonctions internes peuvent être utilisées dams des fonctions
+      // de librairies internes car elles partagent le même contexte
       function map(uint[] memory self, function (uint) pure returns (uint) f)
         internal
         pure
@@ -566,7 +566,7 @@ Example that shows how to use internal function types::
       }
     }
 
-Another example that uses external function types::
+Exemple d' usage de fonction ``external``::
 
     pragma solidity >=0.4.22 <0.6.0;
 
@@ -582,7 +582,7 @@ Another example that uses external function types::
         emit NewRequest(requests.length - 1);
       }
       function reply(uint requestID, uint response) public {
-        // Here goes the check that the reply comes from a trusted source
+        // Ici on checke que la réponse vient d'une source de confiance
         requests[requestID].callback(response);
       }
     }
@@ -603,35 +603,35 @@ Another example that uses external function types::
     }
 
 .. note::
-    Lambda or inline functions are planned but not yet supported.
+    Les fonctions lambda ou en in-line sont prévues mais pas encore prises en charge.
 
 .. index:: ! type;reference, ! reference type, storage, memory, location, array, struct
 
-Reference Types
+Types Référence
 ===============
 
-Values of reference type can be modified through multiple different names.
-Contrast this with value types where you get an independent copy whenever a variable of value type is used. Because of that, reference types have to be handled more carefully than value types. Currently, reference types comprise structs, arrays and mappings. If you use a reference type, you always have to explicitly provide the data area where the type is stored: ``memory`` (whose lifetime is limited to a function call), ``storage`` (the location where the state variables are stored) or ``calldata`` (special data location that contains the function arguments, only available for external function call parameters).
+Les valeurs du type référence peuvent être modifiées par plusieurs noms différents.
+Comparez ceci avec les catégories de valeurs où vous obtenez une copie indépendante chaque fois qu'une variable de valeur est utilisée. Pour cette raison, les types référence doivent être traités avec plus d'attention que les types de valeur. Actuellement, les types référence comprennent les structures, les tableaux et les mappages. Si vous utilisez un type référence, vous devez toujours indiquer explicitement la zone de données où le type est enregistré : (dont la durée de vie est limitée à un appel de fonction), ``storage`` (l'emplacement où les variables d'état sont stockées) ou ``calldata`` (emplacement de données spécial qui contient les arguments de fonction, disponible uniquement pour les paramètres d'appel de fonction externe).
 
-An assignment or type conversion that changes the data location will always incur an automatic copy operation, while assignments inside the same data location only copy in some cases for storage types.
+Une affectation ou une conversion de type qui modifie l'emplacement des données entraîne toujours une opération de copie automatique, alors que les affectations à l'intérieur du même emplacement de données ne copient que dans certains cas selon le type de stockage.
 
 .. _data-location:
 
-Data location
--------------
+Emplacement des données
+-----------------------
 
-Every reference type, i.e. *arrays* and *structs*, has an additional annotation, the "data location", about where it is stored. There are three data locations:
-``memory``, ``storage`` and ``calldata``. Calldata is only valid for parameters of external contract functions and is required for this type of parameter. Calldata is a non-modifiable, non-persistent area where function arguments are stored, and behaves mostly like memory.
+Chaque type référence, c'est-à-dire *arrays* (tableaux) et *structs*, comporte une annotation supplémentaire, la ``localisation des données``, indiquant où elles sont stockées. Il y a trois emplacements de données :
+``Memory``, ``Storage`` et ``Calldata``. Calldata n'est valable que pour les paramètres des fonctions de contrat externes et n'est nécessaire que pour ce type de paramètre. Calldata est une zone non modifiable, non persistante où les arguments de fonction sont stockés, et se comporte principalement comme memory.
 
 
 .. note::
-    Prior to version 0.5.0 the data location could be omitted, and would default to different locations depending on the kind of variable, function type, etc., but all complex types must now give an explicit data location.
+    Avant la version 0.5.0, l'emplacement des données pouvait être omis, et était par défaut à des emplacements différents selon le type de variable, le type de fonction, etc.
 
-Data locations are not only relevant for persistency of data, but also for the semantics of assignments:
-assignments between storage and memory (or from calldata) always create an independent copy.
-Assignments from memory to memory only create references. This means that changes to one memory variable are also visible in all other memory variables that refer to the same data.
-Assignments from storage to a local storage variables also only assign a reference.
-In contrast, all other assignments to storage always copy. Examples for this case are assignments to state variables or to members of local variables of storage struct type, even if the local variable itself is just a reference.
+La localisation des données n'est sont pas seulement pertinente pour la persistance des données, mais aussi pour la sémantique des affectations :
+Les affectations entre le stockage et la mémoire (ou à partir des données de la calldata) créent toujours une copie indépendante.
+Les affectations de mémoire à mémoire ne créent que des références. Cela signifie que les modifications d'une variable mémoire sont également visibles dans toutes les autres variables mémoire qui se réfèrent aux mêmes données.
+Les affectations du stockage à une variable de stockage local n'affectent également qu'une référence.
+En revanche, toutes les autres affectations au stockage sont toujours copiées. Les affectations à des variables d'état ou à des membres de variables locales de type structure de stockage, même si la variable locale elle-même n'est qu'une référence, constituent des exemples dans ce cas.
 
 ::
 
@@ -640,21 +640,21 @@ In contrast, all other assignments to storage always copy. Examples for this cas
     contract C {
         uint[] x; // the data location of x is storage
 
-        // the data location of memoryArray is memory
+        // Les données de memoryArray sont stockées en mémoire (memory)
         function f(uint[] memory memoryArray) public {
-            x = memoryArray; // works, copies the whole array to storage
-            uint[] storage y = x; // works, assigns a pointer, data location of y is storage
-            y[7]; // fine, returns the 8th element
-            y.length = 2; // fine, modifies x through y
-            delete x; // fine, clears the array, also modifies y
-            // The following does not work; it would need to create a new temporary /
-            // unnamed array in storage, but storage is "statically" allocated:
+            x = memoryArray; // marche, copie le tableau en storage
+            uint[] storage y = x; // marche, assigne un pointeur, y est en storage
+            y[7]; // bon, retourne le 8e élément
+            y.length = 2; // bon, modifie x via y
+            delete x; // bon, efface l'array, modifie y
+            // L'exemple suivant ne fonctionne pas, il implique de créer un
+            // tableau anonyme en storage, mais storage est alloué "statiquement"
             // y = memoryArray;
-            // This does not work either, since it would "reset" the pointer, but there
-            // is no sensible location it could point to.
+            // Ceci ne marche pas non plus, car ça redéfinirait le
+            // pointeur mais ne pointe sur rien
             // delete y;
-            g(x); // calls g, handing over a reference to x
-            h(x); // calls h and creates an independent, temporary copy in memory
+            g(x); // appelle g, avec un pointeur sur x
+            h(x); // appelle h et crée une copie indépendante en memory
         }
 
         function g(uint[] storage) internal pure {}
@@ -665,35 +665,35 @@ In contrast, all other assignments to storage always copy. Examples for this cas
 
 .. _arrays:
 
-Arrays
-------
+Tableaux
+--------
 
-Arrays can have a compile-time fixed size or they can be dynamic.
-The are few restrictions for the element, it can also be another array, a mapping or a struct. The general restrictions for
-types apply, though, in that mappings can only be used in storage and publicly-visible functions need parameters that are ABI types.
+Les tableaux peuvent avoir une taille fixe à la compilation ou peuvent être dynamiques.
+Il y a peu de restrictions concernant l'élément contenu, il peut aussi être un autre tableau, un mappage ou une structure. Les restrictions générales
+s'appliquent, cependant, en ce sens que les mappages ne peuvent être utilisés que dans le storage et que les fonctions visibles au public nécessitent des paramètres qui sont des types reconnus par l'ABI.
 
-An array of fixed size ``k`` and element type ``T`` is written as ``T[k]``, an array of dynamic size as ``T[]``. As an example, an array of 5 dynamic arrays of ``uint`` is ``uint[][5]`` (note that the notation is reversed when compared to some other languages). To access the second uint in the third dynamic array, you use ``x[2][1]`` (indices are zero-based and
-access works in the opposite way of the declaration, i.e. ``x[2]`` shaves off one level in the type from the right).
+Un tableau de taille fixe ``k`` et de type d'élément ``T`` est écrit ``T[k]``, un tableau de taille dynamique ``T[]``. Par exemple, un tableau de 5 tableaux dynamiques de ``uint`` est ``uint[][5]`` (notez que la notation est inversée par rapport à certains autres langages). Pour accéder au deuxième uint du troisième tableau dynamique, vous utilisez ``x[2][1]`` (les indexs commencent à zéro et
+l'accès fonctionne dans le sens inverse de la déclaration, c'est-à-dire que ``x[2]`` supprime un niveau dans le type de déclaration à partir de la droite).
 
-Accessing an array past its end causes a revert. If you want to add new elements, you have to use ``.push()`` or increase the ``.length`` member (see below).
+L'accès à un tableau après sa fin provoque un ``revert``. Si vous voulez ajouter de nouveaux éléments, vous devez utiliser ``.push()`` ou augmenter le membre ``.length`` (voir ci-dessous).
 
-Variables of type ``bytes`` and ``string`` are special arrays. A ``bytes`` is similar to ``byte[]``, but it is packed tightly in calldata and memory. ``string`` is equal to ``bytes`` but does not allow length or index access.
-So ``bytes`` should always be preferred over ``byte[]`` because it is cheaper.
-As a rule of thumb, use ``bytes`` for arbitrary-length raw byte data and ``string`` for arbitrary-length string (UTF-8) data. If you can limit the length to a certain number of bytes, always use one of ``bytes1`` to ``bytes32`` because they are much cheaper.
+Les variables de type ``bytes`` et ``string`` sont des tableaux spéciaux. Un ``byte`` est semblable à un ``byte[]``, mais il est condensé en calldata et en mémoire. ``string`` est égal à ``bytes``, mais ne permet pas l'accès à la longueur ou à l'index.
+Il faut donc généralement préférer les ``bytes`` aux ``bytes[]`` car c'est moins cher à l'usage.
+En règle générale, utilisez ``bytes`` pour les données en octets bruts de longueur arbitraire et ``string`` pour les données de chaîne de caractères de longueur arbitraire (UTF-8). Si vous pouvez limiter la longueur à un certain nombre d'octets, utilisez toujours un des ``bytes1`` à ``bytes32``, car ils sont beaucoup moins chers également.
 
 .. note::
-    If you want to access the byte-representation of a string ``s``, use ``bytes(s).length`` / ``bytes(s)[7] = 'x';``. Keep in mind that you are accessing the low-level bytes of the UTF-8 representation, and not the individual characters!
+    Si vous voulez accéder à la représentation en octets d'une chaîne de caractères ``s``, utilisez ``bytes(s).length`` / ``bytes(s)[7] ='x';``. Gardez à l'esprit que vous accédez aux octets de bas niveau de la représentation UTF-8, et non aux caractères individuels !
 
-It is possible to mark arrays ``public`` and have Solidity create a :ref:`getter <visibility-and-getters>`.
-The numeric index will become a required parameter for the getter.
+Il est possible de marquer les tableaux ``public`` et de demander à Solidity de créer un :ref:`getter <visibility-and-getters>`.
+L'index numérique deviendra un paramètre obligatoire pour le getter.
 
 .. index:: ! array;allocating, new
 
-Allocating Memory Arrays
-^^^^^^^^^^^^^^^^^^^^^^^^
+Allouer des tableaux en mémoire
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-You can use the ``new`` keyword to create arrays with a runtime-dependent length in memory.
-As opposed to storage arrays, it is **not** possible to resize memory arrays (e.g. by assigning to the ``.length`` member). You either have to calculate the required size in advance or create a new memory array and copy every element.
+Vous pouvez utiliser le mot-clé ``new`` pour créer des tableaux dont la longueur dépend de la durée d'exécution en mémoire.
+Contrairement aux tableaux de stockage, il n'est **pas** possible de redimensionner les tableaux de mémoire (par exemple en les assignant au membre ``.length``). Vous devez soit calculer la taille requise à l'avance, soit créer un nouveau tableau de mémoire et copier chaque élément.
 
 ::
 
