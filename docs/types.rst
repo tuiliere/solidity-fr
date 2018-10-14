@@ -711,10 +711,10 @@ Contrairement aux tableaux de stockage, il n'est **pas** possible de redimension
 
 .. index:: ! array;literals, !inline;arrays
 
-Array Literals / Inline Arrays
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Tableaux littéraux / Inline Arrays
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Array literals are arrays that are written as an expression and are not assigned to a variable right away.
+Les littéraux de tableau sont des tableaux qui sont écrits comme une expression et ne sont pas assignés à une variable tout de suite.
 
 ::
 
@@ -729,54 +729,52 @@ Array literals are arrays that are written as an expression and are not assigned
         }
     }
 
-The type of an array literal is a memory array of fixed size whose base type is the common type of the given elements. The type of ``[1, 2, 3]`` is ``uint8[3] memory``, because the type of each of these constants is ``uint8``.
-Because of that, it is necessary to convert the first element in the example above to ``uint``. Note that currently, fixed size memory arrays cannot be assigned to dynamically-sized memory arrays, i.e. the following is not
-possible:
+Le type d'un tableau littéral est un tableau mémoire de taille fixe dont le type de base est le type commun des éléments donnés. Le type de ``[1, 2, 3]`` est ``uint8[3] memory```, car le type de chacune de ces constantes est ``uint8``.
+Pour cette raison, il est nécessaire de convertir le premier élément de l'exemple ci-dessus en "uint". Notez qu'actuellement, les tableaux de taille fixe ne peuvent pas être assignées à des tableaux de taille dynamique, c'est-à-dire que ce qui suit n'est pas possible :
 
 ::
 
     pragma solidity >=0.4.0 <0.6.0;
 
-    // This will not compile.
+    // Ceci ne compile pas.
     contract C {
         function f() public {
-            // The next line creates a type error because uint[3] memory
-            // cannot be converted to uint[] memory.
+            // La ligne suivant provoque une erreur car uint[3] memory
+            // ne peut pas être convertit en uint[] memory.
             uint[] memory x = [uint(1), 3, 4];
         }
     }
 
-It is planned to remove this restriction in the future but currently creates some complications because of how arrays are passed in the ABI.
+Il est prévu de supprimer cette restriction à l'avenir, mais crée actuellement certaines complications en raison de la façon dont les tableaux sont transmis dans l'ABI.
 
 .. index:: ! array;length, length, push, pop, !array;push, !array;pop
 
-Members
+Membres
 ^^^^^^^
 
 **length**:
-    Arrays have a ``length`` member that contains their number of elements.
-    The length of memory arrays is fixed (but dynamic, i.e. it can depend on runtime parameters) once they are created.
-    For dynamically-sized arrays (only available for storage), this member can be assigned to resize the array.
-    Accessing elements outside the current length does not automatically resize the array and instead causes a failing assertion.
-    Increasing the length adds new zero-initialised elements to the array.
-    Reducing the length performs an implicit :ref:``delete`` on each of the removed elements.
-**push**:
-     Dynamic storage arrays and ``bytes`` (not ``string``) have a member function called ``push`` that you can use to append an element at the end of the array. The element will be zero-initialised. The function returns the new length.
-**pop**:
-     Dynamic storage arrays and ``bytes`` (not ``string``) have a member function called ``pop`` that you can use to remove an element from the end of the array. This also implicitly calls :ref:``delete`` on the removed element.
+    Les tableaux ont un membre ``length`` qui contient leur nombre d'éléments.
+     La longueur des tableaux memory est fixe (mais dynamique, c'est-à-dire qu'elle peut dépendre des paramètres d'exécution) une fois qu'ils sont créés.
+     Pour les tableaux de taille dynamique (disponible uniquement en storage), ce membre peut être assigné pour redimensionner le tableau.
+     L'accès à des éléments en dehors de la longueur courante ne redimensionne pas automatiquement le tableau et provoque plutôt un échec d'assertion.
+     L'augmentation de la longueur ajoute de nouveaux éléments initialisés zéro au tableau.
+     Réduire la longueur permet d'effectuer une suppression (:ref:``suppression``) implicite sur chacun des éléments supprimés.
+**push** :
+      Les tableaux de stockage dynamique et les ``bytes`` (et non ``string``) ont une fonction membre appelée ``push`` que vous pouvez utiliser pour ajouter un élément à la fin du tableau. L'élément sera mis à zéro à l'initialisation. La fonction renvoie la nouvelle longueur.
+**pop** :
+      Les tableaux de stockage dynamique et les ``bytes`` (et non ``string``) ont une fonction membre appelée ``pop`` que vous pouvez utiliser pour supprimer un élément à la fin du tableau. Ceci appelle aussi implicitement :ref:``delete`` sur l'élément supprimé.
 
 .. warning::
-    If you use ``.length--`` on an empty array, it causes an underflow and thus sets the length to ``2**256-1``.
+    Si vous utilisez ``.length--`` sur un tableau vide, cela provoque un débordement par le bas et fixe donc la longueur à ``2**256-1``.
 
 .. note::
-    Increasing the length of a storage array has constant gas costs because storage is assumed to be zero-initialised, while decreasing the length has at least linear cost (but in most cases worse than linear), because it includes explicitly clearing the removed elements similar to calling :ref:``delete`` on them.
+     L'augmentation de la longueur d'un tableau en storage a des coûts en gas constants parce qu'on suppose que le stockage est nul, alors que la diminution de la longueur a au moins un coût linéaire (mais dans la plupart des cas pire que linéaire), parce qu'elle inclut explicitement l'élimination des éléments supprimés comme si on appelait :ref:``delete``.
 
 .. note::
-    It is not yet possible to use arrays of arrays in external functions (but they are supported in public functions).
+     Il n'est pas encore possible d'utiliser les tableaux de tableaux dans les fonctions externes (mais ils sont supportés dans les fonctions publiques).
 
 .. note::
-    In EVM versions before Byzantium, it was not possible to access dynamic arrays return from function calls. If you call functions that return dynamic arrays, make sure to use an EVM that is set to
-    Byzantium mode.
+     Dans les versions EVM antérieures à Byzantium, il n'était pas possible d'accéder au retour de tableaux dynamique à partir des appels de fonctions. Si vous appelez des fonctions qui retournent des tableaux dynamiques, assurez-vous d'utiliser un EVM qui est configuré en mode Byzantium.
 
 ::
 
@@ -784,18 +782,20 @@ Members
 
     contract ArrayContract {
         uint[2**20] m_aLotOfIntegers;
-        // Note that the following is not a pair of dynamic arrays but a
-        // dynamic array of pairs (i.e. of fixed size arrays of length two).
-        // Because of that, T[] is always a dynamic array of T, even if T
-        // itself is an array.
-        // Data location for all state variables is storage.
+        // Notez que ce qui suit n'est pas une paire de tableaux dynamiques
+        // mais un tableau tableau dynamique de paires (c'est-à-dire de
+        // tableaux de taille fixe de longueur deux).
+        // Pour cette raison, T[] est toujours un tableau dynamique
+        // de T, même si T lui-même est un tableau.
+        // L'emplacement des données pour toutes les variables d'état
+        // est storage.
         bool[2][] m_pairsOfFlags;
 
-        // newPairs is stored in memory - the only possibility
-        // for public contract function arguments
+        // newPairs est stocké en memory - seule possibilité
+        // pour les arguments de fonction publique
         function setAllFlagPairs(bool[2][] memory newPairs) public {
-            // assignment to a storage array performs a copy of ``newPairs`` and
-            // replaces the complete array ``m_pairsOfFlags``.
+            // l'assignation d' un tableau en storage implique la copie
+            // de  ``newPairs`` et remplace l'array ``m_pairsOfFlags``.
             m_pairsOfFlags = newPairs;
         }
 
@@ -806,40 +806,41 @@ Members
         StructType s;
 
         function f(uint[] memory c) public {
-            // stores a reference to ``s`` in ``g``
+            // stocke un pointeur sur ``s`` dans ``g``
             StructType storage g = s;
-            // also changes ``s.moreInfo``.
+            // change aussi ``s.moreInfo``.
             g.moreInfo = 2;
-            // assigns a copy because ``g.contents``
-            // is not a local variable, but a member of
-            // a local variable.
+            // assigne une copie car ``g.contents`` n'est
+            // pas une variable locale mais un membre
+            // d'une variable locale
             g.contents = c;
         }
 
         function setFlagPair(uint index, bool flagA, bool flagB) public {
-            // access to a non-existing index will throw an exception
+            // accès à un index inexistant, déclenche une exception
             m_pairsOfFlags[index][0] = flagA;
             m_pairsOfFlags[index][1] = flagB;
         }
 
         function changeFlagArraySize(uint newSize) public {
-            // if the new size is smaller, removed array elements will be cleared
+            // Si la nouvelle taille est plus petite, les
+            // éléments en trop seront supprimés
             m_pairsOfFlags.length = newSize;
         }
 
         function clear() public {
-            // these clear the arrays completely
+            // supprime le tableau complet
             delete m_pairsOfFlags;
             delete m_aLotOfIntegers;
-            // identical effect here
+            // meme effet avec
             m_pairsOfFlags.length = 0;
         }
 
         bytes m_byteData;
 
         function byteArrays(bytes memory data) public {
-            // byte arrays ("bytes") are different as they are stored without padding,
-            // but can be treated identical to "uint8[]"
+            // le tableau de byte ("bytes") sont différents car stockés sans
+            // padding mais peuvent être traités comme des ``uint8[]``
             m_byteData = data;
             m_byteData.length += 7;
             m_byteData[3] = 0x08;
@@ -851,14 +852,15 @@ Members
         }
 
         function createMemoryArray(uint size) public pure returns (bytes memory) {
-            // Dynamic memory arrays are created using `new`:
+            // Un tableau dynamique est créé via `new`:
             uint[2][] memory arrayOfPairs = new uint[2][](size);
 
-            // Inline arrays are always statically-sized and if you only
-            // use literals, you have to provide at least one type.
+            // Les tableaux déclarés à la volée sont toujours de taille statique
+            // et en cas d' utilisation de littéraux uniquement, au moins
+            // un type doit être spécifié.
             arrayOfPairs[0] = [uint(1), 2];
 
-            // Create a dynamic byte array:
+            // Créée un tableau dynamique de bytes:
             bytes memory b = new bytes(200);
             for (uint i = 0; i < b.length; i++)
                 b[i] = byte(uint8(i));
@@ -874,14 +876,14 @@ Members
 Structs
 -------
 
-Solidity provides a way to define new types in the form of structs, which is shown in the following example:
+Solidity permet de définir de nouveaux types sous forme de structs, comme le montre l'exemple suivant :
 
 ::
 
     pragma solidity >=0.4.11 <0.6.0;
 
     contract CrowdFunding {
-        // Defines a new type with two fields.
+        // Définit un nouveau type avec 2 champs.
         struct Funder {
             address addr;
             uint amount;
@@ -900,18 +902,19 @@ Solidity provides a way to define new types in the form of structs, which is sho
 
         function newCampaign(address payable beneficiary, uint goal) public returns (uint campaignID) {
             campaignID = numCampaigns++; // campaignID is return variable
-            // Creates new struct in memory and copies it to storage.
-            // We leave out the mapping type, because it is not valid in memory.
-            // If structs are copied (even from storage to storage), mapping types
-            // are always omitted, because they cannot be enumerated.
+            // Crée une nouvelle structure en memory et la copie vers storage.
+            // Nous omettons le type de mappage, car il n'est pas valide en mémoire.
+            // Si les structures sont copiées (même d'un stockage à un autre), les // types de mappage sont toujours omis, car ils ne peuvent pas
+            // être énumérés.
             campaigns[campaignID] = Campaign(beneficiary, goal, 0, 0);
         }
 
         function contribute(uint campaignID) public payable {
             Campaign storage c = campaigns[campaignID];
-            // Creates a new temporary memory struct, initialised with the given values
-            // and copies it over to storage.
-            // Note that you can also use Funder(msg.sender, msg.value) to initialise.
+            // Créé une nouvelle struct temporaire en memory, initialisée
+            // aux valeurs voulues, et copie-la en storage.
+            // Notez que vous pouvez également utiliser (msg.sender, msg.value)
+            // pour l'initialiser.
             c.funders[c.numFunders++] = Funder({addr: msg.sender, amount: msg.value});
             c.amount += msg.value;
         }
@@ -927,37 +930,35 @@ Solidity provides a way to define new types in the form of structs, which is sho
         }
     }
 
-The contract does not provide the full functionality of a crowdfunding contract, but it contains the basic concepts necessary to understand structs.
-Struct types can be used inside mappings and arrays and they can itself contain mappings and arrays.
+Le contrat ne fournit pas toutes les fonctionnalités d'un contrat de crowdfunding, mais il contient les concepts de base nécessaires pour comprendre les ``struct``.
+Les types structs peuvent être utilisés à l'intérieur des ``mapping`` et des ``array`` et peuvent eux-mêmes contenir des mappages et des tableaux.
 
-It is not possible for a struct to contain a member of its own type, although the struct itself can be the value type of a mapping member or it can contain a dynamically-sized array of its type.
-This restriction is necessary, as the size of the struct has to be finite.
+Il n'est pas possible pour une structure de contenir un membre de son propre type, bien que la structure elle-même puisse être le type de valeur d'un membre de mappage ou peut contenir un tableau de taille dynamique de son type.
+Cette restriction est nécessaire, car la taille de la structure doit être finie.
 
-Note how in all the functions, a struct type is assigned to a local variable with data location ``storage``.
-This does not copy the struct but only stores a reference so that assignments to members of the local variable actually write to the state.
+Notez que dans toutes les fonctions, un type structure est affecté à une variable locale avec l'emplacement de données ``storage``.
+Ceci ne copie pas la structure mais stocke seulement une référence pour que les affectations aux membres de la variable locale écrivent réellement dans l'état.
 
-Of course, you can also directly access the members of the struct without assigning it to a local variable, as in ``campaigns[campaignID].amount = 0``.
+Bien sûr, vous pouvez aussi accéder directement aux membres de la structure sans l'affecter à une variable locale, comme dans ``campaigns[campaignID].amount = 0``.
 
 .. index:: !mapping
 
-Mappings
+Mappages
 --------
 
-You declare mapping types with the syntax ``mapping(_KeyType => _ValueType)``.
-The ``_KeyType`` can be any elementary type. This means it can be any of the built-in value types plus ``bytes`` and ``string``. User-defined or complex types like contract types, enums, mappings, structs and any array type apart from ``bytes`` and ``string`` are not allowed.
-``_ValueType`` can be any type, including mappings.
+Vous déclarez le objets de type ``mapping`` avec la syntaxe ``mapping(_KeyType => _ValueType)``.
+``_KeyType`` peut être n'importe quel type élémentaire. Cela signifie qu'il peut s'agir de n'importe lequel des types de valeurs intégrés plus les octets et les chaînes de caractères. Les types définis par l'utilisateur ou les types complexes tels que les types de contrat, les énuménations, les mappages, les structs et tout type de tableau, à l'exception des ``bytes`` et des ``string`` qui ne sont pas autorisés.
+``_ValueType`` peut être n'importe quel type, y compris les mappages.
 
-You can think of mappings as `hash tables <https://en.wikipedia.org/wiki/Hash_table>`_, which are virtually initialised
-such that every possible key exists and is mapped to a value whose byte-representation is all zeros, a type's :ref:`default value <default-value>`. The similarity ends there, the key data is not stored in a mapping, only its ``keccak256`` hash is used to look up the value.
+Vous pouvez considérer les mappings comme des `tables de hashage <https://fr.wikipedia.org/wiki/Table_de_hachage>`_, qui sont virtuellement initialisées de telle sorte que chaque clé possible existe et est mappée à une valeur dont la représentation binaire est constituée de zéros, de type :ref:`valeur par défaut <default-value>`. La similitude s'arrête là, les données "clés" ne sont pas stockées dans un mappage, seul son hachage ``keccak256`` est utilisé pour rechercher la valeur.
 
-Because of this, mappings do not have a length or a concept of a key or value being set.
+Pour cette raison, les mappages n'ont pas de longueur ou de concept de clé ou de valeur définie.
 
-Mappings can only have a data location of ``storage`` and thus are allowed for state variables, as storage reference types
-in functions, or as parameters for library functions.
-They cannot be used as parameters or return parameters of contract functions that are publicly visible.
+Les mappages ne peuvent avoir qu'un emplacement de données en ``storage`` et sont donc autorisés pour les variables d'état, comme types référence en storage dans les fonctions ou comme paramètres pour les fonctions de librairies.
+Ils ne peuvent pas être utilisés comme paramètres ou paramètres de retour de fonctions de contrat publiques.
 
-You can mark variables of mapping type as ``public`` and Solidity creates a :ref:`getter <visibility-and-getters>` for you. The ``_KeyType`` becomes a parameter for the getter. If ``_ValueType`` is a value type or a struct, the getter returns ``_ValueType``.
-If ``_ValueType`` is an array or a mapping, the getter has one parameter for each ``_KeyType``, recursively. For example with a mapping:
+Vous pouvez marquer les variables de type mapping comme ``public`` et Solidity crée un :ref:`getter <visibility-and-getters>` pour vous. Le ```_KeyType`` devient un paramètre pour le getter. Si ``_ValueType`` est un type de valeur ou une structure, le getter retourne ``_ValueType``.
+Si ``_ValueType`` est un tableau ou un mappage, le getter a un paramètre pour chaque ``_KeyType``, de manière récursive. Par exemple :
 
 ::
 
@@ -981,26 +982,26 @@ If ``_ValueType`` is an array or a mapping, the getter has one parameter for eac
 
 
 .. note::
-  Mappings are not iterable, but it is possible to implement a data structure on top of them. For an example, see `iterable mapping <https://github.com/ethereum/dapp-bin/blob/master/library/iterable_mapping.sol>`_.
+  Les mappings ne sont pas itérables, mais il est possible d'y ajouter une structure de données. Pour un exemple, voir `mapping iterable <https://github.com/ethereum/dapp-bin/blob/master/library/iterable_mapping.sol>`_.
 
 .. index:: assignment, ! delete, lvalue
 
-Operators Involving LValues
-===========================
+Opérateurs impliquant des LValues
+=================================
 
-If ``a`` is an LValue (i.e. a variable or something that can be assigned to), the following operators are available as shorthands:
+Si ``a`` est une LValue (c.-à-d. une variable ou quelque chose qui peut être assigné à), les opérateurs suivants sont disponibles en version raccourcie::
 
-``a += e`` is equivalent to ``a = a + e``. The operators ``-=``, ``*=``, ``/=``, ``%=``, ``|=``, ``&=`` and ``^=`` are defined accordingly. ``a++`` and ``a--`` are equivalent to ``a += 1`` / ``a -= 1`` but the expression itself still has the previous value of ``a``. In contrast, ``--a`` and ``++a`` have the same effect on ``a`` but return the value after the change.
+``a += e`` équivaut à ``a = a + e``. Les opérateurs ``-=``, ``*=``, ``/=``, ``%=``, ``|=``, ``&=`` et ``^=`` sont définis de la même manière. ``a++`` et ``a--`` sont équivalents à ``a += 1`` / ``a -= 1`` mais l'expression elle-même a toujours la valeur précédente ``a``. Par contraste, ``--a`` et ``++a`` changent également ``a`` de ``1`` , mais retournent la valeur après le changement.
 
 delete
 ------
 
-``delete a`` assigns the initial value for the type to ``a``. I.e. for integers it is equivalent to ``a = 0``, but it can also be used on arrays, where it assigns a dynamic array of length zero or a static array of the same length with all elements reset. For structs, it assigns a struct with all members reset. In other words, the value of ``a`` after ``delete a`` is the same as if ``a`` would be declared without assignment, with the following caveat:
+``delete a`` affecte la valeur initiale du type à ``a``. C'est-à-dire que pour les entiers, il est équivalent à ``a = 0``, mais il peut aussi être utilisé sur les tableaux, où il assigne un tableau dynamique de longueur zéro ou un tableau statique de la même longueur avec tous les éléments réinitialisés. Pour les structs, il assigne une structure avec tous les membres réinitialisés. En d'autres termes, la valeur de ``a`` après ``delete a`` est la même que si ``a`` était déclaré sans attribution, avec la réserve suivante :
 
-``delete`` has no effect on mappings (as the keys of mappings may be arbitrary and are generally unknown). So if you delete a struct, it will reset all members that are not mappings and also recurse into the members unless they are mappings. However, individual keys and what they map to can be deleted: If ``a`` is a mapping, then ``delete a[x]`` will delete the value stored at ``x``.
+``delete`` n'a aucun effet sur les mappages (car les clés des mappages peuvent être arbitraires et sont généralement inconnues). Ainsi, si vous supprimez une structure, elle réinitialisera tous les membres qui ne sont pas des ``mappings`` et se propagera récursivement dans les membres à moins qu'ils ne soient des mappings. Toutefois, il est possible de supprimer des clés individuelles et ce à quoi elles correspondent : Si ``a`` est un mappage, alors ``delete a[x]`` supprimera la valeur stockée à ``x``.
 
-It is important to note that ``delete a`` really behaves like an assignment to ``a``, i.e. it stores a new object in ``a``.
-This distinction is visible when ``a`` is reference variable: It will only reset ``a`` itself, not the value it referred to previously.
+Il est important de noter que ``delete a`` se comporte vraiment comme une affectation à ``a``, c'est-à-dire qu'il stocke un nouvel objet dans ``a``.
+Cette distinction est visible lorsque ``a`` est une variable par référence : Il ne réinitialisera que ``a`` lui-même, et non la valeur à laquelle il se référait précédemment.
 
 ::
 
@@ -1012,13 +1013,15 @@ This distinction is visible when ``a`` is reference variable: It will only reset
 
         function f() public {
             uint x = data;
-            delete x; // sets x to 0, does not affect data
-            delete data; // sets data to 0, does not affect x
+            delete x; // met x à 0, n' affecte pas data
+            delete data; // met data à 0, n'affecte pas x
             uint[] storage y = dataArray;
-            delete dataArray; // this sets dataArray.length to zero, but as uint[] is a complex object, also
-            // y is affected which is an alias to the storage object
-            // On the other hand: "delete y" is not valid, as assignments to local variables
-            // referencing storage objects can only be made from existing storage objects.
+            delete dataArray; // ceci met dataArray.length à zéro, mais un uint[]
+            // est un objet complexe, donc y est affecté est un alias
+            // vers l' objet en storage.
+            // D' un autre côté: "delete y" est invalid, car l' assignement à
+            // une variable locale pointant vers un objet en storage n' est
+            // autorisée que depuis un objet en storage.
             assert(y.length == 0);
         }
     }
@@ -1027,101 +1030,101 @@ This distinction is visible when ``a`` is reference variable: It will only reset
 
 .. _types-conversion-elementary-types:
 
-Conversions between Elementary Types
-====================================
+Conversions entre les types élémentaires
+========================================
 
-Implicit Conversions
---------------------
+Conversions implicites
+----------------------
 
-If an operator is applied to different types, the compiler tries to implicitly convert one of the operands to the type of the other (the same is true for assignments). In general, an implicit conversion between value-types is possible if it makes sense semantically and no information is lost: ``uint8`` is convertible to ``uint16`` and ``int128`` to ``int256``, but ``int8`` is not convertible to ``uint256`` (because ``uint256`` cannot hold e.g. ``-1``).
-Any integer type that can be converted to ``uint160`` can also be converted to ``address``.
+Si un opérateur est appliqué à différents types, le compilateur essaie de convertir implicitement l'un des opérandes au type de l'autre (c'est la même chose pour les assignations). En général, une conversion implicite entre les types valeur est possible si elle a un sens sémantique et qu'aucune information n'est perdue : ``uint8`` est convertible en ``uint16`` et ``int128`` en ``int256``, mais ``uint8`` n'est pas convertible en ``uint256`` (car ``uint256`` ne peut contenir, par exemple, ``-1``).
+Tout type d'entier qui peut être converti en ``uint160`` peut aussi être converti en ``address``.
 
-For more details, please consult the sections about the types themselves.
+Pour plus de détails, veuillez consulter les sections concernant les types eux-mêmes.
 
-Explicit Conversions
---------------------
+Conversions explicites
+----------------------
 
-If the compiler does not allow implicit conversion but you know what you are doing, an explicit type conversion is sometimes possible. Note that this may give you some unexpected behaviour and allows you to bypass some security features of the compiler, so be sure to test that the result is what you want! Take the following example where you are converting a negative ``int8`` to a ``uint``:
+Si le compilateur ne permet pas la conversion implicite mais que vous savez ce que vous faites, une conversion de type explicite est parfois possible. Notez que cela peut vous donner un comportement inattendu et vous permet de contourner certaines fonctions de sécurité du compilateur, donc assurez-vous de tester que le résultat est ce que vous voulez ! Prenons l'exemple suivant où l'on convertit un ``int8`` négatif en un ``uint`` :
 
 ::
 
     int8 y = -3;
     uint x = uint(y);
 
-At the end of this code snippet, ``x`` will have the value ``0xfffff..fd`` (64 hex characters), which is -3 in the two's complement representation of 256 bits.
+A la fin de cet extrait de code, ``x`` aura la valeur ``0xfffffff...fd`` (64 caractères hexadécimaux), qui est -3 dans la représentation en 256 bits du complément à deux.
 
-If an integer is explicitly converted to a smaller type, higher-order bits are cut off::
+Si un entier est explicitement converti en un type plus petit, les bits d'ordre supérieur sont coupés::
 
     uint32 a = 0x12345678;
-    uint16 b = uint16(a); // b will be 0x5678 now
+    uint16 b = uint16(a); // b sera désormais 0x5678
 
-If an integer is explicitly converted to a larger type, it is padded on the left (i.e. at the higher order end).
-The result of the conversion will compare equal to the original integer.
+Si un entier est explicitement converti en un type plus grand, il est rembourré par la gauche (c'est-à-dire à l'extrémité supérieure de l'ordre).
+Le résultat de la conversion sera comparé à l'entier original::
 
     uint16 a = 0x1234;
     uint32 b = uint32(a); // b will be 0x00001234 now
     assert(a == b);
 
-Fixed-size bytes types behave differently during conversions. They can be thought of as sequences of individual bytes and converting to a smaller type will cut off the sequence::
+Les types à taille fixe se comportent différemment lors des conversions. Ils peuvent être considérés comme des séquences d'octets individuels et la conversion à un type plus petit coupera la séquence::
 
     bytes2 a = 0x1234;
-    bytes1 b = bytes1(a); // b will be 0x12
+    bytes1 b = bytes1(a); // b sera désormais 0x12
 
-If a fixed-size bytes type is explicitly converted to a larger type, it is padded on the right. Accessing the byte at a fixed index will result in the same value before and after the conversion (if the index is still in range)::
+Si un type à taille fixe est explicitement converti en un type plus grand, il est rembourré à droite. L'accès à l'octet par un index fixe donnera la même valeur avant et après la conversion (si l'index est toujours dans la plage)::
 
     bytes2 a = 0x1234;
-    bytes4 b = bytes4(a); // b will be 0x12340000
+    bytes4 b = bytes4(a); // b sera désormais 0x12340000
     assert(a[0] == b[0]);
     assert(a[1] == b[1]);
 
-Since integers and fixed-size byte arrays behave differently when truncating or padding, explicit conversions between integers and fixed-size byte arrays are only allowed, if both have the same size. If you want to convert between integers and fixed-size byte arrays of different size, you have to use intermediate conversions that make the desired truncation and padding
-rules explicit::
+Puisque les entiers et les tableaux d'octets de taille fixe se comportent différemment lorsqu'ils sont tronqués ou rembourrés, les conversions explicites entre entiers et tableaux d'octets de taille fixe ne sont autorisées que si les deux ont la même taille. Si vous voulez convertir entre des entiers et des tableaux d'octets de taille fixe de tailles différentes, vous devez utiliser des conversions intermédiaires qui font la troncature et le remplissage désirés.
+règles explicites::
 
     bytes2 a = 0x1234;
-    uint32 b = uint16(a); // b will be 0x00001234
-    uint32 c = uint32(bytes4(a)); // c will be 0x12340000
-    uint8 d = uint8(uint16(a)); // d will be 0x34
-    uint8 e = uint8(bytes1(a)); // d will be 0x12
+    uint32 b = uint16(a); // b sera désormais 0x00001234
+    uint32 c = uint32(bytes4(a)); // c sera désormais 0x12340000
+    uint8 d = uint8(uint16(a)); // d sera désormais 0x34
+    uint8 e = uint8(bytes1(a)); // d sera désormais 0x12
 
 .. _types-conversion-literals:
 
-Conversions between Literals and Elementary Types
-=================================================
+Conversions entre les types littéraux et élémentaires
+=====================================================
 
-Integer Types
--------------
+Types nombres entiers
+-------------------
 
-Decimal and hexadecimal number literals can be implicitly converted to any integer type that is large enough to represent it without truncation::
+Les nombres décimaux et hexadécimaux peuvent être implicitement convertis en n'importe quel type entier suffisamment grand pour le représenter sans troncature::
 
-    uint8 a = 12; // fine
-    uint32 b = 1234; // fine
-    uint16 c = 0x123456; // fails, since it would have to truncate to 0x3456
+    uint8 a = 12; // Bon
+    uint32 b = 1234; // Bon
+    uint16 c = 0x123456; // échoue, car devrait tronquer en 0x3456
 
-Fixed-Size Byte Arrays
-----------------------
+Tableaux d'octets de taille fixe
+--------------------------------
 
-Decimal number literals cannot be implicitly converted to fixed-size byte arrays. Hexadecimal number literals can be, but only if the number of hex digits exactly fits the size of the bytes type. As an exception both decimal and hexadecimal literals which have a value of zero can be converted to any fixed-size bytes type::
+Les nombres décimaux ne peuvent pas être implicitement convertis en tableaux d'octets de taille fixe. Les nombres hexadécimaux peuvent être littéraux, mais seulement si le nombre de chiffres hexadécimaux correspond exactement à la taille du type de ``bytes``. Par exception, les nombres décimaux et hexadécimaux ayant une valeur de zéro peuvent être convertis en n'importe quel type à taille fixe::
 
-    bytes2 a = 54321; // not allowed
-    bytes2 b = 0x12; // not allowed
-    bytes2 c = 0x123; // not allowed
-    bytes2 d = 0x1234; // fine
-    bytes2 e = 0x0012; // fine
-    bytes4 f = 0; // fine
-    bytes4 g = 0x0; // fine
+    bytes2 a = 54321; // pas autorisé
+    bytes2 b = 0x12; // pas autorisé
+    bytes2 c = 0x123; // pas autorisé
+    bytes2 d = 0x1234; // bon
+    bytes2 e = 0x0012; // bon
+    bytes4 f = 0; // bon
+    bytes4 g = 0x0; // bon
 
-String literals and hex string literals can be implicitly converted to fixed-size byte arrays, if their number of characters matches the size of the bytes type::
+Les littéraux de chaînes de caractères et les littéraux de chaînes hexadécimales peuvent être implicitement convertis en tableaux d'octets de taille fixe, si leur nombre de caractères correspond à la taille du type ``bytes``::
 
-    bytes2 a = hex"1234"; // fine
-    bytes2 b = "xy"; // fine
-    bytes2 c = hex"12"; // not allowed
-    bytes2 d = hex"123"; // not allowed
-    bytes2 e = "x"; // not allowed
-    bytes2 f = "xyz"; // not allowed
+    bytes2 a = hex"1234"; // bon
+    bytes2 b = "xy"; // bon
+    bytes2 c = hex"12"; // pas autorisé
+    bytes2 d = hex"123"; // pas autorisé
+    bytes2 e = "x"; // pas autorisé
+    bytes2 f = "xyz"; // débile
 
-Addresses
----------
+Adresses
+--------
 
-As described in :ref:`address_literals`, hex literals of the correct size that pass the checksum test are of ``address`` type. No other literals can be implicitly converted to the ``address`` type.
+Comme décrit dans :ref:`address_literals`, les chaines de caractères hexadécimaux de la bonne taille qui passent le test de somme de contrôle sont de type ``address``. Aucun autre littéral ne peut être implicitement converti au type ``address``.
 
-Explicit conversions from ``bytes20`` or any integer type to ``address`` results in ``address payable``.
+Les conversions explicites de ``bytes20`` ou de tout type entier en ``address`` aboutissent en une ``address payable```.
