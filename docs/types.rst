@@ -324,53 +324,52 @@ Tableaux dynamiques d'octets
 
 .. _address_literals:
 
-Adresses Litérales
-------------------
+Adresses Littérales
+-------------------
 
-Hexadecimal literals that pass the address checksum test, for example ``0xdCad3a6d3569DF655070DEd06cb7A1b2Ccd1D3AF`` are of ``address payable`` type.
-Hexadecimal literals that are between 39 and 41 digits long and do not pass the checksum test produce a warning and are treated as regular rational number literals.
+Les caractères hexadécimaux qui réussissent un test de somme de contrôle d'adresse ("address checksum"), par exemple ``0xdCad3a6d3569DF655070DEd06cb7A1b2Ccd1D3AF`` sont de type ``address payable``.
+Les nombres hexadécimaux qui ont entre 39 et 41 chiffres et qui ne passent pas le test de somme de contrôle produisent un avertissement et sont traités comme des nombres rationnels littéraux réguliers.
 
 .. note::
-    The mixed-case address checksum format is defined in `EIP-55 <https://github.com/ethereum/EIPs/blob/master/EIPS/eip-55.md>`_.
+    Le format de some de contr^ole multi-casse est décrit dans `EIP-55 <https://github.com/ethereum/EIPs/blob/master/EIPS/eip-55.md>`_.
 
 .. index:: literal, literal;rational
 
 .. _rational_literals:
 
-Rational and Integer Literals
------------------------------
+Rationels et entiers littéraux
+------------------------------
 
-Integer literals are formed from a sequence of numbers in the range 0-9.
-They are interpreted as decimals. For example, ``69`` means sixty nine.
-Octal literals do not exist in Solidity and leading zeros are invalid.
+Les nombres entiers littéraux sont formés à partir d'une séquence de nombres compris entre 0 et 9 interprétés en décimal. Par exemple, ``69`` signifie soixante-neuf.
+Les littéraux octaux n'existent pas dans Solidity et les zéros précédant un nombre sont invalides.
 
-Decimal fraction literals are formed by a ``.`` with at least one number on one side.  Examples include ``1.``, ``.1`` and ``1.3``.
+Les fractions décimales sont formées par un ``.`` avec au moins un chiffre sur un côté. Exemples : ``1.1``, ``.1 `` et ``1.3``.
 
-Scientific notation is also supported, where the base can have fractions, while the exponent cannot.
-Examples include ``2e10``, ``-2e10``, ``2e-10``, ``2.5e1``.
+La notation scientifique est également supportée, où la base peut avoir des fractions, alors que l'exposant ne le peut pas.
+Exemples : ``2e10``, ``-2e10``, ``2e-10``, ``2e-10``, ``2.5e1``.
 
-Underscores can be used to separate the digits of a numeric literal to aid readability.
-For example, decimal ``123_000``, hexadecimal ``0x2eff_abde``, scientific decimal notation ``1_2e345_678`` are all valid.
-Underscores are only allowed between two digits and only one consecutive underscore is allowed.
-There is no additional semantic meaning added to a number literal containing underscores, the underscores are ignored.
+Les soulignements (underscore) peuvent être utilisés pour séparer les chiffres d'un nombre littéral numérique afin d'en faciliter la lecture.
+Par exemple, la décimale ``123_000``, l'hexadécimale ``0x2eff_abde``, la notation décimale scientifique ``1_2e345_678`` sont toutes valables.
+Les tirets de soulignement ne sont autorisés qu'entre deux chiffres et un seul tiret de soulignement consécutif est autorisé.
+Il n'y a pas de signification sémantique supplémentaire ajoutée à un nombre contenant des tirets de soulignement, les tirets de soulignement sont ignorés.
 
-Number literal expressions retain arbitrary precision until they are converted to a non-literal type (i.e. by using them together with a non-literal expression or by explicit conversion).
-This means that computations do not overflow and divisions do not truncate in number literal expressions.
+Les expressions littérales numériques conservent une précision arbitraire jusqu'à ce qu'elles soient converties en un type non littéral (c'est-à-dire en les utilisant avec une expression non littérale ou par une conversion explicite).
+Cela signifie que les calculs ne débordent pas (overflow) et que les divisions ne tronquent pas les expressions littérales des nombres.
 
-For example, ``(2**800 + 1) - 2**800`` results in the constant ``1`` (of type ``uint8``) although intermediate results would not even fit the machine word size. Furthermore, ``.5 * 8`` results in the integer ``4`` (although non-integers were used in between).
+Par exemple, ``(2**800 + 1) - 2**800`` produit la constante ``1`` (de type ``uint8``) bien que les résultats intermédiaires ne rentrent même pas dans la taille d'un mot machine. De plus, ``.5 * 8`` donne l'entier ``4`` (bien que des nombres non entiers aient été utilisés entre les deux).
 
-Any operator that can be applied to integers can also be applied to number literal expressions as long as the operands are integers. If any of the two is fractional, bit operations are disallowed and exponentiation is disallowed if the exponent is fractional (because that might result in a non-rational number).
+N'importe quel opérateur qui peut être appliqué aux nombres entiers peut également être appliqué aux expressions littérales des nombres tant que les opérandes sont des nombres entiers. Si l'un des deux est fractionnaire, les opérations sur bits sont interdites et l'exponentiation est interdite si l'exposant est fractionnaire (parce que cela pourrait résulter en un nombre non rationnel).
 
 .. note::
-    Solidity has a number literal type for each rational number.
-    Integer literals and rational number literals belong to number literal types.
-    Moreover, all number literal expressions (i.e. the expressions that  contain only number literals and operators) belong to number literal types.  So the number literal expressions ``1 + 2`` and ``2 + 1`` both belong to the same number literal type for the rational number three.
+    Solidity a un type de nombre littéral pour chaque nombre rationnel.
+     Les nombres entiers littéraux et les nombres rationnels appartiennent à des types de nombres littéraux.
+     De plus, toutes les expressions numériques littérales (c'est-à-dire les expressions qui ne contiennent que des nombres et des opérateurs) appartiennent à des types littéraux de nombres. Ainsi, les expressions littérales ``1 + 2`` et ``2 + 1`` appartiennent toutes deux au même type littéral de nombre pour le nombre rationnel numéro trois.
 
 .. warning::
-    Division on integer literals used to truncate in Solidity prior to version 0.4.0, but it now converts into a rational number, i.e. ``5 / 2`` is not equal to ``2``, but to ``2.5``.
+    La dvision d'entiers littéraux tronquait dans les versions de Solidity avant la version 0.4.0, mais elle donne maintenant en un nombre rationnel, c'est-à-dire que ``5 / 2`` n'est pas égal à ``2``, mais à ``2.5``.
 
 .. note::
-    Number literal expressions are converted into a non-literal type as soon as they are used with non-literal expressions. Disregarding types, the value of the expression assigned to ``b`` below evaluates to an integer. Because ``a`` is of type ``uint128``, the expression ``2.5 + a`` has to have a proper type, though. Since there is no common type for the type of ``2.5`` and ``uint128``, the Solidity compiler does not accept this code.
+    Les expressions littérales numériques sont converties en caractères non littéraux dès qu'elles sont utilisées avec des expressions non littérales. Indépendamment des types, la valeur de l'expression assignée à ``b`` ci-dessous est évaluée en entier. Comme ``a`` est de type ``uint128``, l'expression ``2,5 + a`` doit cependant avoir un type. Puisqu'il n'y a pas de type commun pour les types ``2.5`` et ``uint128``, le compilateur Solidity n'accepte pas ce code.
 
 ::
 
@@ -380,58 +379,58 @@ Any operator that can be applied to integers can also be applied to number liter
 .. index:: literal, literal;string, string
 .. _string_literals:
 
-String Literals
----------------
+Chaines de caractères littérales
+--------------------------------
 
-String literals are written with either double or single-quotes (``"foo"`` or ``'bar'``).  They do not imply trailing zeroes as in C; ``"foo"`` represents three bytes, not four.  As with integer literals, their type can vary, but they are implicitly convertible to ``bytes1``, ..., ``bytes32``, if they fit, to ``bytes`` and to ``string``.
+Les chaînes de caractères littérales sont écrites avec des guillemets simples ou doubles (``"foo"`` ou ``'bar'``). Elles n'impliquent pas de zéro final comme en C ; ``foo`` représente trois octets, pas quatre. Comme pour les entiers littéraux, leur type peut varier, mais ils sont implicitement convertibles en ``bytes1``, ..., ``bytes32``, ou s'ils conviennent, en ``bytes`` et en ``string``.
 
-String literals support the following escape characters:
+Les chaînes de caractères littérales supportent les caractères d'échappement suivants :
 
- - ``\<newline>`` (escapes an actual newline)
- - ``\\`` (backslash)
- - ``\'`` (single quote)
- - ``\"`` (double quote)
+ - ``\<newline>`` (échappe un réel caractère newline)
+ - ``\\`` (barre oblique)
+ - ``\'`` (guillemet simple)
+ - ``\"`` (guillemet double)
  - ``\b`` (backspace)
  - ``\f`` (form feed)
  - ``\n`` (newline)
  - ``\r`` (carriage return)
- - ``\t`` (tab)
- - ``\v`` (vertical tab)
+ - ``\t`` (tabulation horizontale)
+ - ``\v`` (tabulation verticale)
  - ``\xNN`` (hex escape, see below)
- - ``\uNNNN`` (unicode escape, see below)
+ - ``\uNNNN`` (echapement d'unicode, voir ci-dessous)
 
-``\xNN`` takes a hex value and inserts the appropriate byte, while ``\uNNNN`` takes a Unicode codepoint and inserts an UTF-8 sequence.
+``\xNN`` prend une valeur hexadécimale et insère l'octet approprié, tandis que ``\uNNNNN`` prend un codepoint Unicode et insère une séquence UTF-8.
 
-The string in the following example has a length of ten bytes.
-It starts with a newline byte, followed by a double quote, a single quote a backslash character and then (without separator) the character sequence ``abcdef``.
+La chaîne de caractères de l'exemple suivant a une longueur de dix octets.
+Elle commence par un octet de newline, suivi d'une guillemet double, d'une guillemet simple, d'un caractère barre oblique inversée et ensuite (sans séparateur) de la séquence de caractères ``abcdef``.
 
 ::
 
     "\n\"\'\\abc\
     def"
 
-Any unicode line terminator which is not a newline (i.e. LF, VF, FF, CR, NEL, LS, PS) is considered to terminate the string literal. Newline only terminates the string literal if it is not preceded by a ``\``.
+Tout terminateur de ligne unicode qui n'est pas une nouvelle ligne (i.e. LF, VF, FF, CR, NEL, LS, PS) est considéré comme terminant la chaîne littérale. Newline ne termine la chaîne littérale que si elle n'est pas précédée d'un ``\``.
 
 .. index:: literal, bytes
 
-Hexadecimal Literals
---------------------
+Hexadécimaux littéraux
+----------------------
 
-Hexadecimal literals are prefixed with the keyword ``hex`` and are enclosed in double or single-quotes (``hex"001122FF"``). Their content must be a hexadecimal string and their value will be the binary representation of those values.
+Les caractères hexadécimaux sont précédées du mot-clé ``hex`` et sont entourées de guillemets simples ou doubles (``hex"001122FF"``). Leur contenu doit être une chaîne hexadécimale et leur valeur sera la représentation binaire de ces valeurs.
 
-Hexadecimal literals behave like :ref:`string literals <string_literals>` and have the same convertibility restrictions.
+Les littéraux hexadécimaux se comportent comme :ref:`chaînes de caractères littérales<string_literals>` et ont les mêmes restrictions de convertibilité.
 
 .. index:: enum
 
 .. _enums:
 
-Enums
------
+Énumérations
+------------
 
-Enums are one way to create a user-defined type in Solidity. They are explicitly convertible to and from all integer types but implicit conversion is not allowed.  The explicit conversion from integer checks at runtime that the value lies inside the range of the enum and causes a failing assert otherwise.
-Enums needs at least one member.
+Les ``enum`` sont une façon de créer un type défini par l'utilisateur en Solidity. Ils sont explicitement convertibles de et vers tous les types d'entiers mais la conversion implicite n'est pas autorisée. La conversion explicite à partir d'un nombre entier vérifie au moment de l'exécution que la valeur se trouve à l'intérieur de la plage de l'enum et provoque une affirmation d'échec autrement.
+Un enum a besoin d'au moins un membre.
 
-The data representation is the same as for enums in C: The options are represented by subsequent unsigned integer values starting from ``0``.
+La représentation des données est la même que pour les énumérations en C : Les options sont représentées par des valeurs entières non signées à partir de ``0``.
 
 
 ::
@@ -447,11 +446,11 @@ The data representation is the same as for enums in C: The options are represent
             choice = ActionChoices.GoStraight;
         }
 
-        // Since enum types are not part of the ABI, the signature of "getChoice"
-        // will automatically be changed to "getChoice() returns (uint8)"
-        // for all matters external to Solidity. The integer type used is just
-        // large enough to hold all enum values, i.e. if you have more than 256 values,
-        // `uint16` will be used and so on.
+        // Comme le type enum ne fait pas partie de l' ABI, la signature de "getChoice"
+        // sera automatoquement changée en "getChoice() returns (uint8)"
+        // pour ce qui sort de Solidity. Le type entier utilisé est
+        // assez grand pour contenir toutes valeurs, par exemple si vous en avez
+        // plus de 256, ``uint16`` sera utilisé etc...
         function getChoice() public view returns (ActionChoices) {
             return choice;
         }
@@ -465,51 +464,48 @@ The data representation is the same as for enums in C: The options are represent
 
 .. _function_types:
 
-Function Types
+Types Fonction
 --------------
 
-Function types are the types of functions. Variables of function type can be assigned from functions and function parameters of function type can be used to pass functions to and return functions from function calls.
-Function types come in two flavours - *internal* and *external* functions:
+Les types fonction sont les types des fonctions. Les variables du type fonction peuvent être passés et retournés pour transférer les fonctions vers et renvoyer les fonctions des appels de fonction.
+Les types de fonctions se déclinent en deux versions : les fonctions *internes* ``internal`` et les fonctions *externes* ``external`` :
 
-Internal functions can only be called inside the current contract (more specifically, inside the current code unit, which also includes internal library functions and inherited functions) because they cannot be executed outside of the
-context of the current contract. Calling an internal function is realized by jumping to its entry label, just like when calling a function of the current contract internally.
+Les fonctions internes ne peuvent être appelées qu'à l'intérieur du contrat en cours (plus précisément, à l'intérieur de l'unité de code en cours, qui comprend également les fonctions de bibliothèque internes et les fonctions héritées) car elles ne peuvent pas être exécutées en dehors du contexte du contrat actuel. L'appel d'une fonction interne est réalisé en sautant à son label d'entrée, tout comme lors de l'appel interne d'une fonction du contrat en cours.
 
-External functions consist of an address and a function signature and they can be passed via and returned from external function calls.
+Les fonctions externes se composent d'une adresse et d'une signature de fonction et peuvent être transférées et renvoyées à partir des appels de fonction externes.
 
-Function types are notated as follows::
+Les types de fonctions sont notés comme suit: :
 
-    function (<parameter types>) {internal|external} [pure|view|payable] [returns (<return types>)]
+     fonction (<types de paramètres>) {internal|external} {pure|view|payable][returns (<types de retour>)]
 
-In contrast to the parameter types, the return types cannot be empty - if the function type should not return anything, the whole ``returns (<return types>)`` part has to be omitted.
+En contraste avec types de paramètres, les types de retour ne peuvent pas être vides - si le type de fonction ne retourne rien, toute la partie ``returns (<types de retour>)``doit être omise.
 
-By default, function types are internal, so the ``internal`` keyword can be omitted. Note that this only applies to function types. Visibility has to be specified explicitly for functions defined in contracts, they
-do not have a default.
+Par défaut, les fonctions sont de type ``internal``, donc le mot-clé ``internal`` peut être omis. Notez que ceci ne s'applique qu'aux types de fonctions. La visibilité doit être spécifiée explicitement car les fonctions définies dans les contrats n'ont pas de valeur par défaut.
 
-Conversions:
+Conversions :
 
-A value of external function type can be explicitly converted to ``address`` resulting in the address of the contract of the function.
+Une fonction de type ``external`` peut être explicitement convertie en ``address`` résultant en l'adresse du contrat de la fonction.
 
-A function type ``A`` is implicitly convertible to a function type ``B`` if and only if their parameter types are identical, their return types are identical, their internal/external property is identical and the state mutability of ``A``
-is not more restrictive than the state mutability of ``B``. In particular:
+Un type de fonction ``A`` est implicitement convertible en un type de fonction ``B`` si et seulement si leurs types de paramètres sont identiques, leurs types de retour sont identiques, leurs propriétés internal/external sont identiques et la mutabilité d'état de ``A`` n'est pas plus restrictive que la mutabilité de l'état de ``B``. En particulier :
 
- - ``pure`` functions can be converted to ``view`` and ``non-payable`` functions
- - ``view`` functions can be converted to ``non-payable`` functions
- - ``payable`` functions can be converted to ``non-payable`` functions
+ - Les fonctions ``pure`` peuvent être converties en fonctions ``view`` et ``non-payable``.
+ - Les fonctions ``view`` peuvent être converties en fonctions ``non-payable``.
+ - les fonctions ``payable`` peuvent être converties en fonctions ``non-payable``.
 
-No other conversions between function types are possible.
+Aucune autre conversion entre les types de fonction n'est possible.
 
-The rule about ``payable`` and ``non-payable`` might be a little confusing, but in essence, if a function is ``payable``, this means that it also accepts a payment of zero Ether, so it also is ``non-payable``.
-On the other hand, a ``non-payable`` function will reject Ether sent to it, so ``non-payable`` functions cannot be converted to ``payable`` functions.
+La règle concernant les fonctions ``payable`` et ``non-payable`` peut prêter à confusion, mais essentiellement, si une fonction est ``payable``, cela signifie qu'elle accepte aussi un paiement de zéro Ether, donc elle est également ``non-payable``.
+D'autre part, une fonction ``non-payable`` rejettera l'Ether qui lui est envoyé, de sorte que les fonctions ``non-payable`` ne peuvent pas être converties en fonctions ``payable``.
 
-If a function type variable is not initialised, calling it results in a failed assertion. The same happens if you call a function after using ``delete`` on it.
+Si une variable de type fonction n'est pas initialisée, l'appel de celle-ci entraîne l'échec d'une assertion. Il en va de même si vous appelez une fonction après avoir utilisé ``delete`` dessus.
 
-If external function types are used outside of the context of Solidity, they are treated as the ``function`` type, which encodes the address followed by the function identifier together in a single ``bytes24`` type.
+Si des fonctions de type ``external`` sont appelées d'en dehors du contexte de Solidity, ils sont traités comme le type ``function``, qui code l'adresse suivie de l'identificateur de fonction ensemble dans un seul type ``bytes24``.
 
-Note that public functions of the current contract can be used both as an internal and as an external function. To use ``f`` as an internal function, just use ``f``, if you want to use its external form, use ``this.f``.
+Notez que les fonctions publiques du contrat actuel peuvent être utilisées à la fois comme une fonction interne et comme une fonction externe. Pour utiliser ``f`` comme fonction interne, utilisez simplement ``f``, si vous voulez utiliser sa forme externe, utilisez ``this.f```.
 
-Members:
+Membres :
 
-Public (or external) functions also have a special member called ``selector``, which returns the :ref:`ABI function selector <abi_function_selector>`::
+Les fonctions publiques (ou externes) ont aussi un membre spécial appelé ``selector``, qui retourne le :ref:`sélecteur de fonction <abi_function_selector>`::
 
     pragma solidity >=0.4.16 <0.6.0;
 
