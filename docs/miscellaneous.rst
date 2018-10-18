@@ -17,36 +17,21 @@ Statically-sized variables (everything except mapping and dynamically-sized arra
 
 .. warning::
     When using elements that are smaller than 32 bytes, your contract's gas usage may be higher.
-    This is because the EVM operates on 32 bytes at a time. Therefore, if the element is smaller
-    than that, the EVM must use more operations in order to reduce the size of the element from 32
-    bytes to the desired size.
+    This is because the EVM operates on 32 bytes at a time. Therefore, if the element is smaller than that, the EVM must use more operations in order to reduce the size of the element from 32 bytes to the desired size.
 
-    It is only beneficial to use reduced-size arguments if you are dealing with storage values
-    because the compiler will pack multiple elements into one storage slot, and thus, combine
-    multiple reads or writes into a single operation. When dealing with function arguments or memory
-    values, there is no inherent benefit because the compiler does not pack these values.
+    It is only beneficial to use reduced-size arguments if you are dealing with storage values because the compiler will pack multiple elements into one storage slot, and thus, combine multiple reads or writes into a single operation. When dealing with function arguments or memory values, there is no inherent benefit because the compiler does not pack these values.
 
-    Finally, in order to allow the EVM to optimize for this, ensure that you try to order your
-    storage variables and ``struct`` members such that they can be packed tightly. For example,
-    declaring your storage variables in the order of ``uint128, uint128, uint256`` instead of
-    ``uint128, uint256, uint128``, as the former will only take up two slots of storage whereas the
-    latter will take up three.
+    Finally, in order to allow the EVM to optimize for this, ensure that you try to order your storage variables and ``struct`` members such that they can be packed tightly. For example, declaring your storage variables in the order of ``uint128, uint128, uint256`` instead of ``uint128, uint256, uint128``, as the former will only take up two slots of storage whereas the latter will take up three.
 
 The elements of structs and arrays are stored after each other, just as if they were given explicitly.
 
 Mappings and Dynamic Arrays
 ===========================
 
-Due to their unpredictable size, mapping and dynamically-sized array types use a Keccak-256 hash
-computation to find the starting position of the value or the array data. These starting positions are always full stack slots.
+Due to their unpredictable size, mapping and dynamically-sized array types use a Keccak-256 hash computation to find the starting position of the value or the array data. These starting positions are always full stack slots.
 
-The mapping or the dynamic array itself occupies a slot in storage at some position ``p``
-according to the above rule (or by recursively applying this rule for mappings of mappings or arrays of arrays). For dynamic arrays,
-this slot stores the number of elements in the array (byte arrays and strings are an exception, see :ref:`below <bytes-and-string>`).
-For mappings, the slot is unused (but it is needed so that two equal mappings after each other will use a different
-hash distribution). Array data is located at ``keccak256(p)`` and the value corresponding to a mapping key
-``k`` is located at ``keccak256(k . p)`` where ``.`` is concatenation. If the value is again a
-non-elementary type, the positions are found by adding an offset of ``keccak256(k . p)``.
+The mapping or the dynamic array itself occupies a slot in storage at some position ``p`` according to the above rule (or by recursively applying this rule for mappings of mappings or arrays of arrays). For dynamic arrays, this slot stores the number of elements in the array (byte arrays and strings are an exception, see :ref:`below <bytes-and-string>`).
+For mappings, the slot is unused (but it is needed so that two equal mappings after each other will use a different hash distribution). Array data is located at ``keccak256(p)`` and the value corresponding to a mapping key ``k`` is located at ``keccak256(k . p)`` where ``.`` is concatenation. If the value is again a non-elementary type, the positions are found by adding an offset of ``keccak256(k . p)``.
 
 So for the following contract snippet::
 
@@ -65,12 +50,8 @@ The position of ``data[4][9].b`` is at ``keccak256(uint256(9) . keccak256(uint25
 ``bytes`` and ``string``
 ------------------------
 
-``bytes`` and ``string`` are encoded identically. For short byte arrays, they store their data in the same
-slot where the length is also stored. In particular: if the data is at most ``31`` bytes long, it is stored
-in the higher-order bytes (left aligned) and the lowest-order byte stores ``length * 2``.
-For byte arrays that store data which is ``32`` or more bytes long, the main slot stores ``length * 2 + 1`` and the data is
-stored as usual in ``keccak256(slot)``. This means that you can distinguish a short array from a long array
-by checking if the lowest bit is set: short (not set) and long (set).
+``bytes`` and ``string`` are encoded identically. For short byte arrays, they store their data in the same slot where the length is also stored. In particular: if the data is at most ``31`` bytes long, it is stored in the higher-order bytes (left aligned) and the lowest-order byte stores ``length * 2``.
+For byte arrays that store data which is ``32`` or more bytes long, the main slot stores ``length * 2 + 1`` and the data is stored as usual in ``keccak256(slot)``. This means that you can distinguish a short array from a long array by checking if the lowest bit is set: short (not set) and long (set).
 
 .. note::
   Handling invalidly encoded slots is currently not supported but may be added in the future.
@@ -87,9 +68,7 @@ Solidity reserves four 32-byte slots, with specific byte ranges (inclusive of en
 - ``0x40`` - ``0x5f`` (32 bytes): currently allocated memory size (aka. free memory pointer)
 - ``0x60`` - ``0x7f`` (32 bytes): zero slot
 
-Scratch space can be used between statements (i.e. within inline assembly). The zero slot
-is used as initial value for dynamic memory arrays and should never be written to
-(the free memory pointer points to ``0x80`` initially).
+Scratch space can be used between statements (i.e. within inline assembly). The zero slot is used as initial value for dynamic memory arrays and should never be written to (the free memory pointer points to ``0x80`` initially).
 
 Solidity always places new objects at the free memory pointer and memory is never freed (this might change in the future).
 
@@ -104,14 +83,9 @@ Solidity always places new objects at the free memory pointer and memory is neve
 Layout of Call Data
 *******************
 
-The input data for a function call is assumed to be in the format defined by the :ref:`ABI
-specification <ABI>`. Among others, the ABI specification requires arguments to be padded to multiples of 32
-bytes. The internal function calls use a different convention.
+The input data for a function call is assumed to be in the format defined by the :ref:`ABI specification <ABI>`. Among others, the ABI specification requires arguments to be padded to multiples of 32 bytes. The internal function calls use a different convention.
 
-Arguments for the constructor of a contract are directly appended at the end of the
-contract's code, also in ABI encoding. The constructor will access them through a hard-coded offset, and
-not by using the ``codesize`` opcode, since this of course changes when appending
-data to the code.
+Arguments for the constructor of a contract are directly appended at the end of the contract's code, also in ABI encoding. The constructor will access them through a hard-coded offset, and not by using the ``codesize`` opcode, since this of course changes when appending data to the code.
 
 
 .. index: variable cleanup
@@ -120,24 +94,13 @@ data to the code.
 Internals - Cleaning Up Variables
 *********************************
 
-When a value is shorter than 256-bit, in some cases the remaining bits
-must be cleaned.
-The Solidity compiler is designed to clean such remaining bits before any operations
-that might be adversely affected by the potential garbage in the remaining bits.
-For example, before writing a value to the memory, the remaining bits need
-to be cleared because the memory contents can be used for computing
-hashes or sent as the data of a message call.  Similarly, before
-storing a value in the storage, the remaining bits need to be cleaned
-because otherwise the garbled value can be observed.
+When a value is shorter than 256-bit, in some cases the remaining bits must be cleaned.
+The Solidity compiler is designed to clean such remaining bits before any operations that might be adversely affected by the potential garbage in the remaining bits.
+For example, before writing a value to the memory, the remaining bits need to be cleared because the memory contents can be used for computing hashes or sent as the data of a message call.  Similarly, before storing a value in the storage, the remaining bits need to be cleaned because otherwise the garbled value can be observed.
 
-On the other hand, we do not clean the bits if the immediately
-following operation is not affected.  For instance, since any non-zero
-value is considered ``true`` by ``JUMPI`` instruction, we do not clean
-the boolean values before they are used as the condition for
-``JUMPI``.
+On the other hand, we do not clean the bits if the immediately following operation is not affected.  For instance, since any non-zero value is considered ``true`` by ``JUMPI`` instruction, we do not clean the boolean values before they are used as the condition for ``JUMPI``.
 
-In addition to the design principle above, the Solidity compiler
-cleans input data when it is loaded onto the stack.
+In addition to the design principle above, the Solidity compiler cleans input data when it is loaded onto the stack.
 
 Different types have different rules for cleaning up invalid values:
 
@@ -200,47 +163,27 @@ even though the instructions contained a jump in the beginning.
 Source Mappings
 ***************
 
-As part of the AST output, the compiler provides the range of the source
-code that is represented by the respective node in the AST. This can be
-used for various purposes ranging from static analysis tools that report
-errors based on the AST and debugging tools that highlight local variables
-and their uses.
+As part of the AST output, the compiler provides the range of the source code that is represented by the respective node in the AST. This can be used for various purposes ranging from static analysis tools that report errors based on the AST and debugging tools that highlight local variables and their uses.
 
-Furthermore, the compiler can also generate a mapping from the bytecode
-to the range in the source code that generated the instruction. This is again
-important for static analysis tools that operate on bytecode level and
-for displaying the current position in the source code inside a debugger
-or for breakpoint handling.
+Furthermore, the compiler can also generate a mapping from the bytecode to the range in the source code that generated the instruction. This is again important for static analysis tools that operate on bytecode level and for displaying the current position in the source code inside a debugger or for breakpoint handling.
 
 Both kinds of source mappings use integer identifiers to refer to source files.
-These are regular array indices into a list of source files usually called
-``"sourceList"``, which is part of the combined-json and the output of
-the json / npm compiler.
+These are regular array indices into a list of source files usually called ``"sourceList"``, which is part of the combined-json and the output of the json / npm compiler.
 
 .. note ::
-    In the case of instructions that are not associated with any particular source file,
-    the source mapping assigns an integer identifier of ``-1``. This may happen for
-    bytecode sections stemming from compiler-generated inline assembly statements.
+    In the case of instructions that are not associated with any particular source file, the source mapping assigns an integer identifier of ``-1``. This may happen for bytecode sections stemming from compiler-generated inline assembly statements.
 
-The source mappings inside the AST use the following
-notation:
+The source mappings inside the AST use the following notation:
 
 ``s:l:f``
 
-Where ``s`` is the byte-offset to the start of the range in the source file,
-``l`` is the length of the source range in bytes and ``f`` is the source
-index mentioned above.
+Where ``s`` is the byte-offset to the start of the range in the source file, ``l`` is the length of the source range in bytes and ``f`` is the source index mentioned above.
 
 The encoding in the source mapping for the bytecode is more complicated:
-It is a list of ``s:l:f:j`` separated by ``;``. Each of these
-elements corresponds to an instruction, i.e. you cannot use the byte offset
-but have to use the instruction offset (push instructions are longer than a single byte).
-The fields ``s``, ``l`` and ``f`` are as above and ``j`` can be either
-``i``, ``o`` or ``-`` signifying whether a jump instruction goes into a
-function, returns from a function or is a regular jump as part of e.g. a loop.
+It is a list of ``s:l:f:j`` separated by ``;``. Each of these elements corresponds to an instruction, i.e. you cannot use the byte offset but have to use the instruction offset (push instructions are longer than a single byte).
+The fields ``s``, ``l`` and ``f`` are as above and ``j`` can be either ``i``, ``o`` or ``-`` signifying whether a jump instruction goes into a function, returns from a function or is a regular jump as part of e.g. a loop.
 
-In order to compress these source mappings especially for bytecode, the
-following rules are used:
+In order to compress these source mappings especially for bytecode, the following rules are used:
 
  - If a field is empty, the value of the preceding element is used.
  - If a ``:`` is missing, all following fields are considered empty.
@@ -376,21 +319,16 @@ Global Variables
 - ``<address payable>.transfer(uint256 amount)``: send given amount of Wei to :ref:`address`, throws on failure
 
 .. note::
-    Do not rely on ``block.timestamp``, ``now`` and ``blockhash`` as a source of randomness,
-    unless you know what you are doing.
+    Do not rely on ``block.timestamp``, ``now`` and ``blockhash`` as a source of randomness, unless you know what you are doing.
 
     Both the timestamp and the block hash can be influenced by miners to some degree.
-    Bad actors in the mining community can for example run a casino payout function on a chosen hash
-    and just retry a different hash if they did not receive any money.
+    Bad actors in the mining community can for example run a casino payout function on a chosen hash and just retry a different hash if they did not receive any money.
 
-    The current block timestamp must be strictly larger than the timestamp of the last block,
-    but the only guarantee is that it will be somewhere between the timestamps of two
-    consecutive blocks in the canonical chain.
+    The current block timestamp must be strictly larger than the timestamp of the last block, but the only guarantee is that it will be somewhere between the timestamps of two consecutive blocks in the canonical chain.
 
 .. note::
     The block hashes are not available for all blocks for scalability reasons.
-    You can only access the hashes of the most recent 256 blocks, all other
-    values will be zero.
+    You can only access the hashes of the most recent 256 blocks, all other values will be zero.
 
 .. note::
     In version 0.5.0, the following aliases were removed: ``suicide`` as alias for ``selfdestruct``,

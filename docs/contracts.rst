@@ -6,11 +6,7 @@
 Contracts
 ##########
 
-Contracts in Solidity are similar to classes in object-oriented languages. They
-contain persistent data in state variables and functions that can modify these
-variables. Calling a function on a different contract (instance) will perform
-an EVM function call and thus switch the context such that state variables are
-inaccessible.
+Contracts in Solidity are similar to classes in object-oriented languages. They contain persistent data in state variables and functions that can modify these variables. Calling a function on a different contract (instance) will perform an EVM function call and thus switch the context such that state variables are inaccessible.
 
 .. index:: ! contract;creation, constructor
 
@@ -28,21 +24,15 @@ to facilitate contract creation.
 
 When a contract is created, its constructor_  (a function declared with the ``constructor`` keyword) is executed once.
 
-A constructor is optional. Only one constructor is allowed, which means
-overloading is not supported.
+A constructor is optional. Only one constructor is allowed, which means overloading is not supported.
 
-After the constructor has executed, the final code of the contract is deployed to the
-blockchain. This code includes all public and external functions and all functions
-that are reachable from there through function calls. The deployed code does not
-include the constructor code or internal functions only called from the constructor.
+After the constructor has executed, the final code of the contract is deployed to the blockchain. This code includes all public and external functions and all functions that are reachable from there through function calls. The deployed code does not include the constructor code or internal functions only called from the constructor.
 
 .. index:: constructor;arguments
 
-Internally, constructor arguments are passed :ref:`ABI encoded <ABI>` after the code of
-the contract itself, but you do not have to care about this if you use ``web3.js``.
+Internally, constructor arguments are passed :ref:`ABI encoded <ABI>` after the code of the contract itself, but you do not have to care about this if you use ``web3.js``.
 
-If a contract wants to create another contract, the source code
-(and the binary) of the created contract has to be known to the creator.
+If a contract wants to create another contract, the source code (and the binary) of the created contract has to be known to the creator.
 This means that cyclic creation dependencies are impossible.
 
 ::
@@ -131,50 +121,30 @@ This means that cyclic creation dependencies are impossible.
 Visibility and Getters
 **********************
 
-Since Solidity knows two kinds of function calls (internal
-ones that do not create an actual EVM call (also called
-a "message call") and external
-ones that do), there are four types of visibilities for
-functions and state variables.
+Since Solidity knows two kinds of function calls (internal ones that do not create an actual EVM call (also called
+a "message call") and external ones that do), there are four types of visibilities for functions and state variables.
 
-Functions have to be specified as being ``external``,
-``public``, ``internal`` or ``private``.
+Functions have to be specified as being ``external``, ``public``, ``internal`` or ``private``.
 For state variables, ``external`` is not possible.
 
 ``external``:
-    External functions are part of the contract interface,
-    which means they can be called from other contracts and
-    via transactions. An external function ``f`` cannot be called
-    internally (i.e. ``f()`` does not work, but ``this.f()`` works).
-    External functions are sometimes more efficient when
-    they receive large arrays of data.
+    External functions are part of the contract interface, which means they can be called from other contracts and via transactions. An external function ``f`` cannot be called internally (i.e. ``f()`` does not work, but ``this.f()`` works).
+    External functions are sometimes more efficient when they receive large arrays of data.
 
 ``public``:
-    Public functions are part of the contract interface
-    and can be either called internally or via
-    messages. For public state variables, an automatic getter
-    function (see below) is generated.
+    Public functions are part of the contract interface and can be either called internally or via messages. For public state variables, an automatic getter function (see below) is generated.
 
 ``internal``:
-    Those functions and state variables can only be
-    accessed internally (i.e. from within the current contract
-    or contracts deriving from it), without using ``this``.
+    Those functions and state variables can only be accessed internally (i.e. from within the current contract or contracts deriving from it), without using ``this``.
 
 ``private``:
-    Private functions and state variables are only
-    visible for the contract they are defined in and not in
-    derived contracts.
+    Private functions and state variables are only visible for the contract they are defined in and not in derived contracts.
 
 .. note::
-    Everything that is inside a contract is visible to
-    all observers external to the blockchain. Making something ``private``
-    only prevents other contracts from accessing and modifying
-    the information, but it will still be visible to the
-    whole world outside of the blockchain.
+    Everything that is inside a contract is visible to all observers external to the blockchain. Making something ``private``
+    only prevents other contracts from accessing and modifying the information, but it will still be visible to the whole world outside of the blockchain.
 
-The visibility specifier is given after the type for
-state variables and between parameter list and
-return parameter list for functions.
+The visibility specifier is given after the type for state variables and between parameter list and return parameter list for functions.
 
 ::
 
@@ -186,9 +156,7 @@ return parameter list for functions.
         uint public data;
     }
 
-In the following example, ``D``, can call ``c.getData()`` to retrieve the value of
-``data`` in state storage, but is not able to call ``f``. Contract ``E`` is derived from
-``C`` and, thus, can call ``compute``.
+In the following example, ``D``, can call ``c.getData()`` to retrieve the value of ``data`` in state storage, but is not able to call ``f``. Contract ``E`` is derived from ``C`` and, thus, can call ``compute``.
 
 ::
 
@@ -227,12 +195,7 @@ In the following example, ``D``, can call ``c.getData()`` to retrieve the value 
 Getter Functions
 ================
 
-The compiler automatically creates getter functions for
-all **public** state variables. For the contract given below, the compiler will
-generate a function called ``data`` that does not take any
-arguments and returns a ``uint``, the value of the state
-variable ``data``. State variables can be initialized
-when they are declared.
+The compiler automatically creates getter functions for all **public** state variables. For the contract given below, the compiler will generate a function called ``data`` that does not take any arguments and returns a ``uint``, the value of the state variable ``data``. State variables can be initialized when they are declared.
 
 ::
 
@@ -249,10 +212,7 @@ when they are declared.
         }
     }
 
-The getter functions have external visibility. If the
-symbol is accessed internally (i.e. without ``this.``),
-it evaluates to a state variable.  If it is accessed externally
-(i.e. with ``this.``), it evaluates to a function.
+The getter functions have external visibility. If the symbol is accessed internally (i.e. without ``this.``), it evaluates to a state variable.  If it is accessed externally (i.e. with ``this.``), it evaluates to a function.
 
 ::
 
@@ -266,12 +226,7 @@ it evaluates to a state variable.  If it is accessed externally
         }
     }
 
-If you have a ``public`` state variable of array type, then you can only retrieve
-single elements of the array via the generated getter function. This mechanism
-exists to avoid high gas costs when returning an entire array. You can use
-arguments to specify which individual element to return, for example
-``data(0)``. If you want to return an entire array in one call, then you need
-to write a function, for example:
+If you have a ``public`` state variable of array type, then you can only retrieve single elements of the array via the generated getter function. This mechanism exists to avoid high gas costs when returning an entire array. You can use arguments to specify which individual element to return, for example ``data(0)``. If you want to return an entire array in one call, then you need to write a function, for example:
 
 ::
 
@@ -294,8 +249,7 @@ to write a function, for example:
     }
   }
 
-Now you can use ``getArray()`` to retrieve the entire array, instead of
-``myArray(i)``, which returns a single element per call.
+Now you can use ``getArray()`` to retrieve the entire array, instead of ``myArray(i)``, which returns a single element per call.
 
 The next example is more complex:
 
@@ -312,8 +266,7 @@ The next example is more complex:
         mapping (uint => mapping(bool => Data[])) public data;
     }
 
-It generates a function of the following form. The mapping in the struct is omitted
-because there is no good way to provide the key for the mapping:
+It generates a function of the following form. The mapping in the struct is omitted because there is no good way to provide the key for the mapping:
 
 ::
 
@@ -330,9 +283,7 @@ because there is no good way to provide the key for the mapping:
 Function Modifiers
 ******************
 
-Modifiers can be used to easily change the behaviour of functions.  For example,
-they can automatically check a condition prior to executing the function. Modifiers are
-inheritable properties of contracts and may be overridden by derived contracts.
+Modifiers can be used to easily change the behaviour of functions.  For example, they can automatically check a condition prior to executing the function. Modifiers are inheritable properties of contracts and may be overridden by derived contracts.
 
 ::
 
@@ -418,21 +369,14 @@ inheritable properties of contracts and may be overridden by derived contracts.
         }
     }
 
-Multiple modifiers are applied to a function by specifying them in a
-whitespace-separated list and are evaluated in the order presented.
+Multiple modifiers are applied to a function by specifying them in a whitespace-separated list and are evaluated in the order presented.
 
 .. warning::
-    In an earlier version of Solidity, ``return`` statements in functions
-    having modifiers behaved differently.
+    In an earlier version of Solidity, ``return`` statements in functions having modifiers behaved differently.
 
-Explicit returns from a modifier or function body only leave the current
-modifier or function body. Return variables are assigned and
-control flow continues after the "_" in the preceding modifier.
+Explicit returns from a modifier or function body only leave the current modifier or function body. Return variables are assigned and control flow continues after the "_" in the preceding modifier.
 
-Arbitrary expressions are allowed for modifier arguments and in this context,
-all symbols visible from the function are visible in the modifier. Symbols
-introduced in the modifier are not visible in the function (as they might
-change by overriding).
+Arbitrary expressions are allowed for modifier arguments and in this context, all symbols visible from the function are visible in the modifier. Symbols introduced in the modifier are not visible in the function (as they might change by overriding).
 
 .. index:: ! constant
 
@@ -440,25 +384,15 @@ change by overriding).
 Constant State Variables
 ************************
 
-State variables can be declared as ``constant``. In this case, they have to be
-assigned from an expression which is a constant at compile time. Any expression
-that accesses storage, blockchain data (e.g. ``now``, ``address(this).balance`` or
-``block.number``) or
-execution data (``msg.value`` or ``gasleft()``) or makes calls to external contracts is disallowed. Expressions
-that might have a side-effect on memory allocation are allowed, but those that
-might have a side-effect on other memory objects are not. The built-in functions
-``keccak256``, ``sha256``, ``ripemd160``, ``ecrecover``, ``addmod`` and ``mulmod``
-are allowed (even though they do call external contracts).
+State variables can be declared as ``constant``. In this case, they have to be assigned from an expression which is a constant at compile time. Any expression that accesses storage, blockchain data (e.g. ``now``, ``address(this).balance`` or
+``block.number``) or execution data (``msg.value`` or ``gasleft()``) or makes calls to external contracts is disallowed. Expressions that might have a side-effect on memory allocation are allowed, but those that might have a side-effect on other memory objects are not. The built-in functions ``keccak256``, ``sha256``, ``ripemd160``, ``ecrecover``, ``addmod`` and ``mulmod`` are allowed (even though they do call external contracts).
 
-The reason behind allowing side-effects on the memory allocator is that it
-should be possible to construct complex objects like e.g. lookup-tables.
+The reason behind allowing side-effects on the memory allocator is that it should be possible to construct complex objects like e.g. lookup-tables.
 This feature is not yet fully usable.
 
-The compiler does not reserve a storage slot for these variables, and every occurrence is
-replaced by the respective constant expression (which might be computed to a single value by the optimizer).
+The compiler does not reserve a storage slot for these variables, and every occurrence is replaced by the respective constant expression (which might be computed to a single value by the optimizer).
 
-Not all types for constants are implemented at this time. The only supported types are
-value types and strings.
+Not all types for constants are implemented at this time. The only supported types are value types and strings.
 
 ::
 
@@ -488,13 +422,8 @@ View Functions
 Functions can be declared ``view`` in which case they promise not to modify the state.
 
 .. note::
-  If the compiler's EVM target is Byzantium or newer (default) the opcode
-  ``STATICCALL`` is used for ``view`` functions which enforces the state
-  to stay unmodified as part of the EVM execution. For library ``view`` functions
-  ``DELEGATECALL`` is used, because there is no combined ``DELEGATECALL`` and ``STATICCALL``.
-  This means library ``view`` functions do not have run-time checks that prevent state
-  modifications. This should not impact security negatively because library code is
-  usually known at compile-time and the static checker performs compile-time checks.
+  If the compiler's EVM target is Byzantium or newer (default) the opcode ``STATICCALL`` is used for ``view`` functions which enforces the state to stay unmodified as part of the EVM execution. For library ``view`` functions ``DELEGATECALL`` is used, because there is no combined ``DELEGATECALL`` and ``STATICCALL``.
+  This means library ``view`` functions do not have run-time checks that prevent state modifications. This should not impact security negatively because library code is usually known at compile-time and the static checker performs compile-time checks.
 
 The following statements are considered modifying the state:
 
@@ -541,8 +470,7 @@ Pure Functions
 Functions can be declared ``pure`` in which case they promise not to read from or modify the state.
 
 .. note::
-  If the compiler's EVM target is Byzantium or newer (default) the opcode ``STATICCALL`` is used,
-  which does not guarantee that the state is not read, but at least that it is not modified.
+  If the compiler's EVM target is Byzantium or newer (default) the opcode ``STATICCALL`` is used, which does not guarantee that the state is not read, but at least that it is not modified.
 
 In addition to the list of state modifying statements explained above, the following are considered reading from the state:
 
@@ -563,24 +491,16 @@ In addition to the list of state modifying statements explained above, the follo
     }
 
 .. note::
-  Prior to version 0.5.0, the compiler did not use the ``STATICCALL`` opcode
-  for ``pure`` functions.
-  This enabled state modifications in ``pure`` functions through the use of
-  invalid explicit type conversions.
-  By using  ``STATICCALL`` for ``pure`` functions, modifications to the
-  state are prevented on the level of the EVM.
+  Prior to version 0.5.0, the compiler did not use the ``STATICCALL`` opcode for ``pure`` functions.
+  This enabled state modifications in ``pure`` functions through the use of invalid explicit type conversions.
+  By using  ``STATICCALL`` for ``pure`` functions, modifications to the state are prevented on the level of the EVM.
 
 .. warning::
-  It is not possible to prevent functions from reading the state at the level
-  of the EVM, it is only possible to prevent them from writing to the state
-  (i.e. only ``view`` can be enforced at the EVM level, ``pure`` can not).
+  It is not possible to prevent functions from reading the state at the level of the EVM, it is only possible to prevent them from writing to the state (i.e. only ``view`` can be enforced at the EVM level, ``pure`` can not).
 
 .. warning::
   Before version 0.4.17 the compiler did not enforce that ``pure`` is not reading the state.
-  It is a compile-time type check, which can be circumvented doing invalid explicit conversions
-  between contract types, because the compiler can verify that the type of the contract does
-  not do state-changing operations, but it cannot check that the contract that will be called
-  at runtime is actually of that type.
+  It is a compile-time type check, which can be circumvented doing invalid explicit conversions between contract types, because the compiler can verify that the type of the contract does not do state-changing operations, but it cannot check that the contract that will be called at runtime is actually of that type.
 
 .. index:: ! fallback function, function;fallback
 
@@ -589,20 +509,13 @@ In addition to the list of state modifying statements explained above, the follo
 Fallback Function
 =================
 
-A contract can have exactly one unnamed function. This function cannot have
-arguments, cannot return anything and has to have ``external`` visibility.
-It is executed on a call to the contract if none of the other
-functions match the given function identifier (or if no data was supplied at
-all).
+A contract can have exactly one unnamed function. This function cannot have arguments, cannot return anything and has to have ``external`` visibility.
+It is executed on a call to the contract if none of the other functions match the given function identifier (or if no data was supplied at all).
 
-Furthermore, this function is executed whenever the contract receives plain
-Ether (without data). Additionally, in order to receive Ether, the fallback function
-must be marked ``payable``. If no such function exists, the contract cannot receive
+Furthermore, this function is executed whenever the contract receives plain Ether (without data). Additionally, in order to receive Ether, the fallback function must be marked ``payable``. If no such function exists, the contract cannot receive
 Ether through regular transactions.
 
-In the worst case, the fallback function can only rely on 2300 gas being
-available (for example when `send` or `transfer` is used), leaving little
-room to perform other operations except basic logging. The following operations
+In the worst case, the fallback function can only rely on 2300 gas being available (for example when `send` or `transfer` is used), leaving little room to perform other operations except basic logging. The following operations
 will consume more gas than the 2300 gas stipend:
 
 - Writing to storage
@@ -613,25 +526,16 @@ will consume more gas than the 2300 gas stipend:
 Like any function, the fallback function can execute complex operations as long as there is enough gas passed on to it.
 
 .. note::
-    Even though the fallback function cannot have arguments, one can still use ``msg.data`` to retrieve
-    any payload supplied with the call.
+    Even though the fallback function cannot have arguments, one can still use ``msg.data`` to retrieve any payload supplied with the call.
 
 .. warning::
-    The fallback function is also executed if the caller meant to call
-    a function that is not available. If you want to implement the fallback
-    function only to receive ether, you should add a check
-    like ``require(msg.data.length == 0)`` to prevent invalid calls.
+    The fallback function is also executed if the caller meant to call a function that is not available. If you want to implement the fallback function only to receive ether, you should add a check like ``require(msg.data.length == 0)`` to prevent invalid calls.
 
 .. warning::
-    Contracts that receive Ether directly (without a function call, i.e. using ``send`` or ``transfer``)
-    but do not define a fallback function
-    throw an exception, sending back the Ether (this was different
-    before Solidity v0.4.0). So if you want your contract to receive Ether,
-    you have to implement a payable fallback function.
+    Contracts that receive Ether directly (without a function call, i.e. using ``send`` or ``transfer``) but do not define a fallback function throw an exception, sending back the Ether (this was different before Solidity v0.4.0). So if you want your contract to receive Ether, you have to implement a payable fallback function.
 
 .. warning::
-    A contract without a payable fallback function can receive Ether as a recipient of a `coinbase transaction` (aka `miner block reward`)
-    or as a destination of a ``selfdestruct``.
+    A contract without a payable fallback function can receive Ether as a recipient of a `coinbase transaction` (aka `miner block reward`) or as a destination of a ``selfdestruct``.
 
     A contract cannot react to such Ether transfers and thus also cannot reject them. This is a design choice of the EVM and Solidity cannot work around it.
 
@@ -682,11 +586,9 @@ Like any function, the fallback function can execute complex operations as long 
 Function Overloading
 ====================
 
-A contract can have multiple functions of the same name but with different parameter
-types.
+A contract can have multiple functions of the same name but with different parameter types.
 This process is called "overloading" and also applies to inherited functions.
-The following example shows overloading of the function
-``f`` in the scope of contract ``A``.
+The following example shows overloading of the function ``f`` in the scope of contract ``A``.
 
 ::
 
@@ -703,8 +605,7 @@ The following example shows overloading of the function
         }
     }
 
-Overloaded functions are also present in the external interface. It is an error if two
-externally visible functions differ by their Solidity types but not by their external types.
+Overloaded functions are also present in the external interface. It is an error if two externally visible functions differ by their Solidity types but not by their external types.
 
 ::
 
@@ -725,16 +626,12 @@ externally visible functions differ by their Solidity types but not by their ext
     }
 
 
-Both ``f`` function overloads above end up accepting the address type for the ABI although
-they are considered different inside Solidity.
+Both ``f`` function overloads above end up accepting the address type for the ABI although they are considered different inside Solidity.
 
 Overload resolution and Argument matching
 -----------------------------------------
 
-Overloaded functions are selected by matching the function declarations in the current scope
-to the arguments supplied in the function call. Functions are selected as overload candidates
-if all arguments can be implicitly converted to the expected types. If there is not exactly one
-candidate, resolution fails.
+Overloaded functions are selected by matching the function declarations in the current scope to the arguments supplied in the function call. Functions are selected as overload candidates if all arguments can be implicitly converted to the expected types. If there is not exactly one candidate, resolution fails.
 
 .. note::
     Return parameters are not taken into account for overload resolution.
@@ -753,9 +650,7 @@ candidate, resolution fails.
         }
     }
 
-Calling ``f(50)`` would create a type error since ``50`` can be implicitly converted both to ``uint8``
-and ``uint256`` types. On another hand ``f(256)`` would resolve to ``f(uint256)`` overload as ``256`` cannot be implicitly
-converted to ``uint8``.
+Calling ``f(50)`` would create a type error since ``50`` can be implicitly converted both to ``uint8`` and ``uint256`` types. On another hand ``f(256)`` would resolve to ``f(uint256)`` overload as ``256`` cannot be implicitly converted to ``uint8``.
 
 .. index:: ! event
 
@@ -768,35 +663,18 @@ Events
 Solidity events give an abstraction on top of the EVM's logging functionality.
 Applications can subscribe and listen to these events through the RPC interface of an Ethereum client.
 
-Events are inheritable members of contracts. When you call them, they cause the
-arguments to be stored in the transaction's log - a special data structure
-in the blockchain. These logs are associated with the address of the contract,
-are incorporated into the blockchain, and stay there as long as a block is
-accessible (forever as of the Frontier and Homestead releases, but this might
-change with Serenity). The Log and its event data is not accessible from within
-contracts (not even from the contract that created them).
+Events are inheritable members of contracts. When you call them, they cause the arguments to be stored in the transaction's log - a special data structure in the blockchain. These logs are associated with the address of the contract, are incorporated into the blockchain, and stay there as long as a block is accessible (forever as of the Frontier and Homestead releases, but this might change with Serenity). The Log and its event data is not accessible from within contracts (not even from the contract that created them).
 
-It is possible to request a simple payment verification (SPV) for logs, so if
-an external entity supplies a contract with such a verification, it can check
-that the log actually exists inside the blockchain. You have to supply block headers
-because the contract can only see the last 256 block hashes.
+It is possible to request a simple payment verification (SPV) for logs, so if an external entity supplies a contract with such a verification, it can check that the log actually exists inside the blockchain. You have to supply block headers because the contract can only see the last 256 block hashes.
 
-You can add the attribute ``indexed`` to up to three parameters which adds them
-to a special data structure known as :ref:`"topics" <abi_events>` instead of
-the data part of the log. If you use arrays (including ``string`` and ``bytes``)
-as indexed arguments, its Keccak-256 hash is stored as a topic instead, this is
-because a topic can only hold a single word (32 bytes).
+You can add the attribute ``indexed`` to up to three parameters which adds them to a special data structure known as :ref:`"topics" <abi_events>` instead of the data part of the log. If you use arrays (including ``string`` and ``bytes``)
+as indexed arguments, its Keccak-256 hash is stored as a topic instead, this is because a topic can only hold a single word (32 bytes).
 
-All parameters without the ``indexed`` attribute are :ref:`ABI-encoded <ABI>`
-into the data part of the log.
+All parameters without the ``indexed`` attribute are :ref:`ABI-encoded <ABI>` into the data part of the log.
 
-Topics allow you to search for events, for example when filtering a sequence of
-blocks for certain events. You can also filter events by the address of the
-contract that emitted the event.
+Topics allow you to search for events, for example when filtering a sequence of blocks for certain events. You can also filter events by the address of the contract that emitted the event.
 
-For example, the code below uses the web3.js ``subscribe("logs")``
-`method <https://web3js.readthedocs.io/en/1.0/web3-eth-subscribe.html#subscribe-logs>`_ to filter
-logs that match a topic with a certain address value:
+For example, the code below uses the web3.js ``subscribe("logs")`` `method <https://web3js.readthedocs.io/en/1.0/web3-eth-subscribe.html#subscribe-logs>`_ to filter logs that match a topic with a certain address value:
 
 .. code-block:: javascript
 
@@ -816,9 +694,7 @@ logs that match a topic with a certain address value:
     });
 
 
-The hash of the signature of the event is one of the topics, except if you
-declared the event with the ``anonymous`` specifier. This means that it is
-not possible to filter for specific anonymous events by name.
+The hash of the signature of the event is one of the topics, except if you declared the event with the ``anonymous`` specifier. This means that it is not possible to filter for specific anonymous events by name.
 
 ::
 
@@ -887,11 +763,8 @@ The output of the above looks like the following (trimmed):
 Low-Level Interface to Logs
 ===========================
 
-It is also possible to access the low-level interface to the logging
-mechanism via the functions ``log0``, ``log1``, ``log2``, ``log3`` and ``log4``.
-``logi`` takes ``i + 1`` parameter of type ``bytes32``, where the first
-argument will be used for the data part of the log and the others
-as topics. The event call above can be performed in the same way as
+It is also possible to access the low-level interface to the logging mechanism via the functions ``log0``, ``log1``, ``log2``, ``log3`` and ``log4``.
+``logi`` takes ``i + 1`` parameter of type ``bytes32``, where the first argument will be used for the data part of the log and the others as topics. The event call above can be performed in the same way as
 
 ::
 
@@ -909,8 +782,7 @@ as topics. The event call above can be performed in the same way as
         }
     }
 
-where the long hexadecimal number is equal to
-``keccak256("Deposit(address,bytes32,uint256)")``, the signature of the event.
+where the long hexadecimal number is equal to ``keccak256("Deposit(address,bytes32,uint256)")``, the signature of the event.
 
 Additional Resources for Understanding Events
 ==============================================
@@ -927,17 +799,14 @@ Inheritance
 
 Solidity supports multiple inheritance by copying code including polymorphism.
 
-All function calls are virtual, which means that the most derived function
-is called, except when the contract name is explicitly given.
+All function calls are virtual, which means that the most derived function is called, except when the contract name is explicitly given.
 
 When a contract inherits from other contracts, only a single
 contract is created on the blockchain, and the code from all the base contracts
 is copied into the created contract.
 
-The general inheritance system is very similar to
-`Python's <https://docs.python.org/3/tutorial/classes.html#inheritance>`_,
-especially concerning multiple inheritance, but there are also
-some :ref:`differences <multi-inheritance>`.
+The general inheritance system is very similar to `Python's <https://docs.python.org/3/tutorial/classes.html#inheritance>`_,
+especially concerning multiple inheritance, but there are also some :ref:`differences <multi-inheritance>`.
 
 Details are given in the following example.
 
@@ -950,20 +819,14 @@ Details are given in the following example.
         address payable owner;
     }
 
-    // Use `is` to derive from another contract. Derived
-    // contracts can access all non-private members including
-    // internal functions and state variables. These cannot be
-    // accessed externally via `this`, though.
+    // Use `is` to derive from another contract. Derived contracts can access all non-private members including internal functions and state variables. These cannot be accessed externally via `this`, though.
     contract mortal is owned {
         function kill() public {
             if (msg.sender == owner) selfdestruct(owner);
         }
     }
 
-    // These abstract contracts are only provided to make the
-    // interface known to the compiler. Note the function
-    // without body. If a contract does not implement all
-    // functions it can only be used as an interface.
+    // These abstract contracts are only provided to make the interface known to the compiler. Note the function without body. If a contract does not implement all functions it can only be used as an interface.
     contract Config {
         function lookup(uint id) public returns (address adr);
     }
@@ -973,34 +836,26 @@ Details are given in the following example.
         function unregister() public;
      }
 
-    // Multiple inheritance is possible. Note that `owned` is
-    // also a base class of `mortal`, yet there is only a single
-    // instance of `owned` (as for virtual inheritance in C++).
+    // Multiple inheritance is possible. Note that `owned` is also a base class of `mortal`, yet there is only a single instance of `owned` (as for virtual inheritance in C++).
     contract named is owned, mortal {
         constructor(bytes32 name) public {
             Config config = Config(0xD5f9D8D94886E70b06E474c3fB14Fd43E2f23970);
             NameReg(config.lookup(1)).register(name);
         }
 
-        // Functions can be overridden by another function with the same name and
-        // the same number/types of inputs.  If the overriding function has different
-        // types of output parameters, that causes an error.
-        // Both local and message-based function calls take these overrides
-        // into account.
+        // Functions can be overridden by another function with the same name and the same number/types of inputs.  If the overriding function has different types of output parameters, that causes an error.
+        // Both local and message-based function calls take these overrides into account.
         function kill() public {
             if (msg.sender == owner) {
                 Config config = Config(0xD5f9D8D94886E70b06E474c3fB14Fd43E2f23970);
                 NameReg(config.lookup(1)).unregister();
-                // It is still possible to call a specific
-                // overridden function.
+                // It is still possible to call a specific overridden function.
                 mortal.kill();
             }
         }
     }
 
-    // If a constructor takes an argument, it needs to be
-    // provided in the header (or modifier-invocation-style at
-    // the constructor of the derived contract (see below)).
+    // If a constructor takes an argument, it needs to be provided in the header (or modifier-invocation-style at the constructor of the derived contract (see below)).
     contract PriceFeed is owned, mortal, named("GoldFeed") {
        function updateInfo(uint newInfo) public {
           if (msg.sender == owner) info = newInfo;
@@ -1011,8 +866,7 @@ Details are given in the following example.
        uint info;
     }
 
-Note that above, we call ``mortal.kill()`` to "forward" the
-destruction request. The way this is done is problematic, as
+Note that above, we call ``mortal.kill()`` to "forward" the destruction request. The way this is done is problematic, as
 seen in the following example::
 
     pragma solidity >=0.4.22 <0.6.0;
@@ -1039,10 +893,7 @@ seen in the following example::
     contract Final is Base1, Base2 {
     }
 
-A call to ``Final.kill()`` will call ``Base2.kill`` as the most
-derived override, but this function will bypass
-``Base1.kill``, basically because it does not even know about
-``Base1``.  The way around this is to use ``super``::
+A call to ``Final.kill()`` will call ``Base2.kill`` as the most derived override, but this function will bypass ``Base1.kill``, basically because it does not even know about ``Base1``.  The way around this is to use ``super``::
 
     pragma solidity >=0.4.22 <0.6.0;
 
@@ -1069,16 +920,8 @@ derived override, but this function will bypass
     contract Final is Base1, Base2 {
     }
 
-If ``Base2`` calls a function of ``super``, it does not simply
-call this function on one of its base contracts.  Rather, it
-calls this function on the next base contract in the final
-inheritance graph, so it will call ``Base1.kill()`` (note that
-the final inheritance sequence is -- starting with the most
-derived contract: Final, Base2, Base1, mortal, owned).
-The actual function that is called when using super is
-not known in the context of the class where it is used,
-although its type is known. This is similar for ordinary
-virtual method lookup.
+If ``Base2`` calls a function of ``super``, it does not simply call this function on one of its base contracts.  Rather, it calls this function on the next base contract in the final inheritance graph, so it will call ``Base1.kill()`` (note that the final inheritance sequence is -- starting with the most derived contract: Final, Base2, Base1, mortal, owned).
+The actual function that is called when using super is not known in the context of the class where it is used, although its type is known. This is similar for ordinary virtual method lookup.
 
 .. index:: ! constructor
 
@@ -1087,24 +930,15 @@ virtual method lookup.
 Constructors
 ============
 
-A constructor is an optional function declared with the ``constructor`` keyword
-which is executed upon contract creation, and where you can run contract
-initialisation code.
+A constructor is an optional function declared with the ``constructor`` keyword which is executed upon contract creation, and where you can run contract initialisation code.
 
-Before the constructor code is executed, state variables are initialised to
-their specified value if you initialise them inline, or zero if you do not.
+Before the constructor code is executed, state variables are initialised to their specified value if you initialise them inline, or zero if you do not.
 
-After the constructor has run, the final code of the contract is deployed
-to the blockchain. The deployment of
-the code costs additional gas linear to the length of the code.
-This code includes all functions that are part of the public interface
-and all functions that are reachable from there through function calls.
-It does not include the constructor code or internal functions that are
-only called from the constructor.
+After the constructor has run, the final code of the contract is deployed to the blockchain. The deployment of the code costs additional gas linear to the length of the code.
+This code includes all functions that are part of the public interface and all functions that are reachable from there through function calls.
+It does not include the constructor code or internal functions that are only called from the constructor.
 
-Constructor functions can be either ``public`` or ``internal``. If there is no
-constructor, the contract will assume the default constructor, which is
-equivalent to ``constructor() public {}``. For example:
+Constructor functions can be either ``public`` or ``internal``. If there is no constructor, the contract will assume the default constructor, which is equivalent to ``constructor() public {}``. For example:
 
 ::
 
@@ -1134,9 +968,7 @@ A constructor set as ``internal`` causes the contract to be marked as :ref:`abst
 Arguments for Base Constructors
 ===============================
 
-The constructors of all the base contracts will be called following the
-linearization rules explained below. If the base constructors have arguments,
-derived contracts need to specify all of them. This can be done in two ways::
+The constructors of all the base contracts will be called following the linearization rules explained below. If the base constructors have arguments, derived contracts need to specify all of them. This can be done in two ways::
 
     pragma solidity >=0.4.22 <0.6.0;
 
@@ -1155,19 +987,12 @@ derived contracts need to specify all of them. This can be done in two ways::
         constructor(uint _y) Base(_y * _y) public {}
     }
 
-One way is directly in the inheritance list (``is Base(7)``).  The other is in
-the way a modifier is invoked as part of
-the derived constructor (``Base(_y * _y)``). The first way to
-do it is more convenient if the constructor argument is a
-constant and defines the behaviour of the contract or
-describes it. The second way has to be used if the
-constructor arguments of the base depend on those of the
-derived contract. Arguments have to be given either in the
-inheritance list or in modifier-style in the derived constructor.
+One way is directly in the inheritance list (``is Base(7)``).  The other is in the way a modifier is invoked as part of
+the derived constructor (``Base(_y * _y)``). The first way to do it is more convenient if the constructor argument is a
+constant and defines the behaviour of the contract or describes it. The second way has to be used if the constructor arguments of the base depend on those of the derived contract. Arguments have to be given either in the inheritance list or in modifier-style in the derived constructor.
 Specifying arguments in both places is an error.
 
-If a derived contract does not specify the arguments to all of its base
-contracts' constructors, it will be abstract.
+If a derived contract does not specify the arguments to all of its base contracts' constructors, it will be abstract.
 
 .. index:: ! inheritance;multiple, ! linearization, ! C3 linearization
 
@@ -1176,24 +1001,14 @@ contracts' constructors, it will be abstract.
 Multiple Inheritance and Linearization
 ======================================
 
-Languages that allow multiple inheritance have to deal with
-several problems.  One is the `Diamond Problem <https://en.wikipedia.org/wiki/Multiple_inheritance#The_diamond_problem>`_.
-Solidity is similar to Python in that it uses "`C3 Linearization <https://en.wikipedia.org/wiki/C3_linearization>`_"
-to force a specific order in the directed acyclic graph (DAG) of base classes. This
-results in the desirable property of monotonicity but
-disallows some inheritance graphs. Especially, the order in
-which the base classes are given in the ``is`` directive is
-important: You have to list the direct base contracts
-in the order from "most base-like" to "most derived".
+Languages that allow multiple inheritance have to deal with several problems.  One is the `Diamond Problem <https://en.wikipedia.org/wiki/Multiple_inheritance#The_diamond_problem>`_.
+Solidity is similar to Python in that it uses "`C3 Linearization <https://en.wikipedia.org/wiki/C3_linearization>`_" to force a specific order in the directed acyclic graph (DAG) of base classes. This results in the desirable property of monotonicity but disallows some inheritance graphs. Especially, the order in which the base classes are given in the ``is`` directive is
+important: You have to list the direct base contracts in the order from "most base-like" to "most derived".
 Note that this order is the reverse of the one used in Python.
 
-Another simplifying way to explain this is that when a function is called that
-is defined multiple times in different contracts, the given bases
-are searched from right to left (left to right in Python) in a depth-first manner,
-stopping at the first match. If a base contract has already been searched, it is skipped.
+Another simplifying way to explain this is that when a function is called that is defined multiple times in different contracts, the given bases are searched from right to left (left to right in Python) in a depth-first manner, stopping at the first match. If a base contract has already been searched, it is skipped.
 
-In the following code, Solidity will give the
-error "Linearization of inheritance graph impossible".
+In the following code, Solidity will give theerror "Linearization of inheritance graph impossible".
 
 ::
 
@@ -1204,10 +1019,8 @@ error "Linearization of inheritance graph impossible".
     // This will not compile
     contract C is A, X {}
 
-The reason for this is that ``C`` requests ``X`` to override ``A``
-(by specifying ``A, X`` in this order), but ``A`` itself
-requests to override ``X``, which is a contradiction that
-cannot be resolved.
+The reason for this is that ``C`` requests ``X`` to override ``A`` (by specifying ``A, X`` in this order), but ``A`` itself
+requests to override ``X``, which is a contradiction that cannot be resolved.
 
 
 
@@ -1258,8 +1071,7 @@ Example of a Function Type (a variable declaration, where the variable is of typ
 
     function(address) external returns (address) foo;
 
-Abstract contracts decouple the definition of a contract from its implementation providing better extensibility and self-documentation and
-facilitating patterns like the `Template method <https://en.wikipedia.org/wiki/Template_method_pattern>`_ and removing code duplication.
+Abstract contracts decouple the definition of a contract from its implementation providing better extensibility and self-documentation and facilitating patterns like the `Template method <https://en.wikipedia.org/wiki/Template_method_pattern>`_ and removing code duplication.
 Abstract contracts are useful in the same way that defining methods in an interface is useful. It is a way for the designer of the abstract contract to say "any child of mine must implement this method".
 
 
@@ -1280,8 +1092,7 @@ Interfaces are similar to abstract contracts, but they cannot have any functions
 
 Some of these restrictions might be lifted in the future.
 
-Interfaces are basically limited to what the Contract ABI can represent, and the conversion between the ABI and
-an interface should be possible without any information loss.
+Interfaces are basically limited to what the Contract ABI can represent, and the conversion between the ABI and an interface should be possible without any information loss.
 
 Interfaces are denoted by their own keyword:
 
@@ -1297,8 +1108,7 @@ Interfaces are denoted by their own keyword:
 
 Contracts can inherit interfaces as they would inherit other contracts.
 
-Types defined inside interfaces and other contract-like structures
-can be accessed from other contracts: ``Token.TokenType`` or ``Token.Coin``.
+Types defined inside interfaces and other contract-like structures can be accessed from other contracts: ``Token.TokenType`` or ``Token.Coin``.
 
 .. index:: ! library, callcode, delegatecall
 
@@ -1308,60 +1118,29 @@ can be accessed from other contracts: ``Token.TokenType`` or ``Token.Coin``.
 Libraries
 *********
 
-Libraries are similar to contracts, but their purpose is that they are deployed
-only once at a specific address and their code is reused using the ``DELEGATECALL``
-(``CALLCODE`` until Homestead)
-feature of the EVM. This means that if library functions are called, their code
-is executed in the context of the calling contract, i.e. ``this`` points to the
-calling contract, and especially the storage from the calling contract can be
-accessed. As a library is an isolated piece of source code, it can only access
-state variables of the calling contract if they are explicitly supplied (it
-would have no way to name them, otherwise). Library functions can only be
-called directly (i.e. without the use of ``DELEGATECALL``) if they do not modify
-the state (i.e. if they are ``view`` or ``pure`` functions),
-because libraries are assumed to be stateless. In particular, it is
-not possible to destroy a library.
+Libraries are similar to contracts, but their purpose is that they are deployed only once at a specific address and their code is reused using the ``DELEGATECALL`` (``CALLCODE`` until Homestead) feature of the EVM. This means that if library functions are called, their code is executed in the context of the calling contract, i.e. ``this`` points to the calling contract, and especially the storage from the calling contract can be accessed. As a library is an isolated piece of source code, it can only access state variables of the calling contract if they are explicitly supplied (it would have no way to name them, otherwise). Library functions can only be called directly (i.e. without the use of ``DELEGATECALL``) if they do not modify the state (i.e. if they are ``view`` or ``pure`` functions), because libraries are assumed to be stateless. In particular, it is not possible to destroy a library.
 
 .. note::
-    Until version 0.4.20, it was possible to destroy libraries by
-    circumventing Solidity's type system. Starting from that version,
-    libraries contain a :ref:`mechanism<call-protection>` that
-    disallows state-modifying functions
-    to be called directly (i.e. without ``DELEGATECALL``).
+    Until version 0.4.20, it was possible to destroy libraries by circumventing Solidity's type system. Starting from that version, libraries contain a :ref:`mechanism<call-protection>` that disallows state-modifying functions to be called directly (i.e. without ``DELEGATECALL``).
 
 Libraries can be seen as implicit base contracts of the contracts that use them.
-They will not be explicitly visible in the inheritance hierarchy, but calls
-to library functions look just like calls to functions of explicit base
-contracts (``L.f()`` if ``L`` is the name of the library). Furthermore,
-``internal`` functions of libraries are visible in all contracts, just as
-if the library were a base contract. Of course, calls to internal functions
-use the internal calling convention, which means that all internal types
-can be passed and types :ref:`stored in memory <data-location>` will be passed by reference and not copied.
-To realize this in the EVM, code of internal library functions
-and all functions called from therein will at compile time be pulled into the calling
-contract, and a regular ``JUMP`` call will be used instead of a ``DELEGATECALL``.
+They will not be explicitly visible in the inheritance hierarchy, but calls to library functions look just like calls to functions of explicit base contracts (``L.f()`` if ``L`` is the name of the library). Furthermore, ``internal`` functions of libraries are visible in all contracts, just as if the library were a base contract. Of course, calls to internal functions
+use the internal calling convention, which means that all internal types can be passed and types :ref:`stored in memory <data-location>` will be passed by reference and not copied.
+To realize this in the EVM, code of internal library functions and all functions called from therein will at compile time be pulled into the calling contract, and a regular ``JUMP`` call will be used instead of a ``DELEGATECALL``.
 
 .. index:: using for, set
 
-The following example illustrates how to use libraries (but manual method
-be sure to check out :ref:`using for <using-for>` for a
-more advanced example to implement a set).
+The following example illustrates how to use libraries (but manual method be sure to check out :ref:`using for <using-for>` for a more advanced example to implement a set).
 
 ::
 
     pragma solidity >=0.4.22 <0.6.0;
 
     library Set {
-      // We define a new struct datatype that will be used to
-      // hold its data in the calling contract.
+      // We define a new struct datatype that will be used to hold its data in the calling contract.
       struct Data { mapping(uint => bool) flags; }
 
-      // Note that the first parameter is of type "storage
-      // reference" and thus only its storage address and not
-      // its contents is passed as part of the call.  This is a
-      // special feature of library functions.  It is idiomatic
-      // to call the first parameter `self`, if the function can
-      // be seen as a method of that object.
+      // Note that the first parameter is of type "storage reference" and thus only its storage address and not its contents is passed as part of the call.  This is a special feature of library functions.  It is idiomatic to call the first parameter `self`, if the function can be seen as a method of that object.
       function insert(Data storage self, uint value)
           public
           returns (bool)
@@ -1395,31 +1174,19 @@ more advanced example to implement a set).
         Set.Data knownValues;
 
         function register(uint value) public {
-            // The library functions can be called without a
-            // specific instance of the library, since the
-            // "instance" will be the current contract.
+            // The library functions can be called without a specific instance of the library, since the "instance" will be the current contract.
             require(Set.insert(knownValues, value));
         }
         // In this contract, we can also directly access knownValues.flags, if we want.
     }
 
-Of course, you do not have to follow this way to use
-libraries: they can also be used without defining struct
-data types. Functions also work without any storage
-reference parameters, and they can have multiple storage reference
-parameters and in any position.
+Of course, you do not have to follow this way to use libraries: they can also be used without defining struct data types. Functions also work without any storage reference parameters, and they can have multiple storage reference parameters and in any position.
 
-The calls to ``Set.contains``, ``Set.insert`` and ``Set.remove``
-are all compiled as calls (``DELEGATECALL``) to an external
-contract/library. If you use libraries, be aware that an
-actual external function call is performed.
-``msg.sender``, ``msg.value`` and ``this`` will retain their values
-in this call, though (prior to Homestead, because of the use of ``CALLCODE``, ``msg.sender`` and
-``msg.value`` changed, though).
+The calls to ``Set.contains``, ``Set.insert`` and ``Set.remove`` are all compiled as calls (``DELEGATECALL``) to an external
+contract/library. If you use libraries, be aware that an actual external function call is performed.
+``msg.sender``, ``msg.value`` and ``this`` will retain their values in this call, though (prior to Homestead, because of the use of ``CALLCODE``, ``msg.sender`` and ``msg.value`` changed, though).
 
-The following example shows how to use :ref:`types stored in memory <data-location>` and
-internal functions in libraries in order to implement
-custom types without the overhead of external function calls:
+The following example shows how to use :ref:`types stored in memory <data-location>` and internal functions in libraries in order to implement custom types without the overhead of external function calls:
 
 ::
 
@@ -1478,24 +1245,14 @@ custom types without the overhead of external function calls:
         }
     }
 
-As the compiler cannot know where the library will be
-deployed at, these addresses have to be filled into the
-final bytecode by a linker
-(see :ref:`commandline-compiler` for how to use the
-commandline compiler for linking). If the addresses are not
-given as arguments to the compiler, the compiled hex code
-will contain placeholders of the form ``__Set______`` (where
-``Set`` is the name of the library). The address can be filled
-manually by replacing all those 40 symbols by the hex
+As the compiler cannot know where the library will be deployed at, these addresses have to be filled into the final bytecode by a linker (see :ref:`commandline-compiler` for how to use the commandline compiler for linking). If the addresses are not
+given as arguments to the compiler, the compiled hex code will contain placeholders of the form ``__Set______`` (where
+``Set`` is the name of the library). The address can be filled manually by replacing all those 40 symbols by the hex
 encoding of the address of the library contract.
 
 .. note::
-    Manually linking libraries on the generated bytecode is discouraged, because
-    it is restricted to 36 characters.
-    You should ask the compiler to link the libraries at the time
-    a contract is compiled by either using
-    the ``--libraries`` option of ``solc`` or the ``libraries`` key if you use
-    the standard-JSON interface to the compiler.
+    Manually linking libraries on the generated bytecode is discouraged, because it is restricted to 36 characters.
+    You should ask the compiler to link the libraries at the time a contract is compiled by either using the ``--libraries`` option of ``solc`` or the ``libraries`` key if you use the standard-JSON interface to the compiler.
 
 Restrictions for libraries in comparison to contracts:
 
@@ -1510,26 +1267,13 @@ Restrictions for libraries in comparison to contracts:
 Call Protection For Libraries
 =============================
 
-As mentioned in the introduction, if a library's code is executed
-using a ``CALL`` instead of a ``DELEGATECALL`` or ``CALLCODE``,
-it will revert unless a ``view`` or ``pure`` function is called.
+As mentioned in the introduction, if a library's code is executed using a ``CALL`` instead of a ``DELEGATECALL`` or ``CALLCODE``, it will revert unless a ``view`` or ``pure`` function is called.
 
-The EVM does not provide a direct way for a contract to detect
-whether it was called using ``CALL`` or not, but a contract
-can use the ``ADDRESS`` opcode to find out "where" it is
-currently running. The generated code compares this address
-to the address used at construction time to determine the mode
-of calling.
+The EVM does not provide a direct way for a contract to detect whether it was called using ``CALL`` or not, but a contract
+can use the ``ADDRESS`` opcode to find out "where" it is currently running. The generated code compares this address to the address used at construction time to determine the mode of calling.
 
-More specifically, the runtime code of a library always starts
-with a push instruction, which is a zero of 20 bytes at
-compilation time. When the deploy code runs, this constant
-is replaced in memory by the current address and this
-modified code is stored in the contract. At runtime,
-this causes the deploy time address to be the first
-constant to be pushed onto the stack and the dispatcher
-code compares the current address against this constant
-for any non-view and non-pure function.
+More specifically, the runtime code of a library always starts with a push instruction, which is a zero of 20 bytes at
+compilation time. When the deploy code runs, this constant is replaced in memory by the current address and this modified code is stored in the contract. At runtime, this causes the deploy time address to be the first constant to be pushed onto the stack and the dispatcher code compares the current address against this constant for any non-view and non-pure function.
 
 .. index:: ! using for, library
 
@@ -1539,30 +1283,19 @@ for any non-view and non-pure function.
 Using For
 *********
 
-The directive ``using A for B;`` can be used to attach library
-functions (from the library ``A``) to any type (``B``).
-These functions will receive the object they are called on
-as their first parameter (like the ``self`` variable in Python).
+The directive ``using A for B;`` can be used to attach library functions (from the library ``A``) to any type (``B``).
+These functions will receive the object they are called on as their first parameter (like the ``self`` variable in Python).
 
-The effect of ``using A for *;`` is that the functions from
-the library ``A`` are attached to *any* type.
+The effect of ``using A for *;`` is that the functions from the library ``A`` are attached to *any* type.
 
-In both situations, *all* functions in the library are attached,
-even those where the type of the first parameter does not
-match the type of the object. The type is checked at the
-point the function is called and function overload
-resolution is performed.
+In both situations, *all* functions in the library are attached, even those where the type of the first parameter does not
+match the type of the object. The type is checked at the point the function is called and function overload resolution is performed.
 
-The ``using A for B;`` directive is active only within the current
-contract, including within all of its functions, and has no effect
-outside of the contract in which it is used. The directive
-may only be used inside a contract, not inside any of its functions.
+The ``using A for B;`` directive is active only within the current contract, including within all of its functions, and has no effect outside of the contract in which it is used. The directive may only be used inside a contract, not inside any of its functions.
 
-By including a library, its data types including library functions are
-available without having to add further code.
+By including a library, its data types including library functions are available without having to add further code.
 
-Let us rewrite the set example from the
-:ref:`libraries` in this way::
+Let us rewrite the set example from the :ref:`libraries` in this way::
 
     pragma solidity >=0.4.16 <0.6.0;
 
@@ -1604,10 +1337,8 @@ Let us rewrite the set example from the
         Set.Data knownValues;
 
         function register(uint value) public {
-            // Here, all variables of type Set.Data have
-            // corresponding member functions.
-            // The following function call is identical to
-            // `Set.insert(knownValues, value)`
+            // Here, all variables of type Set.Data have corresponding member functions.
+            // The following function call is identical to `Set.insert(knownValues, value)`
             require(knownValues.insert(value));
         }
     }
@@ -1646,7 +1377,4 @@ It is also possible to extend elementary types in that way::
         }
     }
 
-Note that all library calls are actual EVM function calls. This means that
-if you pass memory or value types, a copy will be performed, even of the
-``self`` variable. The only situation where no copy will be performed
-is when storage reference variables are used.
+Note that all library calls are actual EVM function calls. This means that if you pass memory or value types, a copy will be performed, even of the ``self`` variable. The only situation where no copy will be performed is when storage reference variables are used.

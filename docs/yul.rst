@@ -6,35 +6,22 @@ Yul
 
 .. index:: ! assembly, ! asm, ! evmasm, ! yul, julia, iulia
 
-Yul (previously also called JULIA or IULIA) is an intermediate language that can
-compile to various different backends
+Yul (previously also called JULIA or IULIA) is an intermediate language that can compile to various different backends
 (EVM 1.0, EVM 1.5 and eWASM are planned).
-Because of that, it is designed to be a usable common denominator of all three
-platforms.
-It can already be used for "inline assembly" inside Solidity and
-future versions of the Solidity compiler will even use Yul as intermediate
-language. It should also be easy to build high-level optimizer stages for Yul.
+Because of that, it is designed to be a usable common denominator of all three platforms.
+It can already be used for "inline assembly" inside Solidity and future versions of the Solidity compiler will even use Yul as intermediate language. It should also be easy to build high-level optimizer stages for Yul.
 
 .. note::
 
-    Note that the flavour used for "inline assembly" does not have types
-    (everything is ``u256``) and the built-in functions are identical
-    to the EVM opcodes. Please resort to the inline assembly documentation
-    for details.
+    Note that the flavour used for "inline assembly" does not have types (everything is ``u256``) and the built-in functions are identical to the EVM opcodes. Please resort to the inline assembly documentation for details.
 
-The core components of Yul are functions, blocks, variables, literals,
-for-loops, if-statements, switch-statements, expressions and assignments to variables.
+The core components of Yul are functions, blocks, variables, literals, for-loops, if-statements, switch-statements, expressions and assignments to variables.
 
-Yul is typed, both variables and literals must specify the type with postfix
-notation. The supported types are ``bool``, ``u8``, ``s8``, ``u32``, ``s32``,
-``u64``, ``s64``, ``u128``, ``s128``, ``u256`` and ``s256``.
+Yul is typed, both variables and literals must specify the type with postfix notation. The supported types are ``bool``, ``u8``, ``s8``, ``u32``, ``s32``, ``u64``, ``s64``, ``u128``, ``s128``, ``u256`` and ``s256``.
 
-Yul in itself does not even provide operators. If the EVM is targeted,
-opcodes will be available as built-in functions, but they can be reimplemented
-if the backend changes. For a list of mandatory built-in functions, see the section below.
+Yul in itself does not even provide operators. If the EVM is targeted, opcodes will be available as built-in functions, but they can be reimplemented if the backend changes. For a list of mandatory built-in functions, see the section below.
 
-The following example program assumes that the EVM opcodes ``mul``, ``div``
-and ``mod`` are available either natively or as functions and computes exponentiation.
+The following example program assumes that the EVM opcodes ``mul``, ``div`` and ``mod`` are available either natively or as functions and computes exponentiation.
 
 .. code::
 
@@ -53,9 +40,7 @@ and ``mod`` are available either natively or as functions and computes exponenti
         }
     }
 
-It is also possible to implement the same function using a for-loop
-instead of with recursion. Here, we need the EVM opcodes ``lt`` (less-than)
-and ``add`` to be available.
+It is also possible to implement the same function using a for-loop instead of with recursion. Here, we need the EVM opcodes ``lt`` (less-than) and ``add`` to be available.
 
 .. code::
 
@@ -130,29 +115,18 @@ Restrictions on the Grammar
 ---------------------------
 
 Switches must have at least one case (including the default case).
-If all possible values of the expression is covered, the default case should
-not be allowed (i.e. a switch with a ``bool`` expression and having both a
-true and false case should not allow a default case).
+If all possible values of the expression is covered, the default case should not be allowed (i.e. a switch with a ``bool`` expression and having both a true and false case should not allow a default case).
 
-Every expression evaluates to zero or more values. Identifiers and Literals
-evaluate to exactly
-one value and function calls evaluate to a number of values equal to the
-number of return values of the function called.
+Every expression evaluates to zero or more values. Identifiers and Literals evaluate to exactly one value and function calls evaluate to a number of values equal to the number of return values of the function called.
 
-In variable declarations and assignments, the right-hand-side expression
-(if present) has to evaluate to a number of values equal to the number of
-variables on the left-hand-side.
-This is the only situation where an expression evaluating
-to more than one value is allowed.
+In variable declarations and assignments, the right-hand-side expression (if present) has to evaluate to a number of values equal to the number of variables on the left-hand-side.
+This is the only situation where an expression evaluating to more than one value is allowed.
 
-Expressions that are also statements (i.e. at the block level) have to
-evaluate to zero values.
+Expressions that are also statements (i.e. at the block level) have to evaluate to zero values.
 
 In all other situations, expressions have to evaluate to exactly one value.
 
-The ``continue`` and ``break`` statements can only be used inside loop bodies
-and have to be in the same function as the loop (or both have to be at the
-top level).
+The ``continue`` and ``break`` statements can only be used inside loop bodies and have to be in the same function as the loop (or both have to be at the top level).
 The condition part of the for-loop has to evaluate to exactly one value.
 
 Literals cannot be larger than the their type. The largest type defined is 256-bit wide.
@@ -160,53 +134,32 @@ Literals cannot be larger than the their type. The largest type defined is 256-b
 Scoping Rules
 -------------
 
-Scopes in Yul are tied to Blocks (exceptions are functions and the for loop
-as explained below) and all declarations
-(``FunctionDefinition``, ``VariableDeclaration``)
-introduce new identifiers into these scopes.
+Scopes in Yul are tied to Blocks (exceptions are functions and the for loop as explained below) and all declarations
+(``FunctionDefinition``, ``VariableDeclaration``) introduce new identifiers into these scopes.
 
-Identifiers are visible in
-the block they are defined in (including all sub-nodes and sub-blocks).
-As an exception, identifiers defined in the "init" part of the for-loop
-(the first block) are visible in all other parts of the for-loop
-(but not outside of the loop).
-Identifiers declared in the other parts of the for loop respect the regular
-syntatical scoping rules.
-The parameters and return parameters of functions are visible in the
-function body and their names cannot overlap.
+Identifiers are visible in the block they are defined in (including all sub-nodes and sub-blocks).
+As an exception, identifiers defined in the "init" part of the for-loop (the first block) are visible in all other parts of the for-loop (but not outside of the loop).
+Identifiers declared in the other parts of the for loop respect the regular syntatical scoping rules.
+The parameters and return parameters of functions are visible in the function body and their names cannot overlap.
 
-Variables can only be referenced after their declaration. In particular,
-variables cannot be referenced in the right hand side of their own variable
-declaration.
+Variables can only be referenced after their declaration. In particular, variables cannot be referenced in the right hand side of their own variable declaration.
 Functions can be referenced already before their declaration (if they are visible).
 
-Shadowing is disallowed, i.e. you cannot declare an identifier at a point
-where another identifier with the same name is also visible, even if it is
-not accessible.
+Shadowing is disallowed, i.e. you cannot declare an identifier at a point where another identifier with the same name is also visible, even if it is not accessible.
 
-Inside functions, it is not possible to access a variable that was declared
-outside of that function.
+Inside functions, it is not possible to access a variable that was declared outside of that function.
 
 Formal Specification
 --------------------
 
-We formally specify Yul by providing an evaluation function E overloaded
-on the various nodes of the AST. Any functions can have side effects, so
-E takes two state objects and the AST node and returns two new
-state objects and a variable number of other values.
-The two state objects are the global state object
-(which in the context of the EVM is the memory, storage and state of the
-blockchain) and the local state object (the state of local variables, i.e. a
-segment of the stack in the EVM).
-If the AST node is a statement, E returns the two state objects and a "mode",
-which is used for the ``break`` and ``continue`` statements.
-If the AST node is an expression, E returns the two state objects and
-as many values as the expression evaluates to.
+We formally specify Yul by providing an evaluation function E overloaded on the various nodes of the AST. Any functions can have side effects, so E takes two state objects and the AST node and returns two new state objects and a variable number of other values.
+The two state objects are the global state object (which in the context of the EVM is the memory, storage and state of the
+blockchain) and the local state object (the state of local variables, i.e. a segment of the stack in the EVM).
+If the AST node is a statement, E returns the two state objects and a "mode", which is used for the ``break`` and ``continue`` statements.
+If the AST node is an expression, E returns the two state objects and as many values as the expression evaluates to.
 
 
-The exact nature of the global state is unspecified for this high level
-description. The local state ``L`` is a mapping of identifiers ``i`` to values ``v``,
-denoted as ``L[i] = v``.
+The exact nature of the global state is unspecified for this high level description. The local state ``L`` is a mapping of identifiers ``i`` to values ``v``, denoted as ``L[i] = v``.
 
 For an identifier ``v``, let ``$v`` be the name of the identifier.
 
@@ -317,8 +270,7 @@ Truncating conversions are supported between the following types:
  - ``u256``
  - ``s256``
 
-For each of these a type conversion function exists having the prototype in the form of ``<input_type>to<output_type>(x:<input_type>) -> y:<output_type>``,
-such as ``u32tobool(x:u32) -> y:bool``, ``u256tou32(x:u256) -> y:u32`` or ``s256tou256(x:s256) -> y:u256``.
+For each of these a type conversion function exists having the prototype in the form of ``<input_type>to<output_type>(x:<input_type>) -> y:<output_type>``, such as ``u32tobool(x:u32) -> y:bool``, ``u256tou32(x:u256) -> y:u32`` or ``s256tou256(x:s256) -> y:u256``.
 
 .. note::
 
@@ -519,8 +471,7 @@ The following functions must be available:
 Backends
 --------
 
-Backends or targets are the translators from Yul to a specific bytecode. Each of the backends can expose functions
-prefixed with the name of the backend. We reserve ``evm_`` and ``ewasm_`` prefixes for the two proposed backends.
+Backends or targets are the translators from Yul to a specific bytecode. Each of the backends can expose functions prefixed with the name of the backend. We reserve ``evm_`` and ``ewasm_`` prefixes for the two proposed backends.
 
 Backend: EVM
 ------------
@@ -556,14 +507,12 @@ An example Yul Object is shown below:
 .. code::
 
     // Code consists of a single object. A single "code" node is the code of the object.
-    // Every (other) named object or data section is serialized and
-    // made accessible to the special built-in functions datacopy / dataoffset / datasize
+    // Every (other) named object or data section is serialized and made accessible to the special built-in functions datacopy / dataoffset / datasize
     object {
         code {
             let size = datasize("runtime")
             let offset = allocate(size)
-            // This will turn into a memory->memory copy for eWASM and
-            // a codecopy for EVM
+            // This will turn into a memory->memory copy for eWASM and a codecopy for EVM
             datacopy(dataoffset("runtime"), offset, size)
             // this is a constructor and the runtime code is returned
             return(offset, size)
@@ -577,16 +526,14 @@ An example Yul Object is shown below:
 
                 let size = datasize("Contract2")
                 let offset = allocate(size)
-                // This will turn into a memory->memory copy for eWASM and
-                // a codecopy for EVM
+                // This will turn into a memory->memory copy for eWASM and a codecopy for EVM
                 datacopy(dataoffset("Contract2"), offset, size)
                 // constructor parameter is a single number 0x1234
                 mstore(add(offset, size), 0x1234)
                 create(offset, add(size, 32))
             }
 
-            // Embedded object. Use case is that the outside is a factory contract,
-            // and Contract2 is the code to be created by the factory
+            // Embedded object. Use case is that the outside is a factory contract, and Contract2 is the code to be created by the factory
             object "Contract2" {
                 code {
                     // code here ...

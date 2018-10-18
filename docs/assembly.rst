@@ -4,23 +4,16 @@ Solidity Assembly
 
 .. index:: ! assembly, ! asm, ! evmasm
 
-Solidity defines an assembly language that you can use without Solidity and also
-as "inline assembly" inside Solidity source code. This guide starts with describing
-how to use inline assembly, how it differs from standalone assembly, and
-specifies assembly itself.
+Solidity defines an assembly language that you can use without Solidity and also as "inline assembly" inside Solidity source code. This guide starts with describing how to use inline assembly, how it differs from standalone assembly, and specifies assembly itself.
 
 .. _inline-assembly:
 
 Inline Assembly
 ===============
 
-You can interleave Solidity statements with inline assembly in a language close
-to the one of the virtual machine. This gives you more fine-grained control,
-especially when you are enhancing the language by writing libraries.
+You can interleave Solidity statements with inline assembly in a language close to the one of the virtual machine. This gives you more fine-grained control, especially when you are enhancing the language by writing libraries.
 
-As the EVM is a stack machine, it is often hard to address the correct stack slot
-and provide arguments to opcodes at the correct point on the stack. Solidity's inline
-assembly helps you do this, and with other issues that arise when writing manual assembly.
+As the EVM is a stack machine, it is often hard to address the correct stack slot and provide arguments to opcodes at the correct point on the stack. Solidity's inline assembly helps you do this, and with other issues that arise when writing manual assembly.
 
 Inline assembly has the following features:
 
@@ -33,17 +26,13 @@ Inline assembly has the following features:
 * function calls: ``function f(x) -> y { switch x case 0 { y := 1 } default { y := mul(x, f(sub(x, 1))) }   }``
 
 .. warning::
-    Inline assembly is a way to access the Ethereum Virtual Machine
-    at a low level. This bypasses several important safety
-    features and checks of Solidity. You should only use it for
-    tasks that need it, and only if you are confident with using it.
+    Inline assembly is a way to access the Ethereum Virtual Machine at a low level. This bypasses several important safety
+    features and checks of Solidity. You should only use it for tasks that need it, and only if you are confident with using it.
 
 Syntax
 ------
 
-Assembly parses comments, literals and identifiers in the same way as Solidity, so you can use the
-usual ``//`` and ``/* */`` comments. Inline assembly is marked by ``assembly { ... }`` and inside
-these curly braces, you can use the following (see the later sections for more details):
+Assembly parses comments, literals and identifiers in the same way as Solidity, so you can use the usual ``//`` and ``/* */`` comments. Inline assembly is marked by ``assembly { ... }`` and inside these curly braces, you can use the following (see the later sections for more details):
 
  - literals, i.e. ``0x123``, ``42`` or ``"abc"`` (strings up to 32 characters)
  - opcodes in functional style, e.g. ``add(1, mlod(0))``
@@ -60,19 +49,14 @@ The following features are only available for standalone assembly:
  - jump opcodes
 
 .. note::
-  Standalone assembly is supported for backwards compatibility but is not documented
-  here anymore.
+  Standalone assembly is supported for backwards compatibility but is not documented here anymore.
 
-At the end of the ``assembly { ... }`` block, the stack must be balanced,
-unless you require it otherwise. If it is not balanced, the compiler generates
-a warning.
+At the end of the ``assembly { ... }`` block, the stack must be balanced, unless you require it otherwise. If it is not balanced, the compiler generates a warning.
 
 Example
 -------
 
-The following example provides library code to access the code of another contract and
-load it into a ``bytes`` variable. This is not possible with "plain Solidity" and the
-idea is that assembly libraries will be used to enhance the Solidity language.
+The following example provides library code to access the code of another contract and load it into a ``bytes`` variable. This is not possible with "plain Solidity" and the idea is that assembly libraries will be used to enhance the Solidity language.
 
 .. code::
 
@@ -83,8 +67,7 @@ idea is that assembly libraries will be used to enhance the Solidity language.
             assembly {
                 // retrieve the size of the code, this needs assembly
                 let size := extcodesize(_addr)
-                // allocate output byte array - this could also be done without assembly
-                // by using o_code = new bytes(size)
+                // allocate output byte array - this could also be done without assembly by using o_code = new bytes(size)
                 o_code := mload(0x40)
                 // new "memory end" including padding
                 mstore(0x40, add(o_code, and(add(add(size, 0x20), 0x1f), not(0x1f))))
@@ -96,24 +79,20 @@ idea is that assembly libraries will be used to enhance the Solidity language.
         }
     }
 
-Inline assembly is also beneficial in cases where the optimizer fails to produce
-efficient code, for example:
+Inline assembly is also beneficial in cases where the optimizer fails to produce efficient code, for example:
 
 .. code::
 
     pragma solidity >=0.4.16 <0.6.0;
 
     library VectorSum {
-        // This function is less efficient because the optimizer currently fails to
-        // remove the bounds checks in array access.
+        // This function is less efficient because the optimizer currently fails to remove the bounds checks in array access.
         function sumSolidity(uint[] memory _data) public pure returns (uint o_sum) {
             for (uint i = 0; i < _data.length; ++i)
                 o_sum += _data[i];
         }
 
-        // We know that we only access the array in bounds, so we can avoid the check.
-        // 0x20 needs to be added to an array because the first slot contains the
-        // array length.
+        // We know that we only access the array in bounds, so we can avoid the check. 0x20 needs to be added to an array because the first slot contains the array length.
         function sumAsm(uint[] memory _data) public pure returns (uint o_sum) {
             for (uint i = 0; i < _data.length; ++i) {
                 assembly {
@@ -132,8 +111,7 @@ efficient code, for example:
                //
                // Keep temporary variable so it can be incremented in place.
                //
-               // NOTE: incrementing _data would result in an unusable
-               //       _data variable after this assembly block
+               // NOTE: incrementing _data would result in an unusable _data variable after this assembly block
                let data := add(_data, 0x20)
 
                // Iterate until the bound is not met.
@@ -154,18 +132,15 @@ efficient code, for example:
 Opcodes
 -------
 
-This document does not want to be a full description of the Ethereum virtual machine, but the
-following list can be used as a reference of its opcodes.
+This document does not want to be a full description of the Ethereum virtual machine, but the following list can be used as a reference of its opcodes.
 
 If an opcode takes arguments (always from the top of the stack), they are given in parentheses.
 Note that the order of arguments can be seen to be reversed in non-functional style (explained below).
-Opcodes marked with ``-`` do not push an item onto the stack, those marked with ``*`` are
-special and all others push exactly one item onto the stack.
+Opcodes marked with ``-`` do not push an item onto the stack, those marked with ``*`` are special and all others push exactly one item onto the stack.
 Opcodes marked with ``F``, ``H``, ``B`` or ``C`` are present since Frontier, Homestead, Byzantium or Constantinople, respectively.
 Constantinople is still in planning and all instructions marked as such will result in an invalid instruction exception.
 
-In the following, ``mem[a...b)`` signifies the bytes of memory starting at position ``a`` up to
-but not including position ``b`` and ``storage[p]`` signifies the storage contents at position ``p``.
+In the following, ``mem[a...b)`` signifies the bytes of memory starting at position ``a`` up to but not including position ``b`` and ``storage[p]`` signifies the storage contents at position ``p``.
 
 The opcodes ``pushi`` and ``jumpdest`` cannot be used directly.
 
@@ -344,9 +319,7 @@ In the grammar, opcodes are represented as pre-defined identifiers.
 Literals
 --------
 
-You can use integer constants by typing them in decimal or hexadecimal notation and an
-appropriate ``PUSHi`` instruction will automatically be generated. The following creates code
-to add 2 and 3 resulting in 5 and then computes the bitwise and with the string "abc".
+You can use integer constants by typing them in decimal or hexadecimal notation and an appropriate ``PUSHi`` instruction will automatically be generated. The following creates code to add 2 and 3 resulting in 5 and then computes the bitwise and with the string "abc".
 The final value is assigned to a local variable called ``x``.
 Strings are stored left-aligned and cannot be longer than 32 bytes.
 
@@ -358,38 +331,27 @@ Strings are stored left-aligned and cannot be longer than 32 bytes.
 Functional Style
 -----------------
 
-For a sequence of opcodes, it is often hard to see what the actual
-arguments for certain opcodes are. In the following example,
-``3`` is added to the contents in memory at position ``0x80``.
+For a sequence of opcodes, it is often hard to see what the actual arguments for certain opcodes are. In the following example, ``3`` is added to the contents in memory at position ``0x80``.
 
 .. code::
 
     3 0x80 mload add 0x80 mstore
 
-Solidity inline assembly has a "functional style" notation where the same code
-would be written as follows:
+Solidity inline assembly has a "functional style" notation where the same code would be written as follows:
 
 .. code::
 
     mstore(0x80, add(mload(0x80), 3))
 
-If you read the code from right to left, you end up with exactly the same
-sequence of constants and opcodes, but it is much clearer where the
-values end up.
+If you read the code from right to left, you end up with exactly the same sequence of constants and opcodes, but it is much clearer where the values end up.
 
-If you care about the exact stack layout, just note that the
-syntactically first argument for a function or opcode will be put at the
-top of the stack.
+If you care about the exact stack layout, just note that the syntactically first argument for a function or opcode will be put at the top of the stack.
 
 Access to External Variables, Functions and Libraries
 -----------------------------------------------------
 
 You can access Solidity variables and other identifiers by using their name.
-For variables stored in the memory data location, this pushes the address, and not the value
-onto the stack. Variables stored in the storage data location are different, as they might not
-occupy a full storage slot, so their "address" is composed of a slot and a byte-offset
-inside that slot. To retrieve the slot pointed to by the variable ``x``, you
-use ``x_slot``, and to retrieve the byte-offset you use ``x_offset``.
+For variables stored in the memory data location, this pushes the address, and not the value onto the stack. Variables stored in the storage data location are different, as they might not occupy a full storage slot, so their "address" is composed of a slot and a byte-offset inside that slot. To retrieve the slot pointed to by the variable ``x``, you use ``x_slot``, and to retrieve the byte-offset you use ``x_offset``.
 
 Local Solidity variables are available for assignments, for example:
 
@@ -407,12 +369,8 @@ Local Solidity variables are available for assignments, for example:
     }
 
 .. warning::
-    If you access variables of a type that spans less than 256 bits
-    (for example ``uint64``, ``address``, ``bytes16`` or ``byte``),
-    you cannot make any assumptions about bits not part of the
-    encoding of the type. Especially, do not assume them to be zero.
-    To be safe, always clear the data properly before you use it
-    in a context where this is important:
+    If you access variables of a type that spans less than 256 bits (for example ``uint64``, ``address``, ``bytes16`` or ``byte``), you cannot make any assumptions about bits not part of the encoding of the type. Especially, do not assume them to be zero.
+    To be safe, always clear the data properly before you use it in a context where this is important:
     ``uint32 x = f(); assembly { x := and(x, 0xffffffff) /* now use x */ }``
     To clean signed types, you can use the ``signextend`` opcode.
 
@@ -425,12 +383,8 @@ Please use functions, loops, if or switch statements instead.
 Declaring Assembly-Local Variables
 ----------------------------------
 
-You can use the ``let`` keyword to declare variables that are only visible in
-inline assembly and actually only in the current ``{...}``-block. What happens
-is that the ``let`` instruction will create a new stack slot that is reserved
-for the variable and automatically removed again when the end of the block
-is reached. You need to provide an initial value for the variable which can
-be just ``0``, but it can also be a complex functional-style expression.
+You can use the ``let`` keyword to declare variables that are only visible in inline assembly and actually only in the current ``{...}``-block. What happens is that the ``let`` instruction will create a new stack slot that is reserved
+for the variable and automatically removed again when the end of the block is reached. You need to provide an initial value for the variable which can be just ``0``, but it can also be a complex functional-style expression.
 
 .. code::
 
@@ -454,13 +408,10 @@ be just ``0``, but it can also be a complex functional-style expression.
 Assignments
 -----------
 
-Assignments are possible to assembly-local variables and to function-local
-variables. Take care that when you assign to variables that point to
-memory or storage, you will only change the pointer and not the data.
+Assignments are possible to assembly-local variables and to function-local variables. Take care that when you assign to variables that point to memory or storage, you will only change the pointer and not the data.
 
 Variables can only be assigned expressions that result in exactly one value.
-If you want to assign the values returned from a function that has
-multiple return parameters, you have to provide multiple variables.
+If you want to assign the values returned from a function that has multiple return parameters, you have to provide multiple variables.
 
 .. code::
 
@@ -475,8 +426,7 @@ If
 --
 
 The if statement can be used for conditionally executing code.
-There is no "else" part, consider using "switch" (see below) if
-you need multiple alternatives.
+There is no "else" part, consider using "switch" (see below) if you need multiple alternatives.
 
 .. code::
 
@@ -491,10 +441,7 @@ Switch
 
 You can use a switch statement as a very basic version of "if/else".
 It takes the value of an expression and compares it to several constants.
-The branch corresponding to the matching constant is taken. Contrary to the
-error-prone behaviour of some programming languages, control flow does
-not continue from one case to the next. There can be a fallback or default
-case called ``default``.
+The branch corresponding to the matching constant is taken. Contrary to the error-prone behaviour of some programming languages, control flow does not continue from one case to the next. There can be a fallback or default case called ``default``.
 
 .. code::
 
@@ -510,18 +457,12 @@ case called ``default``.
         sstore(0, div(x, 2))
     }
 
-The list of cases does not require curly braces, but the body of a
-case does require them.
+The list of cases does not require curly braces, but the body of a case does require them.
 
 Loops
 -----
 
-Assembly supports a simple for-style loop. For-style loops have
-a header containing an initializing part, a condition and a post-iteration
-part. The condition has to be a functional-style expression, while
-the other two are blocks. If the initializing part
-declares any variables, the scope of these variables is extended into the
-body (including the condition and the post-iteration part).
+Assembly supports a simple for-style loop. For-style loops have a header containing an initializing part, a condition and a post-iteration part. The condition has to be a functional-style expression, while the other two are blocks. If the initializing part declares any variables, the scope of these variables is extended into the body (including the condition and the post-iteration part).
 
 The following example computes the sum of an area in memory.
 
@@ -551,18 +492,11 @@ Simply leave the initialization and post-iteration parts empty.
 Functions
 ---------
 
-Assembly allows the definition of low-level functions. These take their
-arguments (and a return PC) from the stack and also put the results onto the
-stack. Calling a function looks the same way as executing a functional-style
-opcode.
+Assembly allows the definition of low-level functions. These take their arguments (and a return PC) from the stack and also put the results onto the stack. Calling a function looks the same way as executing a functional-style opcode.
 
-Functions can be defined anywhere and are visible in the block they are
-declared in. Inside a function, you cannot access local variables
-defined outside of that function. There is no explicit ``return``
-statement.
+Functions can be defined anywhere and are visible in the block they are declared in. Inside a function, you cannot access local variables defined outside of that function. There is no explicit ``return`` statement.
 
-If you call a function that returns multiple values, you have to assign
-them to a tuple using ``a, b := f(x)`` or ``let a, b := f(x)``.
+If you call a function that returns multiple values, you have to assign them to a tuple using ``a, b := f(x)`` or ``let a, b := f(x)``.
 
 The following example implements the power function by square-and-multiply.
 
@@ -584,29 +518,16 @@ The following example implements the power function by square-and-multiply.
 Things to Avoid
 ---------------
 
-Inline assembly might have a quite high-level look, but it actually is extremely
-low-level. Function calls, loops, ifs and switches are converted by simple
-rewriting rules and after that, the only thing the assembler does for you is re-arranging
-functional-style opcodes, counting stack height for
-variable access and removing stack slots for assembly-local variables when the end
-of their block is reached.
+Inline assembly might have a quite high-level look, but it actually is extremely low-level. Function calls, loops, ifs and switches are converted by simple rewriting rules and after that, the only thing the assembler does for you is re-arranging
+functional-style opcodes, counting stack height for variable access and removing stack slots for assembly-local variables when the end of their block is reached.
 
 Conventions in Solidity
 -----------------------
 
-In contrast to EVM assembly, Solidity knows types which are narrower than 256 bits,
-e.g. ``uint24``. In order to make them more efficient, most arithmetic operations just
-treat them as 256-bit numbers and the higher-order bits are only cleaned at the
-point where it is necessary, i.e. just shortly before they are written to memory
-or before comparisons are performed. This means that if you access such a variable
-from within inline assembly, you might have to manually clean the higher order bits
-first.
+In contrast to EVM assembly, Solidity knows types which are narrower than 256 bits, e.g. ``uint24``. In order to make them more efficient, most arithmetic operations just treat them as 256-bit numbers and the higher-order bits are only cleaned at the point where it is necessary, i.e. just shortly before they are written to memory or before comparisons are performed. This means that if you access such a variable from within inline assembly, you might have to manually clean the higher order bits first.
 
-Solidity manages memory in a very simple way: There is a "free memory pointer"
-at position ``0x40`` in memory. If you want to allocate memory, just use the memory
-starting from where this pointer points at and update it accordingly.
-There is no guarantee that the memory has not been used before and thus
-you cannot assume that its contents are zero bytes.
+Solidity manages memory in a very simple way: There is a "free memory pointer" at position ``0x40`` in memory. If you want to allocate memory, just use the memory starting from where this pointer points at and update it accordingly.
+There is no guarantee that the memory has not been used before and thus you cannot assume that its contents are zero bytes.
 There is no built-in mechanism to release or free allocated memory.
 Here is an assembly snippet that can be used for allocating memory::
 
@@ -615,76 +536,40 @@ Here is an assembly snippet that can be used for allocating memory::
       mstore(0x40, add(pos, length))
     }
 
-The first 64 bytes of memory can be used as "scratch space" for short-term
-allocation. The 32 bytes after the free memory pointer (i.e. starting at ``0x60``)
-is meant to be zero permanently and is used as the initial value for
-empty dynamic memory arrays.
-This means that the allocatable memory starts at ``0x80``, which is the initial value
-of the free memory pointer.
+The first 64 bytes of memory can be used as "scratch space" for short-term allocation. The 32 bytes after the free memory pointer (i.e. starting at ``0x60``) is meant to be zero permanently and is used as the initial value for empty dynamic memory arrays.
+This means that the allocatable memory starts at ``0x80``, which is the initial value of the free memory pointer.
 
-Elements in memory arrays in Solidity always occupy multiples of 32 bytes (yes, this is
-even true for ``byte[]``, but not for ``bytes`` and ``string``). Multi-dimensional memory
-arrays are pointers to memory arrays. The length of a dynamic array is stored at the
-first slot of the array and followed by the array elements.
+Elements in memory arrays in Solidity always occupy multiples of 32 bytes (yes, this is even true for ``byte[]``, but not for ``bytes`` and ``string``). Multi-dimensional memory arrays are pointers to memory arrays. The length of a dynamic array is stored at the first slot of the array and followed by the array elements.
 
 .. warning::
-    Statically-sized memory arrays do not have a length field, but it might be added later
-    to allow better convertibility between statically- and dynamically-sized arrays, so
-    please do not rely on that.
+    Statically-sized memory arrays do not have a length field, but it might be added later to allow better convertibility between statically- and dynamically-sized arrays, so please do not rely on that.
 
 
 Standalone Assembly
 ===================
 
-The assembly language described as inline assembly above can also be used
-standalone and in fact, the plan is to use it as an intermediate language
-for the Solidity compiler. In this form, it tries to achieve several goals:
+The assembly language described as inline assembly above can also be used standalone and in fact, the plan is to use it as an intermediate language for the Solidity compiler. In this form, it tries to achieve several goals:
 
 1. Programs written in it should be readable, even if the code is generated by a compiler from Solidity.
 2. The translation from assembly to bytecode should contain as few "surprises" as possible.
 3. Control flow should be easy to detect to help in formal verification and optimization.
 
-In order to achieve the first and last goal, assembly provides high-level constructs
-like ``for`` loops, ``if`` and ``switch`` statements and function calls. It should be possible
-to write assembly programs that do not make use of explicit ``SWAP``, ``DUP``,
-``JUMP`` and ``JUMPI`` statements, because the first two obfuscate the data flow
-and the last two obfuscate control flow. Furthermore, functional statements of
-the form ``mul(add(x, y), 7)`` are preferred over pure opcode statements like
-``7 y x add mul`` because in the first form, it is much easier to see which
-operand is used for which opcode.
+In order to achieve the first and last goal, assembly provides high-level constructs like ``for`` loops, ``if`` and ``switch`` statements and function calls. It should be possible to write assembly programs that do not make use of explicit ``SWAP``, ``DUP``, ``JUMP`` and ``JUMPI`` statements, because the first two obfuscate the data flow and the last two obfuscate control flow. Furthermore, functional statements of the form ``mul(add(x, y), 7)`` are preferred over pure opcode statements like
+``7 y x add mul`` because in the first form, it is much easier to see which operand is used for which opcode.
 
-The second goal is achieved by compiling the
-higher level constructs to bytecode in a very regular way.
-The only non-local operation performed
-by the assembler is name lookup of user-defined identifiers (functions, variables, ...),
-which follow very simple and regular scoping rules and cleanup of local variables from the stack.
+The second goal is achieved by compiling the higher level constructs to bytecode in a very regular way.
+The only non-local operation performed by the assembler is name lookup of user-defined identifiers (functions, variables, ...), which follow very simple and regular scoping rules and cleanup of local variables from the stack.
 
-Scoping: An identifier that is declared (label, variable, function, assembly)
-is only visible in the block where it was declared (including nested blocks
-inside the current block). It is not legal to access local variables across
-function borders, even if they would be in scope. Shadowing is not allowed.
-Local variables cannot be accessed before they were declared, but
-functions and assemblies can. Assemblies are special blocks that are used
-for e.g. returning runtime code or creating contracts. No identifier from an
-outer assembly is visible in a sub-assembly.
+Scoping: An identifier that is declared (label, variable, function, assembly) is only visible in the block where it was declared (including nested blocks inside the current block). It is not legal to access local variables across function borders, even if they would be in scope. Shadowing is not allowed.
+Local variables cannot be accessed before they were declared, but functions and assemblies can. Assemblies are special blocks that are used for e.g. returning runtime code or creating contracts. No identifier from an outer assembly is visible in a sub-assembly.
 
-If control flow passes over the end of a block, pop instructions are inserted
-that match the number of local variables declared in that block.
-Whenever a local variable is referenced, the code generator needs
-to know its current relative position in the stack and thus it needs to
-keep track of the current so-called stack height. Since all local variables
-are removed at the end of a block, the stack height before and after the block
-should be the same. If this is not the case, compilation fails.
+If control flow passes over the end of a block, pop instructions are inserted that match the number of local variables declared in that block.
+Whenever a local variable is referenced, the code generator needs to know its current relative position in the stack and thus it needs to keep track of the current so-called stack height. Since all local variables are removed at the end of a block, the stack height before and after the block should be the same. If this is not the case, compilation fails.
 
-Using ``switch``, ``for`` and functions, it should be possible to write
-complex code without using ``jump`` or ``jumpi`` manually. This makes it much
-easier to analyze the control flow, which allows for improved formal
-verification and optimization.
+Using ``switch``, ``for`` and functions, it should be possible to write complex code without using ``jump`` or ``jumpi`` manually. This makes it much easier to analyze the control flow, which allows for improved formal verification and optimization.
 
 Furthermore, if manual jumps are allowed, computing the stack height is rather complicated.
-The position of all local variables on the stack needs to be known, otherwise
-neither references to local variables nor removing local variables automatically
-from the stack at the end of a block will work properly.
+The position of all local variables on the stack needs to be known, otherwise neither references to local variables nor removing local variables automatically from the stack at the end of a block will work properly.
 
 Example:
 
@@ -734,17 +619,13 @@ Assembly Grammar
 
 The tasks of the parser are the following:
 
-- Turn the byte stream into a token stream, discarding C++-style comments
-  (a special comment exists for source references, but we will not explain it here).
+- Turn the byte stream into a token stream, discarding C++-style comments (a special comment exists for source references, but we will not explain it here).
 - Turn the token stream into an AST according to the grammar below
-- Register identifiers with the block they are defined in (annotation to the
-  AST node) and note from which point on, variables can be accessed.
+- Register identifiers with the block they are defined in (annotation to the AST node) and note from which point on, variables can be accessed.
 
 The assembly lexer follows the one defined by Solidity itself.
 
-Whitespace is used to delimit tokens and it consists of the characters
-Space, Tab and Linefeed. Comments are regular JavaScript/C++ comments and
-are interpreted in the same way as Whitespace.
+Whitespace is used to delimit tokens and it consists of the characters Space, Tab and Linefeed. Comments are regular JavaScript/C++ comments and are interpreted in the same way as Whitespace.
 
 Grammar::
 

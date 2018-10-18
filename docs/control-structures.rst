@@ -7,8 +7,7 @@ Expressions and Control Structures
 Input Parameters and Output Parameters
 ======================================
 
-As in Javascript, functions may take parameters as input;
-unlike in Javascript and C, they may also return arbitrary number of
+As in Javascript, functions may take parameters as input; unlike in Javascript and C, they may also return arbitrary number of
 parameters as output.
 
 Input Parameters
@@ -16,9 +15,7 @@ Input Parameters
 
 The input parameters are declared the same way as variables are.
 The name of unused parameters can be omitted.
-For example, suppose we want our contract to
-accept one kind of external calls with two integers, we would write
-something like::
+For example, suppose we want our contract to accept one kind of external calls with two integers, we would write something like::
 
     pragma solidity >=0.4.16 <0.6.0;
 
@@ -29,16 +26,12 @@ something like::
         }
     }
 
-Input parameters can be used just as any other local variable
-can be used, they can also be assigned to.
+Input parameters can be used just as any other local variable can be used, they can also be assigned to.
 
 Output Parameters
 -----------------
 
-The output parameters can be declared with the same syntax after the
-``returns`` keyword. For example, suppose we wished to return two results:
-the sum and the product of the two given integers, then we would
-write::
+The output parameters can be declared with the same syntax after the ``returns`` keyword. For example, suppose we wished to return two results: the sum and the product of the two given integers, then we would write::
 
     pragma solidity >=0.4.16 <0.6.0;
 
@@ -54,11 +47,8 @@ write::
     }
 
 The names of output parameters can be omitted.
-The output values can also be specified using ``return`` statements,
-which are also capable of :ref:`returning multiple values<multi-return>`.
-Return parameters can be used as any other local variable and they
-are zero-initialized; if they are not explicitly
-set, they stay zero.
+The output values can also be specified using ``return`` statements, which are also capable of :ref:`returning multiple values<multi-return>`.
+Return parameters can be used as any other local variable and they are zero-initialized; if they are not explicitly set, they stay zero.
 
 .. index:: if, else, while, do/while, for, break, continue, return, switch, goto
 
@@ -67,24 +57,18 @@ Control Structures
 
 Most of the control structures known from curly-braces languages are available in Solidity:
 
-There is: ``if``, ``else``, ``while``, ``do``, ``for``, ``break``, ``continue``, ``return``, with
-the usual semantics known from C or JavaScript.
+There is: ``if``, ``else``, ``while``, ``do``, ``for``, ``break``, ``continue``, ``return``, with the usual semantics known from C or JavaScript.
 
-Parentheses can *not* be omitted for conditionals, but curly brances can be omitted
-around single-statement bodies.
+Parentheses can *not* be omitted for conditionals, but curly brances can be omitted around single-statement bodies.
 
-Note that there is no type conversion from non-boolean to boolean types as
-there is in C and JavaScript, so ``if (1) { ... }`` is *not* valid
-Solidity.
+Note that there is no type conversion from non-boolean to boolean types as there is in C and JavaScript, so ``if (1) { ... }`` is *not* valid in Solidity.
 
 .. _multi-return:
 
 Returning Multiple Values
 -------------------------
 
-When a function has multiple output parameters, ``return (v0, v1, ...,
-vn)`` can return multiple values.  The number of components must be
-the same as the number of output parameters.
+When a function has multiple output parameters, ``return (v0, v1, ..., vn)`` can return multiple values.  The number of components must be the same as the number of output parameters.
 
 .. index:: ! function;call, function;internal, function;external
 
@@ -96,8 +80,7 @@ Function Calls
 Internal Function Calls
 -----------------------
 
-Functions of the current contract can be called directly ("internally"), also recursively, as seen in
-this nonsensical example::
+Functions of the current contract can be called directly ("internally"), also recursively, as seen in this nonsensical example::
 
     pragma solidity >=0.4.16 <0.6.0;
 
@@ -106,28 +89,19 @@ this nonsensical example::
         function f() internal pure returns (uint ret) { return g(7) + f(); }
     }
 
-These function calls are translated into simple jumps inside the EVM. This has
-the effect that the current memory is not cleared, i.e. passing memory references
-to internally-called functions is very efficient. Only functions of the same
-contract can be called internally.
+These function calls are translated into simple jumps inside the EVM. This has the effect that the current memory is not cleared, i.e. passing memory references to internally-called functions is very efficient. Only functions of the same contract can be called internally.
 
-You should still avoid excessive recursion, as every internal function call
-uses up at least one stack slot and there are at most 1024 slots available.
+You should still avoid excessive recursion, as every internal function call uses up at least one stack slot and there are at most 1024 slots available.
 
 External Function Calls
 -----------------------
 
-The expressions ``this.g(8);`` and ``c.g(2);`` (where ``c`` is a contract
-instance) are also valid function calls, but this time, the function
-will be called "externally", via a message call and not directly via jumps.
-Please note that function calls on ``this`` cannot be used in the constructor, as the
-actual contract has not been created yet.
+The expressions ``this.g(8);`` and ``c.g(2);`` (where ``c`` is a contract instance) are also valid function calls, but this time, the function will be called "externally", via a message call and not directly via jumps.
+Please note that function calls on ``this`` cannot be used in the constructor, as the actual contract has not been created yet.
 
-Functions of other contracts have to be called externally. For an external call,
-all function arguments have to be copied to memory.
+Functions of other contracts have to be called externally. For an external call, all function arguments have to be copied to memory.
 
-When calling functions of other contracts, the amount of Wei sent with the call and
-the gas can be specified with special options ``.value()`` and ``.gas()``, respectively::
+When calling functions of other contracts, the amount of Wei sent with the call and the gas can be specified with special options ``.value()`` and ``.gas()``, respectively::
 
     pragma solidity >=0.4.0 <0.6.0;
 
@@ -141,38 +115,23 @@ the gas can be specified with special options ``.value()`` and ``.gas()``, respe
         function callFeed() public { feed.info.value(10).gas(800)(); }
     }
 
-You need to use the modifier ``payable`` with the ``info`` function because
-otherwise, the ``.value()`` option would not be available.
+You need to use the modifier ``payable`` with the ``info`` function because otherwise, the ``.value()`` option would not be available.
 
 .. warning::
   Be careful that ``feed.info.value(10).gas(800)`` only locally sets the ``value`` and amount of ``gas`` sent with the function call, and the parentheses at the end perform the actual call. So in this case, the function is not called.
 
-Function calls cause exceptions if the called contract does not exist (in the
-sense that the account does not contain code) or if the called contract itself
-throws an exception or goes out of gas.
+Function calls cause exceptions if the called contract does not exist (in the sense that the account does not contain code) or if the called contract itself throws an exception or goes out of gas.
 
 .. warning::
-    Any interaction with another contract imposes a potential danger, especially
-    if the source code of the contract is not known in advance. The
-    current contract hands over control to the called contract and that may potentially
-    do just about anything. Even if the called contract inherits from a known parent contract,
-    the inheriting contract is only required to have a correct interface. The
-    implementation of the contract, however, can be completely arbitrary and thus,
-    pose a danger. In addition, be prepared in case it calls into other contracts of
-    your system or even back into the calling contract before the first
-    call returns. This means
-    that the called contract can change state variables of the calling contract
-    via its functions. Write your functions in a way that, for example, calls to
-    external functions happen after any changes to state variables in your contract
-    so your contract is not vulnerable to a reentrancy exploit.
+    Any interaction with another contract imposes a potential danger, especially if the source code of the contract is not known in advance. The current contract hands over control to the called contract and that may potentially do just about anything. Even if the called contract inherits from a known parent contract, the inheriting contract is only required to have a correct interface. The implementation of the contract, however, can be completely arbitrary and thus,
+    pose a danger. In addition, be prepared in case it calls into other contracts of your system or even back into the calling contract before the first call returns. This means that the called contract can change state variables of the calling contract via its functions. Write your functions in a way that, for example, calls to
+    external functions happen after any changes to state variables in your contract so your contract is not vulnerable to a reentrancy exploit.
 
 Named Calls and Anonymous Function Parameters
 ---------------------------------------------
 
-Function call arguments can be given by name, in any order,
-if they are enclosed in ``{ }`` as can be seen in the following
-example. The argument list has to coincide by name with the list of
-parameters from the function declaration, but can be in arbitrary order.
+Function call arguments can be given by name, in any order, if they are enclosed in ``{ }`` as can be seen in the following
+example. The argument list has to coincide by name with the list of parameters from the function declaration, but can be in arbitrary order.
 
 ::
 
@@ -216,9 +175,7 @@ Those parameters will still be present on the stack, but they are inaccessible.
 Creating Contracts via ``new``
 ==============================
 
-A contract can create other contracts using the ``new`` keyword. The full
-code of the contract being created has to be known when the creating contract
-is compiled so recursive creation-dependencies are not possible.
+A contract can create other contracts using the ``new`` keyword. The full code of the contract being created has to be known when the creating contract is compiled so recursive creation-dependencies are not possible.
 
 ::
 
@@ -246,20 +203,14 @@ is compiled so recursive creation-dependencies are not possible.
         }
     }
 
-As seen in the example, it is possible to send Ether while creating
-an instance of ``D`` using the ``.value()`` option, but it is not possible
-to limit the amount of gas.
-If the creation fails (due to out-of-stack, not enough balance or other problems),
-an exception is thrown.
+As seen in the example, it is possible to send Ether while creating an instance of ``D`` using the ``.value()`` option, but it is not possible to limit the amount of gas.
+If the creation fails (due to out-of-stack, not enough balance or other problems), an exception is thrown.
 
 Order of Evaluation of Expressions
 ==================================
 
-The evaluation order of expressions is not specified (more formally, the order
-in which the children of one node in the expression tree are evaluated is not
-specified, but they are of course evaluated before the node itself). It is only
-guaranteed that statements are executed in order and short-circuiting for
-boolean expressions is done. See :ref:`order` for more information.
+The evaluation order of expressions is not specified (more formally, the order in which the children of one node in the expression tree are evaluated is not specified, but they are of course evaluated before the node itself). It is only
+guaranteed that statements are executed in order and short-circuiting for boolean expressions is done. See :ref:`order` for more information.
 
 .. index:: ! assignment
 
@@ -274,8 +225,7 @@ Destructuring Assignments and Returning Multiple Values
 Solidity internally allows tuple types, i.e. a list of objects of potentially different types whose number is a constant at compile-time. Those tuples can be used to return multiple values at the same time.
 These can then either be assigned to newly declared variables or to pre-existing variables (or LValues in general).
 
-Tuples are not proper types in Solidity, they can only be used to form syntactic
-groupings of expressions.
+Tuples are not proper types in Solidity, they can only be used to form syntactic groupings of expressions.
 
 ::
 
@@ -299,18 +249,13 @@ groupings of expressions.
         }
     }
 
-It is not possible to mix variable declarations and non-declaration assignments,
-i.e. the following is not valid: ``(x, uint y) = (1, 2);``
+It is not possible to mix variable declarations and non-declaration assignments, i.e. the following is not valid: ``(x, uint y) = (1, 2);``
 
 .. note::
-    Prior to version 0.5.0 it was possible to assign to tuples of smaller size, either
-    filling up on the left or on the right side (which ever was empty). This is
-    now disallowed, so both sides have to have the same number of components.
+    Prior to version 0.5.0 it was possible to assign to tuples of smaller size, either filling up on the left or on the right side (which ever was empty). This is now disallowed, so both sides have to have the same number of components.
 
 .. warning::
-    Be careful when assigning to multiple variables at the same time when
-    reference types are involved, because it could lead to unexpected
-    copying behaviour.
+    Be careful when assigning to multiple variables at the same time when reference types are involved, because it could lead to unexpected copying behaviour.
 
 Complications for Arrays and Structs
 ------------------------------------
@@ -326,22 +271,13 @@ Scoping and Declarations
 ========================
 
 A variable which is declared will have an initial default value whose byte-representation is all zeros.
-The "default values" of variables are the typical "zero-state" of whatever the type is. For example, the default value for a ``bool``
-is ``false``. The default value for the ``uint`` or ``int`` types is ``0``. For statically-sized arrays and ``bytes1`` to ``bytes32``, each individual
-element will be initialized to the default value corresponding to its type. Finally, for dynamically-sized arrays, ``bytes``
-and ``string``, the default value is an empty array or string.
+The "default values" of variables are the typical "zero-state" of whatever the type is. For example, the default value for a ``bool`` is ``false``. The default value for the ``uint`` or ``int`` types is ``0``. For statically-sized arrays and ``bytes1`` to ``bytes32``, each individual element will be initialized to the default value corresponding to its type. Finally, for dynamically-sized arrays, ``bytes`` and ``string``, the default value is an empty array or string.
 
-Scoping in Solidity follows the widespread scoping rules of C99
-(and many other languages): Variables are visible from the point right after their declaration
-until the end of the smallest ``{ }``-block that contains the declaration. As an exception to this rule, variables declared in the
-initialization part of a for-loop are only visible until the end of the for-loop.
+Scoping in Solidity follows the widespread scoping rules of C99 (and many other languages): Variables are visible from the point right after their declaration until the end of the smallest ``{ }``-block that contains the declaration. As an exception to this rule, variables declared in the initialization part of a for-loop are only visible until the end of the for-loop.
 
-Variables and other items declared outside of a code block, for example functions, contracts,
-user-defined types, etc., are visible even before they were declared. This means you can
-use state variables before they are declared and call functions recursively.
+Variables and other items declared outside of a code block, for example functions, contracts, user-defined types, etc., are visible even before they were declared. This means you can use state variables before they are declared and call functions recursively.
 
-As a consequence, the following examples will compile without warnings, since
-the two variables have the same name but disjoint scopes.
+As a consequence, the following examples will compile without warnings, since the two variables have the same name but disjoint scopes.
 
 ::
 
@@ -360,9 +296,7 @@ the two variables have the same name but disjoint scopes.
         }
     }
 
-As a special example of the C99 scoping rules, note that in the following,
-the first assignment to ``x`` will actually assign the outer and not the inner variable.
-In any case, you will get a warning about the outer variable being shadowed.
+As a special example of the C99 scoping rules, note that in the following, the first assignment to ``x`` will actually assign the outer and not the inner variable. In any case, you will get a warning about the outer variable being shadowed.
 
 ::
 
@@ -380,9 +314,7 @@ In any case, you will get a warning about the outer variable being shadowed.
     }
 
 .. warning::
-    Before version 0.5.0 Solidity followed the same scoping rules as JavaScript, that is, a variable declared anywhere within a function would be in scope
-    for the entire function, regardless where it was declared. The following example shows a code snippet that used
-    to compile but leads to an error starting from version 0.5.0.
+    Before version 0.5.0 Solidity followed the same scoping rules as JavaScript, that is, a variable declared anywhere within a function would be in scope for the entire function, regardless where it was declared. The following example shows a code snippet that used to compile but leads to an error starting from version 0.5.0.
 
  ::
 
@@ -403,33 +335,24 @@ In any case, you will get a warning about the outer variable being shadowed.
 Error handling: Assert, Require, Revert and Exceptions
 ======================================================
 
-Solidity uses state-reverting exceptions to handle errors. Such an exception will undo all changes made to the
-state in the current call (and all its sub-calls) and also flag an error to the caller.
-The convenience functions ``assert`` and ``require`` can be used to check for conditions and throw an exception
-if the condition is not met. The ``assert`` function should only be used to test for internal errors, and to check invariants.
+Solidity uses state-reverting exceptions to handle errors. Such an exception will undo all changes made to the state in the current call (and all its sub-calls) and also flag an error to the caller.
+The convenience functions ``assert`` and ``require`` can be used to check for conditions and throw an exception if the condition is not met. The ``assert`` function should only be used to test for internal errors, and to check invariants.
 The ``require`` function should be used to ensure valid conditions, such as inputs, or contract state variables are met, or to validate return values from calls to external contracts.
 If used properly, analysis tools can evaluate your contract to identify the conditions and function calls which will reach a failing ``assert``. Properly functioning code should never reach a failing assert statement; if this happens there is a bug in your contract which you should fix.
 
-There are two other ways to trigger exceptions: The ``revert`` function can be used to flag an error and
-revert the current call. It is possible to provide a string message containing details about the error
-that will be passed back to the caller.
+There are two other ways to trigger exceptions: The ``revert`` function can be used to flag an error and revert the current call. It is possible to provide a string message containing details about the error that will be passed back to the caller.
 
 .. note::
-    There used to be a keyword called ``throw`` with the same semantics as ``revert()`` which
-    whas deprecated in version 0.4.13 and removed in version 0.5.0.
+    There used to be a keyword called ``throw`` with the same semantics as ``revert()`` which whas deprecated in version 0.4.13 and removed in version 0.5.0.
 
-When exceptions happen in a sub-call, they "bubble up" (i.e. exceptions are rethrown) automatically. Exceptions to this rule are ``send``
-and the low-level functions ``call``, ``delegatecall`` and ``staticcall`` -- those return ``false`` as their first return value in case
-of an exception instead of "bubbling up".
+When exceptions happen in a sub-call, they "bubble up" (i.e. exceptions are rethrown) automatically. Exceptions to this rule are ``send`` and the low-level functions ``call``, ``delegatecall`` and ``staticcall`` -- those return ``false`` as their first return value in case of an exception instead of "bubbling up".
 
 .. warning::
     The low-level functions ``call``, ``delegatecall`` and ``staticcall`` return ``true`` as their first return value if the called account is non-existent, as part of the design of EVM. Existence must be checked prior to calling if desired.
 
 Catching exceptions is not yet possible.
 
-In the following example, you can see how ``require`` can be used to easily check conditions on inputs
-and how ``assert`` can be used for internal error checking. Note that you can optionally provide
-a message string for ``require``, but not for ``assert``.
+In the following example, you can see how ``require`` can be used to easily check conditions on inputs and how ``assert`` can be used for internal error checking. Note that you can optionally provide a message string for ``require``, but not for ``assert``.
 
 ::
 
@@ -468,12 +391,8 @@ A ``require``-style exception is generated in the following situations:
 #. If your contract receives Ether via a public getter function.
 #. If a ``.transfer()`` fails.
 
-Internally, Solidity performs a revert operation (instruction ``0xfd``) for a ``require``-style exception and executes an invalid operation
-(instruction ``0xfe``) to throw an ``assert``-style exception. In both cases, this causes
-the EVM to revert all changes made to the state. The reason for reverting is that there is no safe way to continue execution, because an expected effect
-did not occur. Because we want to retain the atomicity of transactions, the safest thing to do is to revert all changes and make the whole transaction
-(or at least call) without effect. Note that ``assert``-style exceptions consume all gas available to the call, while
-``require``-style exceptions will not consume any gas starting from the Metropolis release.
+Internally, Solidity performs a revert operation (instruction ``0xfd``) for a ``require``-style exception and executes an invalid operation (instruction ``0xfe``) to throw an ``assert``-style exception. In both cases, this causes
+the EVM to revert all changes made to the state. The reason for reverting is that there is no safe way to continue execution, because an expected effect did not occur. Because we want to retain the atomicity of transactions, the safest thing to do is to revert all changes and make the whole transaction (or at least call) without effect. Note that ``assert``-style exceptions consume all gas available to the call, while ``require``-style exceptions will not consume any gas starting from the Metropolis release.
 
 The following example shows how an error string can be used together with revert and require:
 
@@ -495,8 +414,7 @@ The following example shows how an error string can be used together with revert
     }
 
 The provided string will be :ref:`abi-encoded <ABI>` as if it were a call to a function ``Error(string)``.
-In the above example, ``revert("Not enough Ether provided.");`` will cause the following hexadecimal data be
-set as error return data:
+In the above example, ``revert("Not enough Ether provided.");`` will cause the following hexadecimal data be set as error return data:
 
 .. code::
 
