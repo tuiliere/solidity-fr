@@ -2,27 +2,24 @@
 
 .. _contract_structure:
 
-***********************
-Structure of a Contract
-***********************
+**********************
+Structure d'un contrat
+**********************
 
-Contracts in Solidity are similar to classes in object-oriented languages.
-Each contract can contain declarations of :ref:`structure-state-variables`, :ref:`structure-functions`,
-:ref:`structure-function-modifiers`, :ref:`structure-events`, :ref:`structure-struct-types` and :ref:`structure-enum-types`.
-Furthermore, contracts can inherit from other contracts.
+Les contrats Solidity sont similaires à des classes dans des langages orientés objet.
+Chaque contrat peut contenir des déclarations de :ref:`structure-state-variables`, :ref:`structure-fonctions`, :ref:`structure-fonction-modificateurs`, :ref:`structure-événements`, :ref:`structure-struct-types` et :ref:`structure-enum-types`.
+De plus, les contrats peuvent hériter d'autres contrats.
 
-There are also special kinds of contracts called :ref:`libraries<libraries>` and :ref:`interfaces<interfaces>`.
+Il existe également des types de contrats spéciaux appelés :ref:`libraries<libraries>` et :ref:`interfaces<interfaces>`.
 
-The section about :ref:`contracts<contracts>` contains more details than this section,
-which serves to provide a quick overview.
+La section sur les :ref:`contrats<contracts<contracts>` contient plus de détails que cette section, qui permet d'avoir une vue d'ensemble rapide.
 
-.. _structure-state-variables:
+.. _structure-state-variables :
 
-State Variables
-===============
+Variables d'état
+================
 
-State variables are variables whose values are permanently stored in contract
-storage.
+Les variables d'état sont des variables dont les valeurs sont stockées en permanence dans le storage du contrat.
 
 ::
 
@@ -33,16 +30,14 @@ storage.
         // ...
     }
 
-See the :ref:`types` section for valid state variable types and
-:ref:`visibility-and-getters` for possible choices for
-visibility.
+Voir la section :ref:`types` pour les types de variables d'état valides et :ref:`visibility-and-getters` pour les choix possibles de visibilité.
 
 .. _structure-functions:
 
-Functions
+Fonctions
 =========
 
-Functions are the executable units of code within a contract.
+Les fonctions sont les unités exécutables du code d'un contrat.
 
 ::
 
@@ -54,17 +49,14 @@ Functions are the executable units of code within a contract.
         }
     }
 
-:ref:`function-calls` can happen internally or externally
-and have different levels of :ref:`visibility<visibility-and-getters>`
-towards other contracts.
+Les :ref:`function-calls' peuvent se faire en interne ou en externe et ont différents niveaux de :ref:`visibilité<visibility-and-getters>` pour d'autres contrats.
 
 .. _structure-function-modifiers:
 
-Function Modifiers
-==================
+Modificateurs de fonction
+=========================
 
-Function modifiers can be used to amend the semantics of functions in a declarative way
-(see :ref:`modifiers` in the contracts section).
+Les modificateurs de fonction peuvent être utilisés pour modifier la sémantique des fonctions d'une manière déclarative (voir :ref:`modifiers` dans la section contrats).
 
 ::
 
@@ -73,7 +65,7 @@ Function modifiers can be used to amend the semantics of functions in a declarat
     contract Purchase {
         address public seller;
 
-        modifier onlySeller() { // Modifier
+        modifier onlySeller() { // déclaration du modificateur
             require(
                 msg.sender == seller,
                 "Only seller can call this."
@@ -81,17 +73,17 @@ Function modifiers can be used to amend the semantics of functions in a declarat
             _;
         }
 
-        function abort() public view onlySeller { // Modifier usage
+        function abort() public view onlySeller { // utilisation
             // ...
         }
     }
 
 .. _structure-events:
 
-Events
-======
+Événements
+==========
 
-Events are convenience interfaces with the EVM logging facilities.
+Les événements sont des interfaces pratiques avec les fonctionnalités de journalisation (logs) de l'EVM.
 
 ::
 
@@ -106,16 +98,15 @@ Events are convenience interfaces with the EVM logging facilities.
         }
     }
 
-See :ref:`events` in contracts section for information on how events are declared
-and can be used from within a dapp.
+Voir :ref:`events' dans la section contrats pour plus d'informations sur la façon dont les événements sont déclarés et peuvent être utilisés à partir d'une dapp.
 
 .. _structure-struct-types:
 
-Struct Types
-=============
+Types Structure
+===============
 
-Structs are custom defined types that can group several variables (see
-:ref:`structs` in types section).
+Les structures sont des types personnalisés qui peuvent regrouper plusieurs variables (voir
+:ref:`structs` dans la section types).
 
 ::
 
@@ -132,11 +123,10 @@ Structs are custom defined types that can group several variables (see
 
 .. _structure-enum-types:
 
-Enum Types
+Types Enum
 ==========
 
-Enums can be used to create custom types with a finite set of 'constant values' (see
-:ref:`enums` in types section).
+Les énumérations peuvent être utilisées pour créer des types personnalisés avec un ensemble fini de 'valeurs constantes' (voir :ref:`enums` dans la section types).
 
 ::
 
