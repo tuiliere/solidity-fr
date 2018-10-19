@@ -336,7 +336,7 @@ Un exemple de pré-version : ``0.4.9-nightly.2017.1.17+commit.6ecb4aaa3.Emscript
 Informations importantes concernant le versionnage
 ==================================================
 
-Après la sortie d'une version, le niveau de version du correctif est incrémenté, parce que nous supposons que seulement les changements de niveau patch suivent. Lorsque les modifications sont fusionnées, la version doit être supprimée en fonction des éléments suivants et la gravité du changement. Enfin, une version est toujours basée sur la nigthly actuelle, mais sans le spécificateur ``prerelease``.
+Après la sortie d'une version, la version de correctif est incrémentée, parce que nous supposons que seulement les changements de niveau patch suivent. Lorsque les modifications sont fusionnées, la version doit être supprimée en fonction des éléments suivants et la gravité du changement. Enfin, une version est toujours basée sur la nigthly actuelle, mais sans le spécificateur ``prerelease``.
 
 Exemple :
 

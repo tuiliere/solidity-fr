@@ -44,7 +44,7 @@ Les fonctions sont les unités exécutables du code d'un contrat.
     pragma solidity >=0.4.0 <0.6.0;
 
     contract SimpleAuction {
-        function bid() public payable { // Function
+        function bid() public payable { // Fonction
             // ...
         }
     }
@@ -57,6 +57,14 @@ Modificateurs de fonction
 =========================
 
 Les modificateurs de fonction peuvent être utilisés pour modifier la sémantique des fonctions d'une manière déclarative (voir :ref:`modifiers` dans la section contrats).
+
+.. _structure-function-modifiers:
+
+Modificateurs de Fonctions
+==========================
+
+Les modificateurs (``modifier``) de fonctions peuvent être utilisés pour modifier la sémantique des fonctions de manière déclarative (voir :ref:`modifiers` dans la section contrats).
+>>>>>>> develop
 
 ::
 
@@ -73,17 +81,18 @@ Les modificateurs de fonction peuvent être utilisés pour modifier la sémantiq
             _;
         }
 
-        function abort() public view onlySeller { // utilisation
+        function abort() public view onlySeller { // Utilisation du modificateur
             // ...
         }
     }
 
 .. _structure-events:
 
-Événements
+Évènements
 ==========
 
-Les événements sont des interfaces pratiques avec les fonctionnalités de journalisation (logs) de l'EVM.
+Les évènements (``event``) sont une interface d'accès aux fonctionnalités de journalisation (logs) de l'EVM.
+>>>>>>> develop
 
 ::
 
@@ -98,7 +107,7 @@ Les événements sont des interfaces pratiques avec les fonctionnalités de jour
         }
     }
 
-Voir :ref:`events' dans la section contrats pour plus d'informations sur la façon dont les événements sont déclarés et peuvent être utilisés à partir d'une dapp.
+Voir :ref:`events` dans la section contrats pour plus d'informations sur la façon dont les événements sont déclarés et peuvent être utilisés à partir d'une dapp.
 
 .. _structure-struct-types:
 
@@ -126,7 +135,7 @@ Les structures sont des types personnalisés qui peuvent regrouper plusieurs var
 Types Enum
 ==========
 
-Les énumérations peuvent être utilisées pour créer des types personnalisés avec un ensemble fini de 'valeurs constantes' (voir :ref:`enums` dans la section types).
+Les Enumérateurs (``enum``) peuvent être utilisés pour créer des types personnalisés avec un ensemble fini de 'valeurs constantes' (voir :ref:`enums` dans la section Types).
 
 ::
 
