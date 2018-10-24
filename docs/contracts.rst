@@ -6,27 +6,26 @@
 Contracts
 ##########
 
-Contracts in Solidity are similar to classes in object-oriented languages. They contain persistent data in state variables and functions that can modify these variables. Calling a function on a different contract (instance) will perform an EVM function call and thus switch the context such that state variables are inaccessible.
+Les contrats en Solidity sont similaires à des classes dans les langages orientés objets. Ils contiennent des données persistentes dans des variables et des fonctions peuvent les modifier. Appeler la fonction d'un autre contrat (une autre instance) executera un appel de fonction auprès de l'EVM et changera alors le contexte, rendant inaccessibles ces variables.
 
 .. index:: ! contract;creation, constructor
 
 ******************
-Creating Contracts
+Créer des contrats
 ******************
 
-Contracts can be created "from outside" via Ethereum transactions or from within Solidity contracts.
+Les contrats peuvent être créés "en dehors" via des transactions Ethereum ou depuis des contrat en Solidity.
 
-IDEs, such as `Remix <https://remix.ethereum.org/>`_, make the creation process seamless using UI elements.
+Les EDIs, comme `Remix <https://remix.ethereum.org/>`_, facilite la tâche via des éléments visuels.
 
-Creating contracts programmatically on Ethereum is best done via using the JavaScript API `web3.js <https://github.com/ethereum/web3.js>`_.
-It has a function called `web3.eth.Contract <https://web3js.readthedocs.io/en/1.0/web3-eth-contract.html#new-contract>`_
-to facilitate contract creation.
+Créer des contrats via du code se fait le plus simplement en utilisant l'API Javascript `web3.js <https://github.com/ethereum/web3.js>`_.
+Elle possède une fonction appelée `web3.eth.Contract <https://web3js.readthedocs.io/en/1.0/web3-eth-contract.html#new-contract>`_ qui facilite cette création
 
-When a contract is created, its constructor_  (a function declared with the ``constructor`` keyword) is executed once.
+Quand un contrat est créé, son constructeur (une fonction déclarée via le mot-clé ``constructor``) est executé, de manière unique.
 
-A constructor is optional. Only one constructor is allowed, which means overloading is not supported.
+Un constructeur est optionnel. Aussi, un seul constructeur est autorisé, ce qui signifie que l'overloading n'est pas supporté.
 
-After the constructor has executed, the final code of the contract is deployed to the blockchain. This code includes all public and external functions and all functions that are reachable from there through function calls. The deployed code does not include the constructor code or internal functions only called from the constructor.
+Après que le constructeur a été exécuté, le code final du contrat est déployé sur la Blockchain. Ce code inclut toutes les fonctions publiques et externes, et toutes les fonctions qui sont atteignables par des appels de fonctions. Le code déployé n'inclut pas le constructeur ou les fonctions internes uniquement appelées depuis le constructeur.
 
 .. index:: constructor;arguments
 
