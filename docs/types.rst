@@ -1092,7 +1092,7 @@ Conversions entre les types littéraux et élémentaires
 =====================================================
 
 Types nombres entiers
--------------------
+---------------------
 
 Les nombres décimaux et hexadécimaux peuvent être implicitement convertis en n'importe quel type entier suffisamment grand pour le représenter sans troncature::
 
