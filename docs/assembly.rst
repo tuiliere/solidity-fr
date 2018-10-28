@@ -1,62 +1,61 @@
-#################
-Solidity Assembly
-#################
+#####################
+L'Assembleur Solidity
+#####################
 
 .. index:: ! assembly, ! asm, ! evmasm
 
-Solidity defines an assembly language that you can use without Solidity and also as "inline assembly" inside Solidity source code. This guide starts with describing how to use inline assembly, how it differs from standalone assembly, and specifies assembly itself.
+Solidity définit un langage assembleur que vous pouvez utiliser sans Solidity et aussi comme l'assembleur en ligne ("inline assembly") dans le code source de Solidity. Ce guide commence par décrire comment utiliser l'assembleur en ligne, en quoi il diffère de l'assemblage autonome, et spécifie l'assemblage lui-même.
 
 .. _inline-assembly:
 
-Inline Assembly
-===============
+Assembleur en ligne (inline)
+============================
 
-You can interleave Solidity statements with inline assembly in a language close to the one of the virtual machine. This gives you more fine-grained control, especially when you are enhancing the language by writing libraries.
+Vous pouvez entrelacer les instructions en Solidity avec de l'assembleur en ligne, dans un langage proche de celui de la machine virtuelle. Cela vous donne un contrôle plus fin, en particulier lorsque vous améliorez le langage en écrivant des bibliothèques.
 
-As the EVM is a stack machine, it is often hard to address the correct stack slot and provide arguments to opcodes at the correct point on the stack. Solidity's inline assembly helps you do this, and with other issues that arise when writing manual assembly.
+Comme l'EVM est une machine à pile, il est souvent difficile d'adresser le bon emplacement de pile et de fournir des arguments aux opcodes au bon endroit sur la pile. L'assembleur en ligne de Solidity vous aide à le faire, ainsi qu'avec d'autres problèmes qui surviennent lors de la rédaction manuelle d'assembleur.
 
-Inline assembly has the following features:
+L'assembleur en ligne présente les caractéristiques suivantes :
 
-* functional-style opcodes: ``mul(1, add(2, 3))``
-* assembly-local variables: ``let x := add(2, 3)  let y := mload(0x40)  x := add(x, y)``
-* access to external variables: ``function f(uint x) public { assembly { x := sub(x, 1) } }``
-* loops: ``for { let i := 0 } lt(i, x) { i := add(i, 1) } { y := mul(2, y) }``
-* if statements: ``if slt(x, 0) { x := sub(0, x) }``
-* switch statements: ``switch x case 0 { y := mul(x, 2) } default { y := 0 }``
-* function calls: ``function f(x) -> y { switch x case 0 { y := 1 } default { y := mul(x, f(sub(x, 1))) }   }``
+* opcodes de type fonctionnels: ``mul(1, add(2, 3))``
+* variables assembleur locales: ``let x := add(2, 3)  let y := mload(0x40)  x := add(x, y)``
+* accèss à des variables externes: ``function f(uint x) public { assembly { x := sub(x, 1) } }``
+* boucles: ``for { let i := 0 } lt(i, x) { i := add(i, 1) } { y := mul(2, y) }``
+* conditions if: ``if slt(x, 0) { x := sub(0, x) }``
+* conditions switch: ``switch x case 0 { y := mul(x, 2) } default { y := 0 }``
+* appels de fonction: ``function f(x) -> y { switch x case 0 { y := 1 } default { y := mul(x, f(sub(x, 1))) }   }``
 
 .. warning::
-    Inline assembly is a way to access the Ethereum Virtual Machine at a low level. This bypasses several important safety
-    features and checks of Solidity. You should only use it for tasks that need it, and only if you are confident with using it.
+    L'assembleur en ligne est un moyen d'accéder à la machine virtuelle Ethereum en bas niveau. Ceci permet de contourner plusieurs normes de sécurité importantes et contrôles de Solidity. Vous ne devriez l'utiliser que pour les tâches qui en ont besoin, et seulement si vous êtes sûr de pourquoi/comment l'utiliser.
 
-Syntax
-------
-
-Assembly parses comments, literals and identifiers in the same way as Solidity, so you can use the usual ``//`` and ``/* */`` comments. Inline assembly is marked by ``assembly { ... }`` and inside these curly braces, you can use the following (see the later sections for more details):
-
- - literals, i.e. ``0x123``, ``42`` or ``"abc"`` (strings up to 32 characters)
- - opcodes in functional style, e.g. ``add(1, mlod(0))``
- - variable declarations, e.g. ``let x := 7``, ``let x := add(y, 3)`` or ``let x`` (initial value of empty (0) is assigned)
- - identifiers (assembly-local variables and externals if used as inline assembly), e.g. ``add(3, x)``, ``sstore(x_slot, 2)``
- - assignments, e.g. ``x := add(y, 3)``
- - blocks where local variables are scoped inside, e.g. ``{ let x := 3 { let y := add(x, 1) } }``
-
-The following features are only available for standalone assembly:
-
- - direct stack control via ``dup1``, ``swap1``, ...
- - direct stack assignments (in "instruction style"), e.g. ``3 =: x``
- - labels, e.g. ``name:``
- - jump opcodes
-
-.. note::
-  Standalone assembly is supported for backwards compatibility but is not documented here anymore.
-
-At the end of the ``assembly { ... }`` block, the stack must be balanced, unless you require it otherwise. If it is not balanced, the compiler generates a warning.
-
-Example
+Syntaxe
 -------
 
-The following example provides library code to access the code of another contract and load it into a ``bytes`` variable. This is not possible with "plain Solidity" and the idea is that assembly libraries will be used to enhance the Solidity language.
+L'assembleur analyse les commentaires, les littéraux et les identificateurs de la même manière que Solidity, vous pouvez donc utiliser les commentaires habituels ``//`` et ``/* */``. L'assembleur en ligne est délimité par ``assembly { ... }`` et à l'intérieur de ces accolades, vous pouvez utiliser ce qui suit (voir les sections suivantes pour plus de détails) :
+
+ - litéraux, par ex. ``0x123``, ``42`` ou ``"abc"`` (strings jusqu'à 32 caractères)
+ - opcodes de type fonctionnels, exemple ``add(1, mlod(0))``
+ - déclaration de variables, ex. ``let x := 7``, ``let x := add(y, 3)`` or ``let x`` (Initialisées à 0)
+ - identifieurs (variables assembleur locales et externes si utilisée en tant qu'assembleur en ligne), ex. ``add(3, x)``, ``sstore(x_slot, 2)``
+ - assignations, ex. ``x := add(y, 3)``
+ - blocks de délimitation de portée, ex. ``{ let x := 3 { let y := add(x, 1) } }``
+
+Les caractéristiques suivantes ne sont disponibles que dans l'assembleur utilisé seul:
+
+ - contrôle direct de la stack ``dup1``, ``swap1``, ...
+ - assignations directement sur la stack (de style instruction), e.g. ``3 =: x``
+ - étiquettes, ex. ``name:``
+ - opcodes de saut
+
+.. note::
+  L'assembleur autonome est rétrocompatible mais n'est plus documenté ici.
+
+À la fin du bloc ``assembly { ... }``, la pile doit être équilibrée, à moins que vous n'en ayez besoin autrement. S'il n'est pas équilibré, le compilateur génère un avertissement.
+
+Exemple
+-------
+
+L'exemple suivant fournit le code de bibliothèque pour accéder au code d'un autre contrat et le charger dans une variable ``bytes``. Ce n'est pas possible de base avec Solidity et l'idée est que les bibliothèques assembleur seront utilisées pour améliorer le langage Solidity.
 
 .. code::
 
@@ -65,21 +64,21 @@ The following example provides library code to access the code of another contra
     library GetCode {
         function at(address _addr) public view returns (bytes memory o_code) {
             assembly {
-                // retrieve the size of the code, this needs assembly
+                // récupère la taille du code, a besoin d'assembleur
                 let size := extcodesize(_addr)
-                // allocate output byte array - this could also be done without assembly by using o_code = new bytes(size)
+                // allouer le tableau de bytes de sortie - ceci serait fait en Solidity via o_code = new bytes(size)
                 o_code := mload(0x40)
-                // new "memory end" including padding
+                // nouvelle "fin de mémoire" en incluant le padding
                 mstore(0x40, add(o_code, and(add(add(size, 0x20), 0x1f), not(0x1f))))
-                // store length in memory
+                // stocke la taille en mémoire
                 mstore(o_code, size)
-                // actually retrieve the code, this needs assembly
+                // récupère le code lui-même, nécessite de l'assembleur
                 extcodecopy(_addr, add(o_code, 0x20), 0, size)
             }
         }
     }
 
-Inline assembly is also beneficial in cases where the optimizer fails to produce efficient code, for example:
+L'assembleur en ligne est également utile dans les cas où l'optimiseur ne parvient pas à produire un code efficace, par exemple :
 
 .. code::
 

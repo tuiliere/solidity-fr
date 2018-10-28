@@ -79,7 +79,7 @@ Appels de fonction
 Appels de fonction internes
 ---------------------------
 
-Les fonctions du contrat en cours peuvent être appelées directement (``ìnternal``), également de manière récursive, comme le montre cet exemple absurde::
+Les fonctions du contrat en cours peuvent être appelées directement (``internal``), également de manière récursive, comme le montre cet exemple absurde::
 
     pragma solidity >=0.4.16 <0.6.0;
 
