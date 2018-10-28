@@ -4,7 +4,7 @@ Assembleur Solidity
 
 .. index:: ! assembly, ! asm, ! evmasm
 
-Solidity définit un langage assembleur que vous pouvez utiliser sans Solidity et aussi comme l'assembleur en ligne ("inline assembly") dans le code source de Solidity. Ce guide commence par décrire comment utiliser l'assembleur en ligne, en quoi il diffère de l'assemblage autonome, et spécifie l'assemblage lui-même.
+L'EVM définit un langage assembleur que vous pouvez utiliser dans Solidity en assembleur en ligne ("inline assembly") dans le code source ou de manière indépendante. Ce guide commence par décrire comment utiliser l'assembleur en ligne, en quoi il diffère de l'assemblage autonome, et spécifie l'assemblage lui-même.
 
 .. _inline-assembly:
 
@@ -231,9 +231,9 @@ Dans la grammaire, les opcodes sont représentés comme des identificateurs pré
 +-------------------------+-----+---+-----------------------------------------------------------------+
 | msize                   |     | F | taille actuelle de memory, c.à.d plus grand index mémoire       |
 +-------------------------+-----+---+-----------------------------------------------------------------+
-| gas                     |     | F | gas toujours disponible à l'éxécution                           |
+| gas                     |     | F | gas toujours disponible à l'exécution                           |
 +-------------------------+-----+---+-----------------------------------------------------------------+
-| address                 |     | F | addresse du contrat en cours / du contexte d'éxécution          |
+| address                 |     | F | addresse du contrat en cours / du contexte d'exécution          |
 +-------------------------+-----+---+-----------------------------------------------------------------+
 | balance(a)              |     | F | solde en wei de l'adresse a                                     |
 +-------------------------+-----+---+-----------------------------------------------------------------+
@@ -282,17 +282,17 @@ Dans la grammaire, les opcodes sont représentés comme des identificateurs pré
 | insize, out, outsize)   |     |   | et ``callvalue``                                                |
 +-------------------------+-----+---+-----------------------------------------------------------------+
 | staticcall(g, a, in,    |     | B | identique à ``call(g, a, 0, in, insize, out, outsize)`` mais    |
-| insize, out, outsize)   |     |   | n'autorise pasd e modifications de l'état                       |
+| insize, out, outsize)   |     |   | n'autorise pas de modifications de l'état                       |
 +-------------------------+-----+---+-----------------------------------------------------------------+
-| return(p, s)            | `-` | F | termine l'éxécution, retourne data mem[p...(p+s))               |
+| return(p, s)            | `-` | F | termine l'exécution, retourne data mem[p...(p+s))               |
 +-------------------------+-----+---+-----------------------------------------------------------------+
-| revert(p, s)            | `-` | B | termine l'éxécution, annule les changement de l'état, retourne  |
+| revert(p, s)            | `-` | B | termine l'exécution, annule les changement de l'état, retourne  |
 |                         |     |   | data mem[p...(p+s))                                             |
 +-------------------------+-----+---+-----------------------------------------------------------------+
-| selfdestruct(a)         | `-` | F | termine l'éxécution, détruit le contrat en cours et envoie      |
+| selfdestruct(a)         | `-` | F | termine l'exécution, détruit le contrat en cours et envoie      |
 |                         |     |   | ses fonds à a                                                   |
 +-------------------------+-----+---+-----------------------------------------------------------------+
-| invalid                 | `-` | F | termine l'éxécution with invalid instruction                    |
+| invalid                 | `-` | F | termine l'exécution with invalid instruction                    |
 +-------------------------+-----+---+-----------------------------------------------------------------+
 | log0(p, s)              | `-` | F | ajoute data mem[p...(p+s)) au journal sans topics               |
 +-------------------------+-----+---+-----------------------------------------------------------------+
@@ -305,7 +305,7 @@ Dans la grammaire, les opcodes sont représentés comme des identificateurs pré
 | log4(p, s, t1, t2, t3,  | `-` | F | ajoute data mem[p...(p+s)) au journal avec topics t1, t2, t3, t4|
 | t4)                     |     |   |                                                                 |
 +-------------------------+-----+---+-----------------------------------------------------------------+
-| origin                  |     | F | emetteur de la transaction                                      |
+| origin                  |     | F | émetteur de la transaction                                      |
 +-------------------------+-----+---+-----------------------------------------------------------------+
 | gasprice                |     | F | prix du gas pour cette transaction                              |
 +-------------------------+-----+---+-----------------------------------------------------------------+
