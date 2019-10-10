@@ -585,12 +585,12 @@ Comme toute fonction, la fonction de fallback peut exécuter des opérations com
 
 .. _overload-function:
 
-Function Overloading
+Surcharge de fonctions
 ====================
 
-A contract can have multiple functions of the same name but with different parameter types.
-This process is called "overloading" and also applies to inherited functions.
-The following example shows overloading of the function ``f`` in the scope of contract ``A``.
+Un contrat peut avoir plusieurs fonctions du même nom, mais avec des types de paramètres différents.
+Ce processus est appelé "surcharge" et s'applique également aux fonctions héritées.
+L'exemple suivant montre la surcharge de la fonction ``f`` dans le champ d'application du contrat ``A``.
 
 ::
 
@@ -603,24 +603,24 @@ The following example shows overloading of the function ``f`` in the scope of co
 
         function f(uint _in, bool _really) public pure returns (int out) {
             if (_really)
-                out = (int)_in;
+                out = int(_in);
         }
     }
 
-Overloaded functions are also present in the external interface. It is an error if two externally visible functions differ by their Solidity types but not by their external types.
+Des fonctions surchargées sont également présentes dans l'interface externe. C'est une erreur si deux fonctions visibles de l'extérieur diffèrent par leur type Solidity (ici `A` et `B`) mais pas par leur type extérieur (ici `address``).
 
 ::
 
     pragma solidity >=0.4.16 <0.6.0;
 
-    // This will not compile
+    // Ceci ne compile pas
     contract A {
         function f(B _in) public pure returns (B out) {
             out = _in;
         }
 
-        function f(address _in, address _in2) public pure returns (B out) {
-            out = B(_in);
+        function f(A _in) public pure returns (B out) {
+            out = B(address(_in));
         }
     }
 
