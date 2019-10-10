@@ -25,60 +25,60 @@ Quand un contrat est créé, son constructeur (une fonction déclarée via le mo
 
 Un constructeur est optionnel. Aussi, un seul constructeur est autorisé, ce qui signifie que l'overloading n'est pas supporté.
 
-Après que le constructeur a été exécuté, le code final du contrat est déployé sur la Blockchain. Ce code inclut toutes les fonctions publiques et externes, et toutes les fonctions qui sont atteignables par des appels de fonctions. Le code déployé n'inclut pas le constructeur ou les fonctions internes uniquement appelées depuis le constructeur.
+Après que le constructeur ai été exécuté, le code final du contrat est déployé sur la Blockchain. Ce code inclut toutes les fonctions publiques et externes, et toutes les fonctions qui sont atteignables par des appels de fonctions. Le code déployé n'inclut pas le constructeur ou les fonctions internes uniquement appelées depuis le constructeur.
 
 .. index:: constructor;arguments
 
-Internally, constructor arguments are passed :ref:`ABI encoded <ABI>` after the code of the contract itself, but you do not have to care about this if you use ``web3.js``.
+En interne, les arguments du constructeur sont passés :ref:`ABI encodés <ABI>>` après le code du contrat lui-même, mais vous n'avez pas à vous en soucier si vous utilisez ``web3.js``.
 
-If a contract wants to create another contract, the source code (and the binary) of the created contract has to be known to the creator.
-This means that cyclic creation dependencies are impossible.
+Si un contrat veut créer un autre contrat, le code source (et le binaire) du contrat créé doit être connu du créateur.
+Cela signifie que les dépendances cycliques de création sont impossibles.
 
 ::
 
     pragma solidity >=0.4.22 <0.6.0;
 
     contract OwnedToken {
-        // TokenCreator is a contract type that is defined below.
-        // It is fine to reference it as long as it is not used
-        // to create a new contract.
+        // TokenCreator est un type de contrat défini ci-dessous.
+        // Il est possible de le référencer tant qu'il n'est pas utilisé
+        // pour créer un nouveau contrat.
         TokenCreator creator;
         address owner;
         bytes32 name;
 
-        // This is the constructor which registers the
-        // creator and the assigned name.
+        // Ceci est le constructeur qui enregistre le
+        // le créateur et le nom attribué.
         constructor(bytes32 _name) public {
-            // State variables are accessed via their name
-            // and not via e.g. this.owner. This also applies
-            // to functions and especially in the constructors,
-            // you can only call them like that ("internally"),
-            // because the contract itself does not exist yet.
+            // Les variables d'état sont accessibles par leur nom
+            // et non par l'intermédiaire de this.owner par exemple. Ceci s'applique également
+            // aux fonctions et en particulier dans les constructeurs,
+            // vous ne pouvez les appeler que comme ça ("en interne"),
+            // parce que le contrat lui-même n'existe pas encore.
             owner = msg.sender;
-            // We do an explicit type conversion from `address`
-            // to `TokenCreator` and assume that the type of
-            // the calling contract is TokenCreator, there is
-            // no real way to check that.
+            // Nous effectuons une conversion de type explicite de `address`.
+            // vers `TokenCreator` et supposons que le type du
+            // contrat appelant est TokenCreator,
+            // Il n'y a pas vraiment moyen de vérifier ça.
             creator = TokenCreator(msg.sender);
             name = _name;
         }
 
         function changeName(bytes32 newName) public {
-            // Only the creator can alter the name --
-            // the comparison is possible since contracts
-            // are explicitly convertible to addresses.
+            // Seul le créateur peut modifier le nom --
+            // la comparaison est possible puisque les contrats
+            // sont explicitement convertibles en adresses.
             if (msg.sender == address(creator))
                 name = newName;
         }
 
         function transfer(address newOwner) public {
-            // Only the current owner can transfer the token.
+            // Seul le propriétaire actuel peut transférer le token.
             if (msg.sender != owner) return;
 
-            // We also want to ask the creator if the transfer
-            // is fine. Note that this calls a function of the
-            // contract defined below. If the call fails (e.g.
-            // due to out-of-gas), the execution also fails here.
+            // Nous voulons aussi demander au créateur si le transfert
+            // est valide. Notez que ceci appelle une fonction de la fonction
+            // contrat défini ci-dessous. Si l'appel échoue (p. ex.
+            // en raison d'un manque de gas), l'exécution échoue également ici.
             if (creator.isTokenTransferOK(owner, newOwner))
                 owner = newOwner;
         }
@@ -89,16 +89,16 @@ This means that cyclic creation dependencies are impossible.
            public
            returns (OwnedToken tokenAddress)
         {
-            // Create a new Token contract and return its address.
-            // From the JavaScript side, the return type is simply
-            // `address`, as this is the closest type available in
-            // the ABI.
+            // Créer un nouveau contrat Token et renvoyer son adresse.
+            // Du côté JavaScript, le type de retour est simplement
+            // `address`, car c'est le type le plus proche disponible dans
+            // l'ABI.
             return new OwnedToken(name);
         }
 
         function changeName(OwnedToken tokenAddress, bytes32 name) public {
-            // Again, the external type of `tokenAddress` is
-            // simply `address`.
+            // Encore une fois, le type externe de `tokenAddress' est
+            // simplement `adresse`.
             tokenAddress.changeName(name);
         }
 
@@ -107,7 +107,7 @@ This means that cyclic creation dependencies are impossible.
             pure
             returns (bool ok)
         {
-            // Check some arbitrary condition.
+            // Vérifier une condition arbitraire.
             return keccak256(abi.encodePacked(currentOwner, newOwner))[0] == 0x7f;
         }
     }
@@ -117,33 +117,34 @@ This means that cyclic creation dependencies are impossible.
 .. _visibility-and-getters:
 
 **********************
-Visibility and Getters
+Visibilité et Getters
 **********************
 
-Since Solidity knows two kinds of function calls (internal ones that do not create an actual EVM call (also called
-a "message call") and external ones that do), there are four types of visibilities for functions and state variables.
 
-Functions have to be specified as being ``external``, ``public``, ``internal`` or ``private``.
-For state variables, ``external`` is not possible.
+Puisque Solidity connaît deux types d'appels de fonction (internes qui ne créent pas d'appel EVM réel (également appelés
+a "message call") et externes qui le font), il existe quatre types de visibilités pour les fonctions et les variables d'état.
+
+Les fonctions doivent être spécifiées comme étant ``external``, ``public``, ``internal`` ou ``private``.
+Pour les variables d'état, ``external`` n'est pas possible.
 
 ``external``:
-    External functions are part of the contract interface, which means they can be called from other contracts and via transactions. An external function ``f`` cannot be called internally (i.e. ``f()`` does not work, but ``this.f()`` works).
-    External functions are sometimes more efficient when they receive large arrays of data.
+    Les fonctions externes font partie de l'interface du contrat, ce qui signifie qu'elles peuvent être appelées à partir d'autres contrats et via des transactions. Une fonction externe ``f`` ne peut pas être appelée en interne (c'est-à-dire ``f()``ne fonctionne pas, mais ``this.f()`` fonctionne).
+    Les fonctions externes sont parfois plus efficaces lorsqu'elles reçoivent de grandes quantités de données.
 
 ``public``:
-    Public functions are part of the contract interface and can be either called internally or via messages. For public state variables, an automatic getter function (see below) is generated.
+    Les fonctions publiques font partie de l'interface du contrat et peuvent être appelées en interne ou via des messages. Pour les variables d'état publiques, une fonction getter automatique (voir ci-dessous) est générée.
 
 ``internal``:
-    Those functions and state variables can only be accessed internally (i.e. from within the current contract or contracts deriving from it), without using ``this``.
+    Ces fonctions et variables d'état ne sont accessibles qu'en interne (c'est-à-dire à partir du contrat en cours ou des contrats qui en découlent), sans utiliser ``this``.
 
 ``private``:
-    Private functions and state variables are only visible for the contract they are defined in and not in derived contracts.
+    Les fonctions privées et les variables d'état ne sont visibles que pour le contrat dans lequel elles sont définies et non dans les contrats dérivés.
 
 .. note::
-    Everything that is inside a contract is visible to all observers external to the blockchain. Making something ``private``
-    only prevents other contracts from accessing and modifying the information, but it will still be visible to the whole world outside of the blockchain.
+     Tout ce qui se trouve à l'intérieur d'un contrat est visible pour tous les observateurs extérieurs à la blockchain. Passer quelque chose en ``private``
+    ne fait qu'empêcher les autres contrats d'accéder à l'information et de la modifier, mais elle sera toujours visible pour le monde entier à l'extérieur de la blockchain.
 
-The visibility specifier is given after the type for state variables and between parameter list and return parameter list for functions.
+Le spécificateur de visibilité est donné après le type pour les variables d'état et entre la liste des paramètres et la liste des paramètres de retour pour les fonctions.
 
 ::
 
@@ -155,7 +156,7 @@ The visibility specifier is given after the type for state variables and between
         uint public data;
     }
 
-In the following example, ``D``, can call ``c.getData()`` to retrieve the value of ``data`` in state storage, but is not able to call ``f``. Contract ``E`` is derived from ``C`` and, thus, can call ``compute``.
+Dans l'exemple suivant, ``D``, peut appeler ``c.getData()`` pour retrouver la valeur de ``data`` en mémoire d'état, mais ne peut pas appeler ``f``. Le contrat ``E`` est dérivé du contrat ``C`` et peut donc appeler ``compute``.
 
 ::
 
@@ -170,31 +171,31 @@ In the following example, ``D``, can call ``c.getData()`` to retrieve the value 
         function compute(uint a, uint b) internal pure returns (uint) { return a + b; }
     }
 
-    // This will not compile
+    // Ceci ne compile pas
     contract D {
         function readData() public {
             C c = new C();
-            uint local = c.f(7); // error: member `f` is not visible
+            uint local = c.f(7); // Erreur: le membre `f` n'est pas visible
             c.setData(3);
             local = c.getData();
-            local = c.compute(3, 5); // error: member `compute` is not visible
+            local = c.compute(3, 5); // Erreur: le membre `compute` n'est pas visible
         }
     }
 
     contract E is C {
         function g() public {
             C c = new C();
-            uint val = compute(3, 5); // access to internal member (from derived to parent contract)
+            uint val = compute(3, 5); // accès à un membre interne (du contrat dérivé au contrat parent)
         }
     }
 
 .. index:: ! getter;function, ! function;getter
 .. _getter-functions:
 
-Getter Functions
+Fonctions Getter
 ================
 
-The compiler automatically creates getter functions for all **public** state variables. For the contract given below, the compiler will generate a function called ``data`` that does not take any arguments and returns a ``uint``, the value of the state variable ``data``. State variables can be initialized when they are declared.
+Le compilateur crée automatiquement des fonctions getter pour toutes les variables d'état **public**. Pour le contrat donné ci-dessous, le compilateur va générer une fonction appelée ``data`` qui ne prend aucun argument et retourne un ``uint``, la valeur de la variable d'état ``data``. Les variables d'état peuvent être initialisées lorsqu'elles sont déclarées.
 
 ::
 
@@ -211,7 +212,7 @@ The compiler automatically creates getter functions for all **public** state var
         }
     }
 
-The getter functions have external visibility. If the symbol is accessed internally (i.e. without ``this.``), it evaluates to a state variable.  If it is accessed externally (i.e. with ``this.``), it evaluates to a function.
+Les fonctions getter ont une visibilité externe. Si le symbole est accédé en interne (c'est-à-dire sans ``this.``), il est évalué à une variable d'état.  S'il est accédé de l'extérieur (c'est-à-dire avec ``this.``), il évalue à une fonction.
 
 ::
 
@@ -220,22 +221,22 @@ The getter functions have external visibility. If the symbol is accessed interna
     contract C {
         uint public data;
         function x() public returns (uint) {
-            data = 3; // internal access
-            return this.data(); // external access
+            data = 3; // accès interne
+            return this.data(); // accès externe
         }
     }
 
-If you have a ``public`` state variable of array type, then you can only retrieve single elements of the array via the generated getter function. This mechanism exists to avoid high gas costs when returning an entire array. You can use arguments to specify which individual element to return, for example ``data(0)``. If you want to return an entire array in one call, then you need to write a function, for example:
+Si vous avez une variable d'état ``public'' de type array, alors vous ne pouvez récupérer que des éléments simples de l'array via la fonction getter générée. Ce mécanisme permet d'éviter des coûts de gas élevés lors du retour d'un tableau complet. Vous pouvez utiliser des arguments pour spécifier quel élément individuel retourner, par exemple ``data(0)``. Si vous voulez retourner un tableau entier en un appel, alors vous devez écrire une fonction, par exemple :
 
 ::
 
   pragma solidity >=0.4.0 <0.6.0;
 
   contract arrayExample {
-    // public state variable
+    // variable d'état publique
     uint[] public myArray;
 
-    // Getter function generated by the compiler
+    // Fonction getter générée par le compilateur
     /*
     function myArray(uint i) returns (uint) {
         return myArray[i];
