@@ -383,18 +383,18 @@ Traduit avec www.DeepL.com/Translator
 .. index:: ! constant
 
 ************************
-Constant State Variables
+Variables d'état constantes
 ************************
 
-State variables can be declared as ``constant``. In this case, they have to be assigned from an expression which is a constant at compile time. Any expression that accesses storage, blockchain data (e.g. ``now``, ``address(this).balance`` or
-``block.number``) or execution data (``msg.value`` or ``gasleft()``) or makes calls to external contracts is disallowed. Expressions that might have a side-effect on memory allocation are allowed, but those that might have a side-effect on other memory objects are not. The built-in functions ``keccak256``, ``sha256``, ``ripemd160``, ``ecrecover``, ``addmod`` and ``mulmod`` are allowed (even though they do call external contracts).
+Les variables d'état peuvent être déclarées comme ``constantes``. Dans ce cas, elles doivent être assignées à partir d'une expression constante au moment de la compilation. Toute expression qui accède au stockage, aux données de la blockchain (par exemple ``now``, ``address(this).balance`` ou ``block.number``) ou
+les données d'exécution (``msg.value`` ou ``gasleft()``) ou les appels vers des contrats externes sont interdits. Les expressions qui peuvent avoir un effet secondaire sur l'allocation de mémoire sont autorisées, mais celles qui peuvent avoir un effet secondaire sur d'autres objets mémoire ne le sont pas. Les fonctions intégrées ``keccak256``, ``sha256``, ``ripemd160``, ``ecrecover``, ``addmod`` et ``mulmod`` sont autorisées (même si des contrats externes sont appelés).
 
-The reason behind allowing side-effects on the memory allocator is that it should be possible to construct complex objects like e.g. lookup-tables.
-This feature is not yet fully usable.
+La raison pour laquelle on autorise les effets secondaires sur l'allocateur de mémoire est qu'il devrait être possible de construire des objets complexes comme par exemple des tables de consultation.
+Cette fonctionnalité n'est pas encore entièrement utilisable.
 
-The compiler does not reserve a storage slot for these variables, and every occurrence is replaced by the respective constant expression (which might be computed to a single value by the optimizer).
+Le compilateur ne réserve pas d'emplacement de stockage pour ces variables, et chaque occurrence est remplacée par l'expression constante correspondante (qui peut être calculée à une valeur unique par l'optimiseur).
 
-Not all types for constants are implemented at this time. The only supported types are value types and strings.
+Tous les types de constantes ne sont pas implémentés pour le moment. Les seuls types pris en charge sont les types valeurs et les chaînes de caractères.
 
 ::
 
@@ -411,32 +411,32 @@ Not all types for constants are implemented at this time. The only supported typ
 .. _functions:
 
 *********
-Functions
+Fonctions
 *********
 
 .. index:: ! view function, function;view
 
 .. _view-functions:
 
-View Functions
+Fonctions View
 ==============
 
-Functions can be declared ``view`` in which case they promise not to modify the state.
+Les fonctions peuvent être déclarées ``view``, auquel cas elles promettent de ne pas modifier l'état.
 
 .. note::
-  If the compiler's EVM target is Byzantium or newer (default) the opcode ``STATICCALL`` is used for ``view`` functions which enforces the state to stay unmodified as part of the EVM execution. For library ``view`` functions ``DELEGATECALL`` is used, because there is no combined ``DELEGATECALL`` and ``STATICCALL``.
-  This means library ``view`` functions do not have run-time checks that prevent state modifications. This should not impact security negatively because library code is usually known at compile-time and the static checker performs compile-time checks.
+  Si la cible EVM du compilateur est Byzantium ou plus récent (par défaut), l'opcode ``STATICCALL`` est utilisé pour les fonctions ``view`` qui imposent à l'état de rester non modifié lors de l'exécution EVM. Pour les librairies, on utilise les fonctions ``view`` et ``DELEGATECALL`` parce qu'il n'y a pas de ``DELEGATECALL`` et ``STATICCALL`` combinés.
+  Cela signifie que les fonctions ``view`` de librairies n'ont pas de contrôles d'exécution qui empêchent les modifications d'état. Cela ne devrait pas avoir d'impact négatif sur la sécurité car le code de librairies est généralement connu au moment de la compilation et le vérificateur statique effectue les vérifications au moment de la compilation.
 
-The following statements are considered modifying the state:
+Les déclarations suivantes sont considérées comme une modification de l'état :
 
-#. Writing to state variables.
-#. :ref:`Emitting events <events>`.
-#. :ref:`Creating other contracts <creating-contracts>`.
-#. Using ``selfdestruct``.
-#. Sending Ether via calls.
-#. Calling any function not marked ``view`` or ``pure``.
-#. Using low-level calls.
-#. Using inline assembly that contains certain opcodes.
+#. Ecrire dans les variables d'état.
+#. :ref:`Emettre des événements <events>`.
+#. :ref:`Création d'autres contrats <creating-contracts>`.
+#. Utiliser ``selfdestruct``.
+#. Envoyer des Ethers par des appels.
+#. Appeler une fonction qui n'est pas marquée ``view`` ou ``pure``.
+#. Utilisation d'appels bas niveau.
+#. Utilisation d'assembleur inline qui contient certains opcodes.
 
 ::
 
@@ -449,38 +449,38 @@ The following statements are considered modifying the state:
     }
 
 .. note::
-  ``constant`` on functions used to be an alias to ``view``, but this was dropped in version 0.5.0.
+  ``constant`` sur les fonctions était un alias de ``view``, mais cela a été abandonné dans la version 0.5.0.
 
 .. note::
-  Getter methods are automatically marked ``view``.
+  Les méthodes Getter sont automatiquement marquées ``view``.
 
 .. note::
-  Prior to version 0.5.0, the compiler did not use the ``STATICCALL`` opcode
-  for ``view`` functions.
-  This enabled state modifications in ``view`` functions through the use of
-  invalid explicit type conversions.
-  By using  ``STATICCALL`` for ``view`` functions, modifications to the
-  state are prevented on the level of the EVM.
+  Avant la version 0.5.0, le compilateur n'utilisait pas l'opcode ``STATICCALL``.
+  pour les fonctions ``view``.
+  Cela permettait de modifier l'état des fonctions ``view`` grâce à l'utilisation de
+  conversions de type explicites non valides.
+  En utilisant ``STATICCALL`` pour les fonctions ``view``, les modifications de la fonction
+  sont évités au niveau de l'EVM.
 
 .. index:: ! pure function, function;pure
 
 .. _pure-functions:
 
-Pure Functions
+Fonctions Pure
 ==============
 
-Functions can be declared ``pure`` in which case they promise not to read from or modify the state.
+Les fonctions peuvent être déclarées ``pures``, auquel cas elles promettent de ne pas lire ou modifier l'état.
 
 .. note::
-  If the compiler's EVM target is Byzantium or newer (default) the opcode ``STATICCALL`` is used, which does not guarantee that the state is not read, but at least that it is not modified.
+  Si la cible EVM du compilateur est Byzantium ou plus récente (par défaut), on utilise l'opcode ``STATICCALL``, ce qui ne garantit pas que l'état ne soit pas lu, mais au moins qu'il ne soit pas modifié.
 
-In addition to the list of state modifying statements explained above, the following are considered reading from the state:
+En plus de la liste des modificateurs d'état expliqués ci-dessus, sont considérés comme des lectures de l'état :
 
-#. Reading from state variables.
-#. Accessing ``address(this).balance`` or ``<address>.balance``.
-#. Accessing any of the members of ``block``, ``tx``, ``msg`` (with the exception of ``msg.sig`` and ``msg.data``).
-#. Calling any function not marked ``pure``.
-#. Using inline assembly that contains certain opcodes.
+#. Lecture des variables d'état.
+#. Accéder à ``address(this).balance`` ou ``<address>.balance``.
+#. Accéder à l'un des membres de ``block``, ``tx``, ``msg`` (à l'exception de ``msg.sig`` et ``msg.data``).
+#. Appeler une fonction qui n'est pas marquée ``pure``.
+#. Utilisation d'assembleur inline qui contient certains opcodes.
 
 ::
 
@@ -493,55 +493,55 @@ In addition to the list of state modifying statements explained above, the follo
     }
 
 .. note::
-  Prior to version 0.5.0, the compiler did not use the ``STATICCALL`` opcode for ``pure`` functions.
-  This enabled state modifications in ``pure`` functions through the use of invalid explicit type conversions.
-  By using  ``STATICCALL`` for ``pure`` functions, modifications to the state are prevented on the level of the EVM.
+  Avant la version 0.5.0, le compilateur n'utilisait pas l'opcode ``STATICCALL`` pour les fonctions ``pure``.
+  Cela permettait de modifier l'état des fonctions ``pures`` en utilisant des conversions de type explicites invalides.
+  En utilisant ``STATICCALL`` pour des fonctions ``pures``, les modifications de l'état sont empêchées au niveau de l'EVM.
 
-.. warning::
-  It is not possible to prevent functions from reading the state at the level of the EVM, it is only possible to prevent them from writing to the state (i.e. only ``view`` can be enforced at the EVM level, ``pure`` can not).
+.. avertissement::
+  Il n'est pas possible d'empêcher les fonctions de lire l'état au niveau de l'EVM, il est seulement possible de les empêcher d'écrire dans l'état (c'est-à-dire que seul "view" peut être exécuté au niveau de l'EVM, ``pure`` ne peut pas).
 
-.. warning::
-  Before version 0.4.17 the compiler did not enforce that ``pure`` is not reading the state.
-  It is a compile-time type check, which can be circumvented doing invalid explicit conversions between contract types, because the compiler can verify that the type of the contract does not do state-changing operations, but it cannot check that the contract that will be called at runtime is actually of that type.
+.. avertissement::
+  Avant la version 0.4.17, le compilateur n'appliquait pas le fait que ``pure`` ne lisait pas l'état.
+  Il s'agit d'un contrôle de type à la compilation, qui peut être contourné en effectuant des conversions explicites invalides entre les types de contrats, parce que le compilateur peut vérifier que le type de contrat ne fait pas d'opérations de changement d'état, mais il ne peut pas vérifier que le contrat qui sera appelé à l'exécution est effectivement de ce type.
 
 .. index:: ! fallback function, function;fallback
 
 .. _fallback-function:
 
-Fallback Function
+Fonction de repli
 =================
 
-A contract can have exactly one unnamed function. This function cannot have arguments, cannot return anything and has to have ``external`` visibility.
-It is executed on a call to the contract if none of the other functions match the given function identifier (or if no data was supplied at all).
+Un contrat peut avoir exactement une fonction sans nom. Cette fonction ne peut pas avoir d'arguments, ne peut rien retourner et doit avoir une visibilité ``external``.
+Elle est exécutée lors d'un appel au contrat si aucune des autres fonctions ne correspond à l'identificateur de fonction donné (ou si aucune donnée n'a été fournie).
 
-Furthermore, this function is executed whenever the contract receives plain Ether (without data). Additionally, in order to receive Ether, the fallback function must be marked ``payable``. If no such function exists, the contract cannot receive
-Ether through regular transactions.
+En outre, cette fonction est exécutée chaque fois que le contrat reçoit des Ethers bruts (sans données). De plus, pour recevoir des Ethers, la fonction de fallback doit être marquée ``payable``. En l'absence d'une telle fonction, le contrat ne peut recevoir
+d'Ether par des transactions traditionnelles.
 
-In the worst case, the fallback function can only rely on 2300 gas being available (for example when `send` or `transfer` is used), leaving little room to perform other operations except basic logging. The following operations
-will consume more gas than the 2300 gas stipend:
+Dans le pire des cas, la fonction de fallback ne peut compter que sur la disponibilité de 2 300 gas (par exemple lorsque l'on utilise `send` ou `transfer`), ce qui laisse peu de place pour effectuer d'autres opérations que du log basique. Les opérations suivantes
+consommeront plus de gaz que le forfait de 2 300 gas alloué :
 
-- Writing to storage
-- Creating a contract
-- Calling an external function which consumes a large amount of gas
-- Sending Ether
+- Ecrire dans le stockage
+- Création d'un contrat
+- Appel d'une fonction externe qui consomme une grande quantité de gas
+- Envoi d'Ether
 
-Like any function, the fallback function can execute complex operations as long as there is enough gas passed on to it.
+Comme toute fonction, la fonction de fallback peut exécuter des opérations complexes tant que suffisamment de gas lui est transmis.
 
 .. note::
-    Even though the fallback function cannot have arguments, one can still use ``msg.data`` to retrieve any payload supplied with the call.
+    Même si la fonction de fallback ne peut pas avoir d'arguments, on peut toujours utiliser ``msg.data`` pour récupérer toute charge utile fournie avec l'appel.
 
-.. warning::
-    The fallback function is also executed if the caller meant to call a function that is not available. If you want to implement the fallback function only to receive ether, you should add a check like ``require(msg.data.length == 0)`` to prevent invalid calls.
+.. avertissement::
+    La fonction de fallback est également exécutée si l'appelant a l'intention d'appeler une fonction qui n'est pas disponible. Si vous voulez implémenter la fonction de fallback uniquement pour recevoir de l'Ether, vous devez ajouter une vérification comme ``require(msg.data.length == 0)`` pour éviter les appels invalides.
 
-.. warning::
-    Contracts that receive Ether directly (without a function call, i.e. using ``send`` or ``transfer``) but do not define a fallback function throw an exception, sending back the Ether (this was different before Solidity v0.4.0). So if you want your contract to receive Ether, you have to implement a payable fallback function.
+.. avertissement::
+    Les contrats qui reçoivent directement l'Ether (sans appel de fonction, c'est-à-dire en utilisant ``send`` ou `` transfer``) mais ne définissent pas de fonction de fallback lèvent une exception, renvoyant l'Ether (c'était différent avant Solidity v0.4.0). Donc si vous voulez que votre contrat reçoive de l'Ether, vous devez implémenter une fonction de fallback ``payable``.
 
-.. warning::
-    A contract without a payable fallback function can receive Ether as a recipient of a `coinbase transaction` (aka `miner block reward`) or as a destination of a ``selfdestruct``.
+.. avertissement::
+    Un contrat sans fonction de fallback payable peut recevoir de l'Ether en tant que destinataire d'une `coinbase transaction` (alias `récompense de mineur de bloc`) ou en tant que destination d'un ``selfdestruct``.
 
-    A contract cannot react to such Ether transfers and thus also cannot reject them. This is a design choice of the EVM and Solidity cannot work around it.
+    Un contrat ne peut pas réagir à de tels transferts d'Ether et ne peut donc pas non plus les rejeter. C'est un choix de conception de l'EVM et Solidity ne peut le contourner.
 
-    It also means that ``address(this).balance`` can be higher than the sum of some manual accounting implemented in a contract (i.e. having a counter updated in the fallback function).
+    Cela signifie également que ``address(this).balance`` peut être plus élevé que la somme de certaines comptabilités manuelles implémentées dans un contrat (i.e. avoir un compteur mis à jour dans la fonction fallback).
 
 ::
 
