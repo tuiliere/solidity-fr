@@ -601,9 +601,9 @@ The following example shows overloading of the function ``f`` in the scope of co
             out = _in;
         }
 
-        function f(uint _in, bool _really) public pure returns (uint out) {
+        function f(uint _in, bool _really) public pure returns (int out) {
             if (_really)
-                out = _in;
+                out = (int)_in;
         }
     }
 
@@ -619,8 +619,8 @@ Overloaded functions are also present in the external interface. It is an error 
             out = _in;
         }
 
-        function f(address _in) public pure returns (address out) {
-            out = _in;
+        function f(address _in, address _in2) public pure returns (B out) {
+            out = B(_in);
         }
     }
 
