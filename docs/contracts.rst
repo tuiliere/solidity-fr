@@ -585,7 +585,7 @@ Comme toute fonction, la fonction de fallback peut exécuter des opérations com
 
 .. _overload-function:
 
-Surcharge de fonctions
+Surcharge de  (overload)
 ====================
 
 Un contrat peut avoir plusieurs fonctions du même nom, mais avec des types de paramètres différents.
@@ -628,15 +628,15 @@ Des fonctions surchargées sont également présentes dans l'interface externe. 
     }
 
 
-Both ``f`` function overloads above end up accepting the address type for the ABI although they are considered different inside Solidity.
+Les deux fonctions ``f`` surchargées ci-dessus acceptent des addresses du point de vue de l'ABI, mais ces adresses sont considérées comme différents types en Solidity.
 
-Overload resolution and Argument matching
+Résolution des surcharges et concordance des arguments
 -----------------------------------------
 
-Overloaded functions are selected by matching the function declarations in the current scope to the arguments supplied in the function call. Functions are selected as overload candidates if all arguments can be implicitly converted to the expected types. If there is not exactly one candidate, resolution fails.
+Les fonctions surchargées sont sélectionnées en faisant correspondre les déclarations de fonction dans le scope actuel aux arguments fournis dans l'appel de fonction. La fonction évaluée est choisie si tous les arguments peuvent être implicitement convertis en types attendus. S'il y a plusieurs fonctions correspondantes, la résolution échoue.
 
 .. note::
-    Return parameters are not taken into account for overload resolution.
+    Le type des valeurs retournées par la fonction n'est pas pris en compte dans la résolution des surcharges.
 
 ::
 
@@ -652,31 +652,32 @@ Overloaded functions are selected by matching the function declarations in the c
         }
     }
 
-Calling ``f(50)`` would create a type error since ``50`` can be implicitly converted both to ``uint8`` and ``uint256`` types. On another hand ``f(256)`` would resolve to ``f(uint256)`` overload as ``256`` cannot be implicitly converted to ``uint8``.
+L'appel de ``f(50)`` créerait une erreur de type puisque ``50`` peut être implicitement converti à la fois en type ``uint8`` et ``uint256``. D'un autre côté, ``f(256)`` se résoudrait à ``f(uint256)`` car ``256`` ne peut pas être implicitement converti en ``uint8``.
 
 .. index:: ! event
 
 .. _events:
 
 ******
-Events
+Événements
 ******
 
-Solidity events give an abstraction on top of the EVM's logging functionality.
-Applications can subscribe and listen to these events through the RPC interface of an Ethereum client.
+Les événements Solidity autorisent une abstraction en plus de la fonctionnalité de journalisation de l'EVM.
+Les applications peuvent souscrire à et écouter ces événements via l'interface RPC d'un client Ethereum.
 
-Events are inheritable members of contracts. When you call them, they cause the arguments to be stored in the transaction's log - a special data structure in the blockchain. These logs are associated with the address of the contract, are incorporated into the blockchain, and stay there as long as a block is accessible (forever as of the Frontier and Homestead releases, but this might change with Serenity). The Log and its event data is not accessible from within contracts (not even from the contract that created them).
+Les événements sont des membres héritables des contrats. Lorsque vous les appelez, ils font en sorte que les arguments soient stockés dans le journal des transactions - une structure de données spéciale dans la blockchain. Ces logs sont associés à l'adresse du contrat, sont incorporés dans la blockchain et y restent tant qu'un bloc est accessible (pour toujours à partir des versions Frontier et Homestead, mais cela peut changer avec Serenity). Le journal et ses données d'événement ne sont pas accessibles depuis les contrats (pas même depuis le contrat qui les a créés).
 
-It is possible to request a simple payment verification (SPV) for logs, so if an external entity supplies a contract with such a verification, it can check that the log actually exists inside the blockchain. You have to supply block headers because the contract can only see the last 256 block hashes.
+Il est possible de demander une simple vérification de paiement (SPV) pour les logs, de sorte que si une entité externe fournit un contrat avec une telle vérification, elle peut vérifier que le log existe réellement dans la blockchain. Vous devez fournir des en-têtes (headers) de bloc car le contrat ne peut voir que les 256 derniers hashs de blocs.
 
-You can add the attribute ``indexed`` to up to three parameters which adds them to a special data structure known as :ref:`"topics" <abi_events>` instead of the data part of the log. If you use arrays (including ``string`` and ``bytes``)
-as indexed arguments, its Keccak-256 hash is stored as a topic instead, this is because a topic can only hold a single word (32 bytes).
+Vous pouvez ajouter l'attribut ``indexed`` à un maximum de trois paramètres qui les ajoute à une structure de données spéciale appelée :ref:`"topics" <abi_events>` au lieu de la partie data du log. Si vous utilisez des tableaux (y compris les ``string`` et ``bytes``)
+comme arguments indexés, leurs hashs Keccak-256 sont stockés comme topic à la place, car un topic ne peut contenir qu'un seul mot (32 octets).
 
-All parameters without the ``indexed`` attribute are :ref:`ABI-encoded <ABI>` into the data part of the log.
+Tous les paramètres sans l'attribut ``indexed`` sont :ref:`ABI-encoded <ABI>` dans la partie données du log.
 
-Topics allow you to search for events, for example when filtering a sequence of blocks for certain events. You can also filter events by the address of the contract that emitted the event.
+Les topics vous permettent de rechercher des événements, par exemple lors du filtrage d'une séquence de blocs pour certains événements. Vous pouvez également filtrer les événements par l'adresse du contrat qui les a émis.
 
-For example, the code below uses the web3.js ``subscribe("logs")`` `method <https://web3js.readthedocs.io/en/1.0/web3-eth-subscribe.html#subscribe-logs>`_ to filter logs that match a topic with a certain address value:
+Par exemple, le code ci-dessous utilise web3.js ``subscribe("logs")``
+`method <https://web3js.readthedocs.io/en/1.0/web3-eth-subscribe.html#subscribe-logs>`_  pour filtrer les logs qui correspondent à un sujet avec une certaine valeur d'adresse :
 
 .. code-block:: javascript
 
@@ -696,7 +697,7 @@ For example, the code below uses the web3.js ``subscribe("logs")`` `method <http
     });
 
 
-The hash of the signature of the event is one of the topics, except if you declared the event with the ``anonymous`` specifier. This means that it is not possible to filter for specific anonymous events by name.
+Le hash de la signature de l'event est l'un des topics, sauf si vous avez déclaré l'événement avec le spécificateur "anonymous". Cela signifie qu'il n'est pas possible de filtrer des événements anonymes spécifiques par leur nom.
 
 ::
 
@@ -710,20 +711,20 @@ The hash of the signature of the event is one of the topics, except if you decla
         );
 
         function deposit(bytes32 _id) public payable {
-            // Events are emitted using `emit`, followed by
-            // the name of the event and the arguments
-            // (if any) in parentheses. Any such invocation
-            // (even deeply nested) can be detected from
-            // the JavaScript API by filtering for `Deposit`.
+            // Les événements sont émis à l'aide de `emit`, suivi du
+            // nom de l'événement et des arguments
+            // (le cas échéant) entre parenthèses. Une telle invocation
+            // (même profondément imbriquée) peut être détectée à partir de
+            // l'API JavaScript en filtrant `Deposit`.
             emit Deposit(msg.sender, _id, msg.value);
         }
     }
 
-The use in the JavaScript API is as follows:
+L'utilisation dans l'API JavaScript est la suivante :
 
 ::
 
-    var abi = /* abi as generated by the compiler */;
+    var abi = /* abi telle que génerée par le compilateur */;
     var ClientReceipt = web3.eth.contract(abi);
     var clientReceipt = ClientReceipt.at("0x1234...ab67" /* address */);
 
