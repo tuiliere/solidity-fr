@@ -726,14 +726,14 @@ L'utilisation dans l'API JavaScript est la suivante :
 
     var abi = /* abi telle que génerée par le compilateur */;
     var ClientReceipt = web3.eth.contract(abi);
-    var clientReceipt = ClientReceipt.at("0x1234...ab67" /* address */);
+    var clientReceipt = ClientReceipt.at("0x1234...ab67" /* adresse */);
 
     var event = clientReceipt.Deposit();
 
-    // watch for changes
+    // inspecter les eventuels changements
     event.watch(function(error, result){
-        // result contains non-indexed arguments and topics
-        // given to the `Deposit` call.
+        // le résultat contient des arguments et topics non indexés
+        // passées à l'appel de `Deposit`.
         if (!error)
             console.log(result);
     });
