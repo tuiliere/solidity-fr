@@ -585,7 +585,7 @@ Comme toute fonction, la fonction de fallback peut exécuter des opérations com
 
 .. _overload-function:
 
-Surcharge de  (overload)
+Surcharge de fonctions (overload)
 ====================
 
 Un contrat peut avoir plusieurs fonctions du même nom, mais avec des types de paramètres différents.
@@ -739,13 +739,13 @@ L'utilisation dans l'API JavaScript est la suivante :
     });
 
 
-    // Or pass a callback to start watching immediately
+    // Ou passez une fonction pour ecouter dès maintenant
     var event = clientReceipt.Deposit(function(error, result) {
         if (!error)
             console.log(result);
     });
 
-The output of the above looks like the following (trimmed):
+La sortie du code ci-dessus ressemble à (trimmée):
 
 .. code-block:: json
 
@@ -763,11 +763,11 @@ The output of the above looks like the following (trimmed):
 
 .. index:: ! log
 
-Low-Level Interface to Logs
+Interface bas-niveau des Logs
 ===========================
 
-It is also possible to access the low-level interface to the logging mechanism via the functions ``log0``, ``log1``, ``log2``, ``log3`` and ``log4``.
-``logi`` takes ``i + 1`` parameter of type ``bytes32``, where the first argument will be used for the data part of the log and the others as topics. The event call above can be performed in the same way as
+Il est également possible d'accéder à l'interface bas niveau du mécanisme de logs via les fonctions ``log0``, ``log1``, ``log2``, ``log3`` et ``log4``.
+``logi`` prend le paramètre ``i + 1`` paramètre de type ``bytes32``, où le premier argument sera utilisé pour la partie données du journal et les autres comme sujets. L'appel d'événement ci-dessus peut être effectué de la même manière que
 
 ::
 
@@ -785,33 +785,33 @@ It is also possible to access the low-level interface to the logging mechanism v
         }
     }
 
-where the long hexadecimal number is equal to ``keccak256("Deposit(address,bytes32,uint256)")``, the signature of the event.
+où le nombre hexadécimal long est égal à ``keccak256("Deposit(address,bytes32,uint256)")``, la signature de l'événement.
 
-Additional Resources for Understanding Events
+Ressources complémentaires pour comprendre les Events
 ==============================================
 
 - `Javascript documentation <https://github.com/ethereum/wiki/wiki/JavaScript-API#contract-events>`_
-- `Example usage of events <https://github.com/debris/smart-exchange/blob/master/lib/contracts/SmartExchange.sol>`_
-- `How to access them in js <https://github.com/debris/smart-exchange/blob/master/lib/exchange_transactions.js>`_
+- `Exemples d usage des events <https://github.com/debris/smart-exchange/blob/master/lib/contracts/SmartExchange.sol>`_
+- `Comment y accéder en js <https://github.com/debris/smart-exchange/blob/master/lib/exchange_transactions.js>`_
 
 .. index:: ! inheritance, ! base class, ! contract;base, ! deriving
 
 ***********
-Inheritance
+Héritage
 ***********
 
-Solidity supports multiple inheritance by copying code including polymorphism.
+Solidity supporte l'héritage multiple en copiant du code, incluant le polymorphisme.
 
-All function calls are virtual, which means that the most derived function is called, except when the contract name is explicitly given.
+Tous les appels de fonction sont virtuels, ce qui signifie que la fonction la plus dérivée est appelée, sauf lorsque le nom du contrat est explicitement donné.
 
-When a contract inherits from other contracts, only a single
-contract is created on the blockchain, and the code from all the base contracts
-is copied into the created contract.
+Lorsqu'un contrat hérite d'autres contrats, un seul contrat
+est créé dans la blockchain et le code de tous les contrats de base
+est copié dans le contrat créé.
 
-The general inheritance system is very similar to `Python's <https://docs.python.org/3/tutorial/classes.html#inheritance>`_,
-especially concerning multiple inheritance, but there are also some :ref:`differences <multi-inheritance>`.
+Le système général d'héritage est très similaire à celui de `Python <https://docs.python.org/3/tutorial/classes.html#inheritance>`_,
+surtout en ce qui concerne l'héritage multiple, mais il y a aussi quelques :ref:`differences <multi-inheritance>`.
 
-Details are given in the following example.
+Les détails sont donnés dans l'exemple suivant.
 
 ::
 
@@ -822,14 +822,14 @@ Details are given in the following example.
         address payable owner;
     }
 
-    // Use `is` to derive from another contract. Derived contracts can access all non-private members including internal functions and state variables. These cannot be accessed externally via `this`, though.
+    // Utilisez `is` pour dériver d'un autre contrat. Les contrats dérivés peuvent accéder à tous les membres non privés, y compris les fonctions internes et les variables d'état. Il n'est cependant pas possible d'y accéder de l'extérieur via `this`.
     contract mortal is owned {
         function kill() public {
             if (msg.sender == owner) selfdestruct(owner);
         }
     }
 
-    // These abstract contracts are only provided to make the interface known to the compiler. Note the function without body. If a contract does not implement all functions it can only be used as an interface.
+    // Ces contrats abstraits ne sont fournis que pour faire connaître l'interface au compilateur. Notez la fonction sans corps. Si un contrat n'implémente pas toutes les fonctions, il ne peut être utilisé que comme interface.
     contract Config {
         function lookup(uint id) public returns (address adr);
     }
@@ -839,26 +839,26 @@ Details are given in the following example.
         function unregister() public;
      }
 
-    // Multiple inheritance is possible. Note that `owned` is also a base class of `mortal`, yet there is only a single instance of `owned` (as for virtual inheritance in C++).
+    // L'héritage multiple est possible. Notez que `owned` est aussi une classe de base de `mortal`, pourtant il n'y a qu'une seule instance de `owned` (comme pour l'héritage virtuel en C++).
     contract named is owned, mortal {
         constructor(bytes32 name) public {
             Config config = Config(0xD5f9D8D94886E70b06E474c3fB14Fd43E2f23970);
             NameReg(config.lookup(1)).register(name);
         }
 
-        // Functions can be overridden by another function with the same name and the same number/types of inputs.  If the overriding function has different types of output parameters, that causes an error.
-        // Both local and message-based function calls take these overrides into account.
+        // Les fonctions peuvent être remplacées par une autre fonction ayant le même nom et le même nombre/type d'entrées.  Si la fonction de surcharge a différents types de paramètres de sortie, cela provoque une erreur.
+        // Les appels de fonction locaux et les appels de fonction basés sur la messagerie tiennent compte de ces dérogations.
         function kill() public {
             if (msg.sender == owner) {
                 Config config = Config(0xD5f9D8D94886E70b06E474c3fB14Fd43E2f23970);
                 NameReg(config.lookup(1)).unregister();
-                // It is still possible to call a specific overridden function.
+                // Il est toujours possible d'appeler une fonction spécidique surchagée.
                 mortal.kill();
             }
         }
     }
 
-    // If a constructor takes an argument, it needs to be provided in the header (or modifier-invocation-style at the constructor of the derived contract (see below)).
+    // Si un constructeur prend un argument, il doit être fourni dans l'en-tête (ou dans le constructeur du contrat dérivé (voir ci-dessous)).
     contract PriceFeed is owned, mortal, named("GoldFeed") {
        function updateInfo(uint newInfo) public {
           if (msg.sender == owner) info = newInfo;
@@ -869,8 +869,7 @@ Details are given in the following example.
        uint info;
     }
 
-Note that above, we call ``mortal.kill()`` to "forward" the destruction request. The way this is done is problematic, as
-seen in the following example::
+Notez que ci-dessus, nous appelons ``mortal.kill()`` pour "transmettre" la demande de destruction. La façon dont cela est fait est problématique, comme vu dans l'exemple suivant::
 
     pragma solidity >=0.4.22 <0.6.0;
 
@@ -896,7 +895,7 @@ seen in the following example::
     contract Final is Base1, Base2 {
     }
 
-A call to ``Final.kill()`` will call ``Base2.kill`` as the most derived override, but this function will bypass ``Base1.kill``, basically because it does not even know about ``Base1``.  The way around this is to use ``super``::
+Un appel à ``Final.kill()`` appellera ``Base2.kill`` comme étant la priorité la plus dérivée, mais cette fonction contournera ``Base1.kill``, essentiellement parce qu'elle ne sait même pas pour ``Base1``.  Le moyen de contourner ce problème est d'utiliser ``super``.::
 
     pragma solidity >=0.4.22 <0.6.0;
 
@@ -923,25 +922,25 @@ A call to ``Final.kill()`` will call ``Base2.kill`` as the most derived override
     contract Final is Base1, Base2 {
     }
 
-If ``Base2`` calls a function of ``super``, it does not simply call this function on one of its base contracts.  Rather, it calls this function on the next base contract in the final inheritance graph, so it will call ``Base1.kill()`` (note that the final inheritance sequence is -- starting with the most derived contract: Final, Base2, Base1, mortal, owned).
-The actual function that is called when using super is not known in the context of the class where it is used, although its type is known. This is similar for ordinary virtual method lookup.
+Si ``Base2`` appelle une fonction de ``super``, elle n'appelle pas simplement cette fonction sur un de ses contrats de base.  Elle appelle plutôt cette fonction sur le prochain contrat de base dans le graph d'héritage final, donc elle appellera ``Base1.kill()`` (notez que la séquence d'héritage finale est -- en commençant par le contrat le plus dérivé : Final, Base2, Base1, mortal, owned).
+La fonction réelle qui est appelée lors de l'utilisation de super n'est pas connue dans le contexte de la classe où elle est utilisée, bien que son type soit connu. Il en va de même pour la recherche de méthodes virtuelles ordinaires.
 
 .. index:: ! constructor
 
 .. _constructor:
 
-Constructors
+Constructeurs
 ============
 
-A constructor is an optional function declared with the ``constructor`` keyword which is executed upon contract creation, and where you can run contract initialisation code.
+Un constructeur est une fonction optionnelle déclarée avec le mot-clé ``constructeur`` qui est exécuté lors de la création du contrat, et où vous pouvez exécuter le code d'initialisation du contrat.
 
-Before the constructor code is executed, state variables are initialised to their specified value if you initialise them inline, or zero if you do not.
+Avant l'exécution du code constructeur, les variables d'état sont initialisées à leur valeur spécifiée si vous les initialisez en ligne, ou à zéro si vous ne le faites pas.
 
-After the constructor has run, the final code of the contract is deployed to the blockchain. The deployment of the code costs additional gas linear to the length of the code.
-This code includes all functions that are part of the public interface and all functions that are reachable from there through function calls.
-It does not include the constructor code or internal functions that are only called from the constructor.
+Après l'exécution du constructeur, le code final du contrat est déployé dans la chaîne de blocs. Le déploiement du code coûte du gas supplémentaire linéairement à la longueur du code.
+Ce code inclut toutes les fonctions qui font partie de l'interface publique et toutes les fonctions qui sont accessibles à partir de là par des appels de fonctions.
+Il n'inclut pas le code constructeur ni les fonctions internes qui ne sont appelées que par le constructeur.
 
-Constructor functions can be either ``public`` or ``internal``. If there is no constructor, the contract will assume the default constructor, which is equivalent to ``constructor() public {}``. For example:
+Les fonctions du constructeur peuvent être ``public`` ou ``internal``. S'il n'y a pas de constructeur, le contrat assumera le constructeur par défaut, ce qui est équivalent à ``constructor() public {}}``. Par exemple :
 
 ::
 
@@ -959,19 +958,19 @@ Constructor functions can be either ``public`` or ``internal``. If there is no c
         constructor() public {}
     }
 
-A constructor set as ``internal`` causes the contract to be marked as :ref:`abstract <abstract-contract>`.
+Un constructeur déclaré ``internal`` rend le contrat :ref:`abstract <abstract-contract>`.
 
-.. warning ::
-    Prior to version 0.4.22, constructors were defined as functions with the same name as the contract.
-    This syntax was deprecated and is not allowed anymore in version 0.5.0.
+.. attention ::
+    Avant 0.4.22, ont été définis comme des fonctions portant le même nom que le contrat.
+    Cette syntaxe a été dépréciée et n'est plus autorisée dans la version 0.5.0.
 
 
 .. index:: ! base;constructor
 
-Arguments for Base Constructors
+Arguments des Constructeurs de Base
 ===============================
 
-The constructors of all the base contracts will be called following the linearization rules explained below. If the base constructors have arguments, derived contracts need to specify all of them. This can be done in two ways::
+Les constructeurs de tous les contrats de base seront appelés selon les règles de linéarisation expliquées ci-dessous. Si les constructeurs de base ont des arguments, les contrats dérivés doivent les spécifier tous. Cela peut se faire de deux façons::
 
     pragma solidity >=0.4.22 <0.6.0;
 
