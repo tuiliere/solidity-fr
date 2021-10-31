@@ -8,8 +8,7 @@ Solidity
 
 Solidity est un langage haut-niveau, orienté objet dédié à l'implémentation de smart contracts. Les smart contracts (littéralement contrats intelligents) sont des programes qui régissent le comportement de comptes dans l'état d'Ethereum.
 
-Solidity a été influencé par C++, Python et JavaScript et est conçu pour cibler
-la machine virtuelle Ethereum (EVM).
+Solidity a été influencé par C++, Python et JavaScript et est conçu pour cibler la machine virtuelle Ethereum (EVM).
 
 Solidity est statiquement typé, supporte l'héritage, les librairies et les bibliothèques, ainsi
 que les types complexes définis par l'utilisateur parmi d'autres caractéristiques.
@@ -17,32 +16,34 @@ que les types complexes définis par l'utilisateur parmi d'autres caractéristiq
 Avec Solidity, vous pouvez créer des contrats pour des usages tels que le vote, le crowdfunding, les enchères à l'aveugle,
 et portefeuilles multi-signature.
 
-When deploying contracts, you should use the latest released
-version of Solidity. This is because breaking changes as well as
-new features and bug fixes are introduced regularly. We currently use
-a 0.x version number `to indicate this fast pace of change <https://semver.org/#spec-item-4>`_.
+Pour déploye des contrat, vous devriez utiliser la dernière version disponible ne téléchargement de Solidity. 
+Ceci car des changements importants, des corrections de bugs et de nouvelles caractèristiques sont introduits  régulièrement. 
 
-.. warning::
+Nous utilison actuellement un numéro 0.x pour indiquer le changement rapide
+ <https://semver.org/#spec-item-4>`_.
 
-  Solidity recently released the 0.6.x version that introduced a lot of breaking
-  changes. Make sure you read :doc:`the full list <060-breaking-changes>`.
+.. Avertissement::
+
+  Solidity a récement introduit la version 0.6.x qavec beaucoup de chagements structurels. 
+  Lisez bien la documentation:doc:`the full list <060-breaking-changes>`.
 
 Documentation du langage
 ------------------------
 
-If you are new to the concept of smart contracts we recommend you start with
-:ref:`an example smart contract <simple-smart-contract>` written
-in Solidity. When you are ready for more detail, we recommend you read the
-:doc:`"Solidity by Example" <solidity-by-example>` and
-"Language Description" sections to learn the core concepts of the language.
+Si vous n'êtes pas familié avec le concept de smart contracts, nous vous recommendons de commencer avec
+:ref:`un exemple simple de smart contract <simple-smart-contract>` écrit en  Solidity. 
+Quand vous serez prêts pour davantage de détails, nous vous recommandons de lire
+:doc:`"Solidity par l'exemple" <solidity-by-example>` et
+les sections "Description u langage" pour apprendre les concepts de base du langage. 
 
-For further reading, try :ref:`the basics of blockchains <blockchain-basics>`
-and details of the :ref:`Ethereum Virtual Machine <the-ethereum-virtual-machine>`.
 
-.. hint::
-  Rappelez-vous que vous pouvez toujours essayer les contrats `dans votre navigateur <https://remix.ethereum.org>`_ ! Remix is a web browser based IDE
-  that allows you to write Solidity smart contracts, then deploy and run the
-  smart contracts. It can take a while to load, so please be patient.
+Pour une lecture plus avancée, essayez :ref:`the basics of blockchains <blockchain-basics>`
+et les détails de  :ref:`Ethereum Virtual Machine <the-ethereum-virtual-machine>`.
+
+.. Astuce::
+  Rappelez-vous que vous pouvez toujours essayer les contrats `dans votre navigateur <https://remix.ethereum.org>`_ ! Remix est un IDE dans un navigateu
+  permettant d'écrire des spart contracts Solidity, puis de déployer et exécuter les smart contracts. 
+  Cela peut prendre du temps; soyez donc patients. 
 
 .. warning::
     As humans write software, it can have bugs. You should follow established
