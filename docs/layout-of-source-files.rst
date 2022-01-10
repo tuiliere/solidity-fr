@@ -48,7 +48,7 @@ can be found at the `SPDX website <https://spdx.org/ids-how>`_.
 Pragmas
 =======
 
-Le mot-clé ``pragma``` peut être utilisé pour activer certaines fonctions ou vérifications du compilateur. Une directive pragma est toujours locale à un fichier source, donc vous devez donc ajouter pragma à tous vos fichiers si vous voulez l'activer dans tout votre projet.
+Le mot-clé ``pragma`` peut être utilisé pour activer certaines fonctions ou vérifications du compilateur. Une directive pragma est toujours locale à un fichier source, donc vous devez donc ajouter pragma à tous vos fichiers si vous voulez l'activer dans tout votre projet.
 Si vous :ref:`importez<import>` un autre fichier, le pragma de ce fichier ne s'appliquera *pas* automatiquement au fichier à importer.
 
 .. index:: ! pragma, version
