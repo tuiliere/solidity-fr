@@ -1,80 +1,95 @@
 Solidity
 ========
 
-Solidity est un langage haut-niveau, orienté objet dédié à l'implémentation de smart contracts. Les smart contracts (littéralement contrats intelligents) sont des programes qui régissent le comportement de comptes dans l'état d'Ethereum.
+.. image:: logo.svg
+    :width: 120px
+    :alt: Solidity logo
+    :align: center
+
+Solidity est un langage orienté objet et de haut niveau pour la 
+mise en œuvre de contrats intelligents. Les contrats intelligents 
+sont des programmes qui régissent le comportement des comptes dans l'état Ethereum.
+
+Solidity est un `langage d'accolades <https://en.wikipedia.org/wiki/List_of_programming_languages_by_type#Curly-bracket_languages>`_.
+Il est influencé par le C++, le Python et le JavaScript, et est conçu pour cibler la machine virtuelle Ethereum (EVM).
+Vous pouvez trouver plus de détails sur les langages dont Solidity s'est inspiré dans la section
+sur les :doc:`influences linguistiques <language-influences>`.
+
+Solidity est statiquement typé, supporte l'héritage, les bibliothèques et les 
+types complexes définis par l'utilisateur, entre autres caractéristiques.
+
+Avec Solidity, vous pouvez créer des contrats pour des utilisations telles que 
+le vote, le crowdfunding, les enchères à l'aveugle et les portefeuilles à signatures multiples.
+
+Lorsque vous déployez des contrats, vous devez utiliser la dernière version publiée
+de Solidity. Sauf cas exceptionnel, seule la dernière version reçoit des
+`correctifs de sécurité <https://github.com/ethereum/solidity/security/policy#supported-versions>`_.
+En outre, les changements de rupture ainsi que les
+nouvelles fonctionnalités sont introduites régulièrement. Nous utilisons actuellement
+un numéro de version 0.y.z `pour indiquer ce rythme rapide de changement <https://semver.org/#spec-item-4>`_.
 
 
-Solidity est un `curly-bracket language <https://en.wikipedia.org/wiki/List_of_programming_languages_by_type#Curly-bracket_languages>`_ (langage à accolades).
-Solidity a été influencé par C++, Python et JavaScript et est conçu pour cibler
-la machine virtuelle Ethereum (EVM).
-Plus d'informations sur les langages qui ont inspiré Solidity dans la section :doc:`language influences <language-influences>`.
+  Solidity a récemment publié la version 0.8.x qui a introduit de nombreux changements.
+  Assurez-vous de lire :doc:`la liste complète <080-breaking-changes>`.
 
-Solidity est statiquement typé, supporte l'héritage, les librairies et les bibliothèques, ainsi
-que les types complexes définis par l'utilisateur parmi d'autres caractéristiques.
-
-Avec Solidity, vous pouvez créer des contrats pour des usages tels que le vote, le crowdfunding, les enchères à l'aveugle,
-et portefeuilles multi-signature.
-
-Pour déployer des contrats, vous devriez utiliser la dernière version de Solidity publiée. Apart from exceptional cases, only the latest version receives
-`security fixes <https://github.com/ethereum/solidity/security/policy#supported-versions>`_.
-Ceci car des changements importants, des corrections de bugs et de nouvelles caractèristiques sont introduits régulièrement. We currently use
-a 0.y.z version number `to indicate this fast pace of change <https://semver.org/#spec-item-4>`_.
-
-Nous utilison actuellement un numéro 0.x pour indiquer le changement rapide
- <https://semver.org/#spec-item-4>`_.
-
-.. Avertissement::
-
-  Solidity a récement introduit la version 0.6.x avec beaucoup de changements structurels. 
-  Lisez bien la documentation:doc:`the full list <060-breaking-changes>`.
-
-Ideas for improving Solidity or this documentation are always welcome,
-read our :doc:`contributors guide <contributing>` for more details.
-
-.. Hint::
-
-  You can download this documentation as PDF, HTML or Epub by clicking on the versions
-  flyout menu in the bottom-left corner and selecting the preferred download format.
-
-
-Getting Started
----------------
-
-**1. Understand the Smart Contract Basics**
-
-Si vous n'êtes pas familier avec le concept de smart contracts, nous vous recommendons de commencer avec
-:ref:`un exemple simple de smart contract <simple-smart-contract>` écrit en  Solidity. 
-Quand vous serez prêts pour davantage de détails, nous vous recommandons de lire
-:doc:`"Solidity par l'exemple" <solidity-by-example>` et
-les sections "Description du langage" pour apprendre les concepts de base du langage. 
-
-
-Pour une lecture plus avancée, essayez :ref:`the basics of blockchains <blockchain-basics>`
-et les détails de  :ref:`Ethereum Virtual Machine <the-ethereum-virtual-machine>`.
-
-**2. Get to Know Solidity**
-
-Once you are accustomed to the basics, we recommend you read the :doc:`"Solidity by Example" <solidity-by-example>`
-and “Language Description” sections to understand the core concepts of the language.
-
-**3. Install the Solidity Compiler**
-
-There are various ways to install the Solidity compiler,
-simply choose your preferred option and follow the steps outlined on the :ref:`installation page <installing-solidity>`.
+Les idées pour améliorer Solidity ou cette documentation sont toujours les bienvenues,
+lisez notre :doc:`guide des contributeurs <contributing>` pour plus de détails.
 
 .. Astuce::
-  Rappelez-vous que vous pouvez toujours essayer les contrats `dans votre navigateur <https://remix.ethereum.org>`_ ! Remix est un IDE dans un navigateur
-  permettant d'écrire des smart contracts Solidity, puis de déployer et exécuter les smart contracts. 
-  Cela peut prendre du temps; soyez donc patients. 
+
+  Vous pouvez télécharger cette documentation au format PDF, HTML ou Epub en cliquant
+  sur le menu déroulant des versions dans le coin inférieur gauche et en sélectionnant
+  le format de téléchargement préféré.
+
+
+Pour commencer
+---------------
+
+**1. Comprendre les bases des contrats intelligents**
+
+Si le concept des contrats intelligents est nouveau pour vous, nous vous recommandons
+de commencer par vous plonger dans la section "Introduction aux contrats intelligents".
+dans la section "Introduction aux contrats intelligents", qui couvre :
+
+* :ref:`Un exemple simple de smart contract <simple-smart-contract>` écrit sous Solidity.
+* :ref:`Les bases de la blockchain <blockchain-basics>`.
+* :ref:`La Ethereum Virtual Machine <the-ethereum-virtual-machine>`.
+
+**2. Apprenez à connaître Solidity**
+
+Une fois que vous êtes habitué aux bases, nous vous recommandons de lire les sections :doc:`"Solidity by Example" <solidity-by-example>`
+et "Description du langage" pour comprendre les concepts fondamentaux du langage.
+
+**3. Installer le compilateur Solidity**
+
+Il existe plusieurs façons d'installer le compilateur Solidity.
+Il vous suffit de choisir votre option préférée et de suivre les étapes décrites sur la :ref:`installation page <installing-solidity>`.
+
+.. hint::
+  Vous pouvez essayer des exemples de code directement dans votre navigateur grâce à la fonction
+  `Remix IDE <https://remix.ethereum.org>`_. Remix est un IDE basé sur un navigateur web
+  qui vous permet d'écrire, de déployer et d'administrer les smart contracts Solidity,
+  sans avoir à sans avoir besoin d'installer Solidity localement.
 
 .. warning::
-    As humans write software, it can have bugs. You should follow established
-    software development best-practices when writing your smart contracts. This
-    includes code review, testing, audits, and correctness proofs. Smart contract
-    users are sometimes more confident with code than their authors, and
-    blockchains and smart contracts have their own unique issues to
-    watch out for, so before working on production code, make sure you read the
-    :ref:`security_considerations` section.
+    Comme les humains écrivent des logiciels, ceux-ci peuvent comporter des bugs.
+    Vous devez suivre les meilleures pratiques établies en matière de développement
+    de logiciels lorsque vous écrivez vos contrats intelligents. Cela inclut
+    la révision du code, les tests, les audits et les preuves de correction. Les utilisateurs
+    de contrats intelligents sont parfois plus confiants dans le code que ses auteurs,
+    et les blockchains et les contrats intelligents ont leurs propres problèmes à surveiller.
+    Avant de travailler sur le code de production, assurez-vous de lire la section :ref:`security_considerations`.
+
+**4. En savoir plus**
+
+Si vous souhaitez en savoir plus sur la création d'applications décentralisées sur Ethereum, le programme
+`Ethereum Developer Resources <https://ethereum.org/en/developers/>`_
+peut vous aider à trouver de la documentation générale sur Ethereum, ainsi qu'une large sélection de tutoriels,
+d'outils et de cadres de développement.
+
+Si vous avez des questions, vous pouvez essayer de chercher des réponses ou de les poser sur
+`Ethereum StackExchange <https://ethereum.stackexchange.com/>`_, ou
+sur notre `salon Gitter <https://gitter.im/ethereum/solidity/>`_.
 
 **4. Learn More**
 
@@ -90,15 +105,20 @@ our `Gitter channel <https://gitter.im/ethereum/solidity/>`_.
 .. _translations:
 
 Traductions
------------
+------------
 
-Cette documentation est traduite en plusieurs langues par des bénévoles de la communauté avec divers degrés d'exhaustivité et d'actualité. La version anglaise reste la référence.
+Des bénévoles de la communauté aident à traduire cette documentation
+en plusieurs langues. Leur degré d'exhaustivité et de mise à jour varie.
+La version anglaise est une référence.
 
 .. note::
 
-   We recently set up a new GitHub organization and translation workflow to help streamline the
-   community efforts. Please refer to the `translation guide <https://github.com/solidity-docs/translation-guide>`_
-   for information on how to contribute to the community translations moving forward.
+.. note::
+
+   Nous avons récemment mis en place une nouvelle organisation GitHub et un nouveau flux de
+   traduction pour aider à rationaliser les efforts de la communauté. Veuillez vous référer
+   au `guide de traduction <https://github.com/solidity-docs/translation-guide>`_
+   pour obtenir des informations sur la manière de contribuer aux traductions communautaires en cours.
 
 * `French <http://solidity-fr.readthedocs.io>`_ (en cours)
 * `Italian <https://github.com/damianoazzolini/solidity>`_ (en cours)
@@ -107,16 +127,16 @@ Cette documentation est traduite en plusieurs langues par des bénévoles de la 
 * `Russian <https://github.com/ethereum/wiki/wiki/%5BRussian%5D-%D0%A0%D1%83%D0%BA%D0%BE%D0%B2%D0%BE%D0%B4%D1%81%D1%82%D0%B2%D0%BE-%D0%BF%D0%BE-Solidity>`_ (plutôt dépassée)
 * `Simplified Chinese <https://learnblockchain.cn/docs/solidity/>`_ (en cours)
 * `Spanish <https://solidity-es.readthedocs.io>`_
-* `Turkish <https://github.com/denizozzgur/Solidity_TR/blob/master/README.md>`_ (partielle)
+* `Turkish <https://github.com/denizozzgur/Solidity_TR/blob/master/README.md>`_ (partial)
 
-Sommaire
+Contenu
 ========
 
-:ref:`Keyword Index <genindex>`, :ref:`Search Page <search>`
+:ref:`Index des mots-clés <genindex>`, :ref:`Page de recherche <search>`
 
 .. toctree::
    :maxdepth: 2
-   :caption: Les bases
+   :caption: Principes de base
 
    introduction-to-smart-contracts.rst
    installing-solidity.rst
@@ -124,7 +144,7 @@ Sommaire
 
 .. toctree::
    :maxdepth: 2
-   :caption: Description du langage
+   :caption: Description de la langue
 
    layout-of-source-files.rst
    structure-of-a-contract.rst
@@ -159,7 +179,7 @@ Sommaire
 
 .. toctree::
    :maxdepth: 2
-   :caption: Ressources additionelles
+   :caption: Matériel supplémentaire
 
    050-breaking-changes.rst
    060-breaking-changes.rst
