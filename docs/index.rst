@@ -15,7 +15,7 @@ Il est influencé par le C++, le Python et le JavaScript, et est conçu pour cib
 Vous pouvez trouver plus de détails sur les langages dont Solidity s'est inspiré dans la section
 sur les :doc:`influences linguistiques <language-influences>`.
 
-Solidity est statiquement typé, supporte l'héritage, les bibliothèques et les 
+Solidity est typé statiquement, supporte l'héritage, les bibliothèques et les 
 types complexes définis par l'utilisateur, entre autres caractéristiques.
 
 Avec Solidity, vous pouvez créer des contrats pour des utilisations telles que 
@@ -91,17 +91,6 @@ Si vous avez des questions, vous pouvez essayer de chercher des réponses ou de 
 `Ethereum StackExchange <https://ethereum.stackexchange.com/>`_, ou
 sur notre `salon Gitter <https://gitter.im/ethereum/solidity/>`_.
 
-**4. Learn More**
-
-If you want to learn more about building decentralized applications on Ethereum, the
-`Ethereum Developer Resources <https://ethereum.org/en/developers/>`_
-can help you with further general documentation around Ethereum, and a wide selection of tutorials,
-tools and development frameworks.
-
-If you have any questions, you can try searching for answers or asking on the
-`Ethereum StackExchange <https://ethereum.stackexchange.com/>`_, or
-our `Gitter channel <https://gitter.im/ethereum/solidity/>`_.
-
 .. _translations:
 
 Traductions
@@ -113,14 +102,12 @@ La version anglaise est une référence.
 
 .. note::
 
-.. note::
-
    Nous avons récemment mis en place une nouvelle organisation GitHub et un nouveau flux de
    traduction pour aider à rationaliser les efforts de la communauté. Veuillez vous référer
    au `guide de traduction <https://github.com/solidity-docs/translation-guide>`_
    pour obtenir des informations sur la manière de contribuer aux traductions communautaires en cours.
 
-* `French <http://solidity-fr.readthedocs.io>`_ (en cours)
+* `French <https://solidity-fr.readthedocs.io>`_ (en cours)
 * `Italian <https://github.com/damianoazzolini/solidity>`_ (en cours)
 * `Japanese <https://solidity-jp.readthedocs.io>`_
 * `Korean <http://solidity-kr.readthedocs.io>`_ (en cours)
