@@ -131,7 +131,7 @@ Contenu
 
 .. toctree::
    :maxdepth: 2
-   :caption: Description de la langue
+   :caption: Description du langage
 
    layout-of-source-files.rst
    structure-of-a-contract.rst
@@ -145,7 +145,7 @@ Contenu
 
 .. toctree::
    :maxdepth: 2
-   :caption: Compiler
+   :caption: Compilateur
 
    using-the-compiler.rst
    analysing-compilation-output.rst
@@ -153,7 +153,7 @@ Contenu
 
 .. toctree::
    :maxdepth: 2
-   :caption: Internals
+   :caption: Fonctionnement interne
 
    internals/layout_in_storage.rst
    internals/layout_in_memory.rst
@@ -166,7 +166,7 @@ Contenu
 
 .. toctree::
    :maxdepth: 2
-   :caption: Matériel supplémentaire
+   :caption: Ressources additionnelles
 
    050-breaking-changes.rst
    060-breaking-changes.rst
