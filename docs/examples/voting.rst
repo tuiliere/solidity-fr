@@ -15,11 +15,10 @@ Les personnes derrière les adresses peuvent alors choisir de voter elles-mêmes
 
 A la fin du temps de vote, la ``winningProposal()`` (proposition gagnante) retournera la proposition avec le plus grand nombre de votes.
 
-::
+.. code-block:: solidity
 
     // SPDX-License-Identifier: GPL-3.0
-    pragma solidity >=0.4.22 <0.7.0;
-
+    pragma solidity >=0.7.0 <0.9.0;
     /// @title Vote par délegation.
     contract Ballot {
         // Ceci déclare un type complexe, représentant
@@ -47,8 +46,13 @@ A la fin du temps de vote, la ``winningProposal()`` (proposition gagnante) retou
         // Un tableau dynamique de structs `Proposal`.
         Proposal[] public proposals;
 
+<<<<<<< HEAD
         /// Créé un nouveau bulletin pour choisir l'un des `proposalNames`.
-        constructor(bytes32[] memory proposalNames) public {
+        constructor(bytes32[] memory proposalNames) {
+=======
+        /// Create a new ballot to choose one of `proposalNames`.
+        constructor(bytes32[] memory proposalNames) {
+>>>>>>> 47d77931747aba8e364452537d989b795df7ca04
             chairperson = msg.sender;
             voters[chairperson].weight = 1;
 
@@ -68,7 +72,7 @@ A la fin du temps de vote, la ``winningProposal()`` (proposition gagnante) retou
 
         // Donne à un `voter` un droit de vote pour ce scrutin.
         // Peut seulement être appelé par `chairperson`.
-        function giveRightToVote(address voter) public {
+        function giveRightToVote(address voter) external {
             // Si le premier argument passé à `require` s'évalue
             // à `false`, l'exécution s'arrete et tous les changements
             // à l'état et aux soldes sont annulés.
@@ -78,7 +82,7 @@ A la fin du temps de vote, la ``winningProposal()`` (proposition gagnante) retou
             // pour vérifier si les appels de fonctions
             // s'effectuent correctement.
             // Comme second argument, vous pouvez fournir une
-            // phrase explicative de ce qui est allé de travers.
+            // phrase explicative de ce qui s'est mal passé.
             require(
                 msg.sender == chairperson,
                 "Only chairperson can give right to vote."
@@ -92,7 +96,7 @@ A la fin du temps de vote, la ``winningProposal()`` (proposition gagnante) retou
         }
 
         /// Delegue son vote au votant `to`.
-        function delegate(address to) public {
+        function delegate(address to) external {
             // assigne les références
             Voter storage sender = voters[msg.sender];
             require(!sender.voted, "You already voted.");
@@ -118,9 +122,12 @@ A la fin du temps de vote, la ``winningProposal()`` (proposition gagnante) retou
 
             // Comme `sender` est une référence, ceci
             // modifie `voters[msg.sender].voted`
+            Voter storage delegate_ = voters[to];
+
+            // Voters cannot delegate to wallets that cannot vote.
+            require(delegate_.weight >= 1);
             sender.voted = true;
             sender.delegate = to;
-            Voter storage delegate_ = voters[to];
             if (delegate_.voted) {
                 // Si le délégué a déjà voté,
                 // on ajoute directement le vote aux autres
@@ -133,7 +140,7 @@ A la fin du temps de vote, la ``winningProposal()`` (proposition gagnante) retou
 
         /// Voter (incluant les procurations par délégation)
         /// pour la proposition `proposals[proposal].name`.
-        function vote(uint proposal) public {
+        function vote(uint proposal) external {
             Voter storage sender = voters[msg.sender];
             require(!sender.voted, "Already voted.");
             sender.voted = true;
@@ -161,7 +168,7 @@ A la fin du temps de vote, la ``winningProposal()`` (proposition gagnante) retou
         // Appelle la fonction winningProposal() pour avoir
         // l'index du gagnant dans le tableau de propositions
         // et retourne le nom de la proposition gagnante.
-        function winnerName() public view
+        function winnerName() external view
                 returns (bytes32 winnerName_)
         {
             winnerName_ = proposals[winningProposal()].name;

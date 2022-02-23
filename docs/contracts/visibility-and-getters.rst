@@ -1,11 +1,38 @@
 .. index:: ! visibility, external, public, private, internal
 
+.. |visibility-caveat| replace:: Making something ``private`` or ``internal`` only prevents other contracts from reading or modifying the information, but it will still be visible to the whole world outside of the blockchain.
+
 .. _visibility-and-getters:
 
 **********************
 Visibilité et Getters
 **********************
 
+
+State Variable Visibility
+=========================
+
+``public``
+    Public state variables differ from internal ones only in that the compiler automatically generates
+    :ref:`getter functions<getter-functions>` for them, which allows other contracts to read their values.
+    When used within the same contract, the external access (e.g. ``this.x``) invokes the getter
+    while internal access (e.g. ``x``) gets the variable value directly from storage.
+    Setter functions are not generated so other contracts cannot directly modify their values.
+
+``internal``
+    Internal state variables can only be accessed from within the contract they are defined in
+    and in derived contracts.
+    They cannot be accessed externally.
+    This is the default visibility level for state variables.
+
+``private``
+    Private state variables are like internal ones but they are not visible in derived contracts.
+
+.. warning::
+    |visibility-caveat|
+
+Function Visibility
+===================
 
 Puisque Solidity connaît deux types d'appels de fonction (internes qui ne créent pas d'appel EVM réel (également appelés
 a "message call") et externes qui le font), il existe quatre types de visibilités pour les fonctions et les variables d'état.
@@ -32,10 +59,10 @@ Pour les variables d'état, ``external`` n'est pas possible.
 
 Le spécificateur de visibilité est donné après le type pour les variables d'état et entre la liste des paramètres et la liste des paramètres de retour pour les fonctions.
 
-::
+.. code-block:: solidity
 
     // SPDX-License-Identifier: GPL-3.0
-    pragma solidity >=0.4.16 <0.7.0;
+    pragma solidity >=0.4.16 <0.9.0;
 
     contract C {
         function f(uint a) private pure returns (uint b) { return a + 1; }
@@ -45,10 +72,10 @@ Le spécificateur de visibilité est donné après le type pour les variables d'
 
 Dans l'exemple suivant, ``D``, peut appeler ``c.getData()`` pour retrouver la valeur de ``data`` en mémoire d'état, mais ne peut pas appeler ``f``. Le contrat ``E`` est dérivé du contrat ``C`` et peut donc appeler ``compute``.
 
-::
+.. code-block:: solidity
 
     // SPDX-License-Identifier: GPL-3.0
-    pragma solidity >=0.4.16 <0.7.0;
+    pragma solidity >=0.4.16 <0.9.0;
 
     contract C {
         uint private data;
@@ -85,10 +112,10 @@ Fonctions Getter
 
 Le compilateur crée automatiquement des fonctions getter pour toutes les variables d'état **public**. Pour le contrat donné ci-dessous, le compilateur va générer une fonction appelée ``data`` qui ne prend aucun argument et retourne un ``uint``, la valeur de la variable d'état ``data``. Les variables d'état peuvent être initialisées lorsqu'elles sont déclarées.
 
-::
+.. code-block:: solidity
 
     // SPDX-License-Identifier: GPL-3.0
-    pragma solidity >=0.4.16 <0.7.0;
+    pragma solidity >=0.4.16 <0.9.0;
 
     contract C {
         uint public data = 42;
@@ -103,7 +130,7 @@ Le compilateur crée automatiquement des fonctions getter pour toutes les variab
 
 Les fonctions getter ont une visibilité externe. Si le symbole est accédé en interne (c'est-à-dire sans ``this.``), il est évalué à une variable d'état.  S'il est accédé de l'extérieur (c'est-à-dire avec ``this.``), il évalue à une fonction.
 
-::
+.. code-block:: solidity
 
     // SPDX-License-Identifier: GPL-3.0
     pragma solidity >=0.4.16 <0.7.0;
@@ -116,12 +143,14 @@ Les fonctions getter ont une visibilité externe. Si le symbole est accédé en 
         }
     }
 
-Si vous avez une variable d'état ``public`` de type array, alors vous ne pouvez récupérer que des éléments simples de l'array via la fonction getter générée. Ce mécanisme permet d'éviter des coûts de gas élevés lors du retour d'un tableau complet. Vous pouvez utiliser des arguments pour spécifier quel élément individuel retourner, par exemple ``data(0)``. Si vous voulez retourner un tableau entier en un appel, alors vous devez écrire une fonction, par exemple :
+Si vous avez une variable d'état ``public`` de type array, alors vous ne pouvez récupérer que des éléments simples de l'array via la fonction getter générée.
+Ce mécanisme permet d'éviter des coûts de gas élevés lors du retour d'un tableau complet.
+Vous pouvez utiliser des arguments pour spécifier quel élément individuel retourner, par exemple ``data(0)``. Si vous voulez retourner un tableau entier en un appel, alors vous devez écrire une fonction, par exemple :
 
-::
+.. code-block:: solidity
 
     // SPDX-License-Identifier: GPL-3.0
-    pragma solidity >=0.4.16 <0.7.0;
+    pragma solidity >=0.4.16 <0.9.0;
 
   contract arrayExample {
     // variable d'état publique
@@ -144,25 +173,34 @@ Maintenant vous pouvez utiliser ``getArray()`` pour récupérer le tableau entie
 
 L'exemple suivant est plus complexe:
 
-::
+.. code-block:: solidity
 
     // SPDX-License-Identifier: GPL-3.0
-    pragma solidity >=0.4.16 <0.7.0;
+    pragma solidity >=0.4.0 <0.9.0;
 
     contract Complex {
         struct Data {
             uint a;
             bytes3 b;
             mapping (uint => uint) map;
+            uint[3] c;
+            uint[] d;
+            bytes e;
         }
         mapping (uint => mapping(bool => Data[])) public data;
     }
 
-Il génère une fonction de la forme suivante. Le mappage dans la structure est omis parce qu'il n'y a pas de bonne façon de fournir la clé pour le mappage :
+It generates a function of the following form. The mapping and arrays (with the
+exception of byte arrays) in the struct are omitted because there is no good way
+to select individual struct members or provide a key for the mapping:
 
-::
+.. code-block:: solidity
 
-    function data(uint arg1, bool arg2, uint arg3) public returns (uint a, bytes3 b) {
+    function data(uint arg1, bool arg2, uint arg3)
+        public
+        returns (uint a, bytes3 b, bytes memory e)
+    {
         a = data[arg1][arg2][arg3].a;
         b = data[arg1][arg2][arg3].b;
+        e = data[arg1][arg2][arg3].e;
     }
