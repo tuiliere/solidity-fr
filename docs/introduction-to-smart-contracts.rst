@@ -79,7 +79,7 @@ De plus, n'importe qui peut s'envoyer des pièces sans avoir besoin de s'enregis
         address public minter;
         mapping (address => uint) public balances;
 
-        // Les Events authowisent les clients légers à réagir
+        // Les Events autorisent les clients légers à réagir
         // aux changements efficacement.
         event Sent(address from, address to, uint amount);
 
