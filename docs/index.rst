@@ -3,6 +3,7 @@ Solidity
 
 Solidity est un langage haut-niveau, orienté objet dédié à l'implémentation de smart contracts. Les smart contracts (littéralement contrats intelligents) sont des programes qui régissent le comportement de comptes dans l'état d'Ethereum.
 
+
 Solidity est un `curly-bracket language <https://en.wikipedia.org/wiki/List_of_programming_languages_by_type#Curly-bracket_languages>`_ (langage à accolades).
 Solidity a été influencé par C++, Python et JavaScript et est conçu pour cibler
 la machine virtuelle Ethereum (EVM).
@@ -14,17 +15,18 @@ que les types complexes définis par l'utilisateur parmi d'autres caractéristiq
 Avec Solidity, vous pouvez créer des contrats pour des usages tels que le vote, le crowdfunding, les enchères à l'aveugle,
 et portefeuilles multi-signature.
 
-When deploying contracts, you should use the latest released
-version of Solidity. Apart from exceptional cases, only the latest version receives
+Pour déployer des contrats, vous devriez utiliser la dernière version de Solidity publiée. Apart from exceptional cases, only the latest version receives
 `security fixes <https://github.com/ethereum/solidity/security/policy#supported-versions>`_.
-Furthermore, breaking changes as well as
-new features are introduced regularly. We currently use
+Ceci car des changements importants, des corrections de bugs et de nouvelles caractèristiques sont introduits régulièrement. We currently use
 a 0.y.z version number `to indicate this fast pace of change <https://semver.org/#spec-item-4>`_.
 
-.. warning::
+Nous utilison actuellement un numéro 0.x pour indiquer le changement rapide
+ <https://semver.org/#spec-item-4>`_.
 
-  Solidity recently released the 0.8.x version that introduced a lot of breaking
-  changes. Make sure you read :doc:`the full list <080-breaking-changes>`.
+.. Avertissement::
+
+  Solidity a récement introduit la version 0.6.x avec beaucoup de changements structurels. 
+  Lisez bien la documentation:doc:`the full list <060-breaking-changes>`.
 
 Ideas for improving Solidity or this documentation are always welcome,
 read our :doc:`contributors guide <contributing>` for more details.
@@ -40,12 +42,15 @@ Getting Started
 
 **1. Understand the Smart Contract Basics**
 
-If you are new to the concept of smart contracts we recommend you to get started by digging
-into the "Introduction to Smart Contracts" section, which covers:
+Si vous n'êtes pas familier avec le concept de smart contracts, nous vous recommendons de commencer avec
+:ref:`un exemple simple de smart contract <simple-smart-contract>` écrit en  Solidity. 
+Quand vous serez prêts pour davantage de détails, nous vous recommandons de lire
+:doc:`"Solidity par l'exemple" <solidity-by-example>` et
+les sections "Description du langage" pour apprendre les concepts de base du langage. 
 
-* :ref:`A simple example smart contract <simple-smart-contract>` written in Solidity.
-* :ref:`Blockchain Basics <blockchain-basics>`.
-* :ref:`The Ethereum Virtual Machine <the-ethereum-virtual-machine>`.
+
+Pour une lecture plus avancée, essayez :ref:`the basics of blockchains <blockchain-basics>`
+et les détails de  :ref:`Ethereum Virtual Machine <the-ethereum-virtual-machine>`.
 
 **2. Get to Know Solidity**
 
@@ -57,10 +62,10 @@ and “Language Description” sections to understand the core concepts of the l
 There are various ways to install the Solidity compiler,
 simply choose your preferred option and follow the steps outlined on the :ref:`installation page <installing-solidity>`.
 
-.. hint::
-  Rappelez-vous que vous pouvez toujours essayer les contrats `dans votre navigateur <https://remix.ethereum.org>`_ ! Remix is a web browser based IDE
-  that allows you to write, deploy and administer Solidity smart contracts, without
-  the need to install Solidity locally.
+.. Astuce::
+  Rappelez-vous que vous pouvez toujours essayer les contrats `dans votre navigateur <https://remix.ethereum.org>`_ ! Remix est un IDE dans un navigateur
+  permettant d'écrire des smart contracts Solidity, puis de déployer et exécuter les smart contracts. 
+  Cela peut prendre du temps; soyez donc patients. 
 
 .. warning::
     As humans write software, it can have bugs. You should follow established
