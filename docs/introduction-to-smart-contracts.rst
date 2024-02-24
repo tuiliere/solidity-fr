@@ -30,9 +30,7 @@ Exemple: Stockage
         }
     }
 
-The first line tells you that the source code is licensed under the
-GPL version 3.0. Machine-readable license specifiers are important
-in a setting where publishing the source code is the default.
+La première ligne indique que le code est sous license GPL Version 3.0. Les indicateurs de licence interprétables par le compilateur sont importants dans un contexte ou le code source est public par défaut
 
 La ligne suivante indique simplement que le code source est écrit pour Solidity version 0.4.16 ou tout ce qui est plus récent qui ne casse pas la fonctionnalité (jusqu'à la version 0.9.0, mais non comprise). Il s'agit de s'assurer que le contrat n'est pas compilable avec une nouvelle version du compilateur (de rupture), où il pourrait se comporter différemment.
 Les pré-cités pragmas sont des instructions courantes pour les compilateurs sur la façon de traiter le code source (par exemple `pragma once <https://fr.wikipedia.org/wiki/Pragma_once>`_).
